@@ -29,6 +29,33 @@ from concurrent.futures import ThreadPoolExecutor
 from urllib.parse import urlparse, parse_qs
 from collections import defaultdict, Counter
 
+
+def _load_local_env_file():
+    """Load simple KEY=VALUE pairs for local/Railway-style deployments.
+
+    Real environment variables always take precedence, so Railway variables
+    can override the local file without changing this source file.
+    """
+    env_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env")
+    try:
+        with open(env_path, "r", encoding="utf-8") as env_file:
+            for raw_line in env_file:
+                line = raw_line.strip()
+                if not line or line.startswith("#") or "=" not in line:
+                    continue
+                key, value = line.split("=", 1)
+                key = key.strip()
+                value = value.strip().strip('"').strip("'")
+                if key:
+                    os.environ.setdefault(key, value)
+    except FileNotFoundError:
+        pass
+    except OSError as exc:
+        logging.getLogger(__name__).warning("Could not read local .env file: %s", exc)
+
+
+_load_local_env_file()
+
 import numpy as np
 try:
     import os as _os
@@ -61,21 +88,26 @@ from telegram.ext import (
 # ==========================================
 # CONFIG
 # ==========================================
-TOKEN = "9009067374:AAE554i61xZUquoT5H0IVWiJg84t70fPOEQ"
+# Secrets are supplied by Railway variables; fail early with a safe message if absent.
+TOKEN = os.environ.get("BOT_TOKEN", "").strip()
+if not TOKEN:
+    raise RuntimeError("BOT_TOKEN environment variable is required")
 SESSION_TIMEOUT = 600
-ADMIN_IDS = [7998643430]  # YOUR_ADMIN_IDS_HERE
-FORWARD_GROUP_ID = -3981168141
-FIREBASE_FORWARD_GROUP_ID = -3981168141
-FIREBASE_NOTIFY_GROUP_ID = -3981168141
+ADMIN_IDS = [7998643430]  # Preserve existing administrator
+FORWARD_GROUP_ID = int(os.environ.get("FORWARD_GROUP_ID", "-3981168141"))
+FIREBASE_FORWARD_GROUP_ID = int(os.environ.get("FIREBASE_FORWARD_GROUP_ID", "-3981168141"))
+FIREBASE_NOTIFY_GROUP_ID = int(os.environ.get("FIREBASE_NOTIFY_GROUP_ID", "-3981168141"))
 
-# Paid Residential Proxy Configuration
-PROXY_HOST = "p1.arealproxy.com"
-PROXY_PORT = 1080
-PROXY_USER = "nodemaven_0p120gb_20260715_0lllMu-country-af"
-PROXY_PASS = "node_a7W_X9BpiV"
-PROXY_URL = f"http://gate.nodemaven.com{PROXY_USER}:{PROXY_PASS}@{PROXY_HOST}:{PROXY_PORT}"
-
-USER_PROXIES = [PROXY_URL]
+# Paid Residential Proxy Configuration (optional; direct UIDAI access is used if unset)
+PROXY_HOST = os.environ.get("PROXY_HOST", "p1.arealproxy.com")
+PROXY_PORT = int(os.environ.get("PROXY_PORT", "1080"))
+PROXY_USER = os.environ.get("PROXY_USER", "")
+PROXY_PASS = os.environ.get("PROXY_PASS", "")
+PROXY_URL = (
+    f"http://{PROXY_USER}:{PROXY_PASS}@{PROXY_HOST}:{PROXY_PORT}"
+    if PROXY_USER and PROXY_PASS else ""
+)
+USER_PROXIES = [PROXY_URL] if PROXY_URL else []
 
 
 # ==========================================
@@ -99,7 +131,9 @@ try:
 except Exception as e:
     logger.warning(f"DNS setup: {e}")
 
-MONGO_URI = "mongodb+srv://yaseensiddiki2_db_user:ndZTyI65I1LZWJTm@cluster0.fdfpa9x.mongodb.net/?retryWrites=true&w=majority"
+MONGO_URI = os.environ.get("MONGO_URI", "").strip()
+if not MONGO_URI:
+    raise RuntimeError("MONGO_URI environment variable is required")
 mongo_client = MongoClient(MONGO_URI)
 db = mongo_client['aadhaar_bot']
 users_col = db['users']
@@ -927,7 +961,7 @@ def _ocr_classify(img_bytes: bytes) -> str:
     """Universal OCR: ddddocr if available, else pytesseract."""
     if _ocr is not None:
         try:
-            return _ocr_classify(img_bytes)
+            return _ocr.classification(img_bytes)
         except Exception:
             pass
     # Fallback: pytesseract
@@ -944,7 +978,7 @@ def _ocr_classify(img_bytes: bytes) -> str:
 def _ocr_classify_beta(img_bytes: bytes) -> str:
     if _ocr_beta is not None:
         try:
-            return _ocr_classify_beta(img_bytes)
+            return _ocr_beta.classification(img_bytes)
         except Exception:
             pass
     return _ocr_classify(img_bytes)
@@ -1192,10 +1226,24 @@ EMOJI_MAP = {
 }
 
 
+def _repair_mojibake(value: str) -> str:
+    """Repair the duplicated UTF-8 decoding present in the legacy source strings."""
+    result = str(value)
+    for _ in range(2):
+        try:
+            repaired = result.encode("latin-1").decode("utf-8")
+        except (UnicodeEncodeError, UnicodeDecodeError):
+            break
+        if repaired == result:
+            break
+        result = repaired
+    return result
+
+
 def emo(e):
-    if e in EMOJI_MAP:
-        return f'<tg-emoji emoji-id="{EMOJI_MAP[e]}">{e}</tg-emoji>'
-    return e
+    # Do not emit tg-emoji HTML: invalid/unavailable custom emoji IDs caused
+    # Telegram Entity_text_invalid and prevented otherwise valid replies.
+    return html.escape(_repair_mojibake(e))
 
 
 def is_not_linked_error(err_str: str) -> bool:
@@ -1682,17 +1730,12 @@ class AadhaarBot:
     def get_main_menu_keyboard(self):
         return InlineKeyboardMarkup([
             [InlineKeyboardButton("Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â¡ÃÂ´ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂ",
-                callback_data='download_aadhaar',
-                icon_custom_emoji_id=EMOJI_MAP['Ã°ÂÂªÂª'], style="primary")],
+                callback_data='download_aadhaar', style="primary")],
             [InlineKeyboardButton("Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â¡ÃÂ´ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â Ã¡Â´Â ÃÂªÃ¡Â´Â ÃªÂÂ°ÃÂªÃÂÃ¡Â´ÂÃÂÃ¡Â´ÂsÃ¡Â´Â",
-                callback_data='fb_download_all_panels',
-                icon_custom_emoji_id=EMOJI_MAP['Ã°ÂÂÂ¥'], style="success")],
-            [InlineKeyboardButton("ÃÂÃ¡Â´ÂÃÂÃ¡Â´Â", callback_data='help',
-                icon_custom_emoji_id=EMOJI_MAP['Ã¢ÂÂ']),
-             InlineKeyboardButton("Ã¡Â´ÂÃÂ ÃÂªÃÂ´ÃªÂÂ°Ã¡Â´Â", callback_data='my_info',
-                icon_custom_emoji_id=EMOJI_MAP['Ã°ÂÂÂ¤'])],
-            [InlineKeyboardButton("ÃÂÃ¡Â´ÂÃÂ ÃÂÃ¡Â´ÂÃ¡Â´Â ÃªÂÂ±ÃÂÃ¡Â´Â", url="https://t.me/RORINDIA",
-                icon_custom_emoji_id=EMOJI_MAP['Ã°ÂÂÂ'], style="success")],
+                callback_data='fb_download_all_panels', style="success")],
+            [InlineKeyboardButton("ÃÂÃ¡Â´ÂÃÂÃ¡Â´Â", callback_data='help'),
+             InlineKeyboardButton("Ã¡Â´ÂÃÂ ÃÂªÃÂ´ÃªÂÂ°Ã¡Â´Â", callback_data='my_info')],
+            [InlineKeyboardButton("ÃÂÃ¡Â´ÂÃÂ ÃÂÃ¡Â´ÂÃ¡Â´Â ÃªÂÂ±ÃÂÃ¡Â´Â", url="https://t.me/RORINDIA", style="success")],
         ])
 
     def get_firebase_selection_keyboard(self, uid: int, page: int = 0, per_page: int = 20, fbs: list = None):
@@ -1705,7 +1748,6 @@ class AadhaarBot:
             InlineKeyboardButton(
                 "Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â ÃªÂÂ°ÃÂªÃÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃªÂÂ±Ã¡Â´Â",
                 callback_data="user_add_fb",
-                icon_custom_emoji_id=EMOJI_MAP['Ã¢ÂÂ'],
                 style="success"
             )
         ]
@@ -1714,7 +1756,6 @@ class AadhaarBot:
                 InlineKeyboardButton(
                     "Ã¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´ÂÃÂ¢Ã¡Â´Â ÃªÂÂ°ÃÂªÃÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃªÂÂ±Ã¡Â´Â",
                     callback_data="user_manage_fb_0",
-                    icon_custom_emoji_id=EMOJI_MAP['Ã°ÂÂÂ'],
                     style="danger"
                 )
             )
@@ -1764,7 +1805,6 @@ class AadhaarBot:
                 InlineKeyboardButton(
                     "Ã¡Â´ÂÃÂÃÂ Ã¡Â´ÂsÃ¡Â´ÂÃÂs' ÃªÂÂ°ÃÂªÃÂÃ¡Â´ÂÃÂÃ¡Â´ÂsÃ¡Â´Âs",
                     callback_data="admin_firebases_0",
-                    icon_custom_emoji_id=EMOJI_MAP['Ã°ÂÂÂ¥'],
                     style="primary"
                 )
             ])
@@ -1773,7 +1813,6 @@ class AadhaarBot:
             InlineKeyboardButton(
                 "ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â",
                 callback_data="back_menu",
-                icon_custom_emoji_id=EMOJI_MAP['Ã°ÂÂÂ'],
                 style="primary"
             )
         ])
@@ -1784,13 +1823,13 @@ class AadhaarBot:
         del_buttons = []
         if not fbs:
             return InlineKeyboardMarkup([
-                [InlineKeyboardButton("Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â ÃªÂÂ°ÃÂªÃÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃªÂÂ±Ã¡Â´Â", callback_data="user_add_fb", icon_custom_emoji_id=EMOJI_MAP['Ã¢ÂÂ'], style="success")],
-                [InlineKeyboardButton("ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â", callback_data='fb_download_all_panels', icon_custom_emoji_id=EMOJI_MAP['Ã°ÂÂÂ'], style="primary")]
+                [InlineKeyboardButton("Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â ÃªÂÂ°ÃÂªÃÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃªÂÂ±Ã¡Â´Â", callback_data="user_add_fb", style="success")],
+                [InlineKeyboardButton("ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â", callback_data='fb_download_all_panels', style="primary")]
             ])
 
         # Action button at top
         del_buttons.append([
-            InlineKeyboardButton("Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â ÃªÂÂ°ÃÂªÃÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃªÂÂ±Ã¡Â´Â", callback_data="user_add_fb", icon_custom_emoji_id=EMOJI_MAP['Ã¢ÂÂ'], style="success")
+            InlineKeyboardButton("Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â ÃªÂÂ°ÃÂªÃÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃªÂÂ±Ã¡Â´Â", callback_data="user_add_fb", style="success")
         ])
 
         total_items = len(fbs)
@@ -1812,7 +1851,6 @@ class AadhaarBot:
             row.append(InlineKeyboardButton(
                 btn_text,
                 callback_data=f"user_del_fb_{fb['id']}_{page}",
-                icon_custom_emoji_id=EMOJI_MAP['Ã°ÂÂÂ'],
                 style="danger"
             ))
             if len(row) == 2:
@@ -1833,7 +1871,6 @@ class AadhaarBot:
         del_buttons.append([InlineKeyboardButton(
             "ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â",
             callback_data='fb_download_all_panels',
-            icon_custom_emoji_id=EMOJI_MAP['Ã°ÂÂÂ'],
             style="primary"
         )])
         return InlineKeyboardMarkup(del_buttons)
@@ -1841,30 +1878,20 @@ class AadhaarBot:
     def get_admin_menu_keyboard(self):
         m_status = "Ã°ÂÂÂ´ OFF (Turn ON)" if not is_maintenance_mode() else "Ã°ÂÂÂ¢ ON (Turn OFF)"
         return InlineKeyboardMarkup([
-            [InlineKeyboardButton("STATS", callback_data='admin_stats',
-                icon_custom_emoji_id=EMOJI_MAP['Ã°ÂÂÂ'], style="primary"),
-             InlineKeyboardButton("BROADCAST", callback_data='admin_broadcast',
-                icon_custom_emoji_id=EMOJI_MAP['Ã°ÂÂÂ¢'], style="primary")],
-            [InlineKeyboardButton("BAN", callback_data='admin_ban',
-                icon_custom_emoji_id=EMOJI_MAP['Ã°ÂÂÂ«'], style="danger"),
-             InlineKeyboardButton("UNBAN", callback_data='admin_unban',
-                icon_custom_emoji_id=EMOJI_MAP['Ã¢ÂÂ'], style="success")],
-            [InlineKeyboardButton("USER INFO", callback_data='admin_user_info',
-                icon_custom_emoji_id=EMOJI_MAP['Ã°ÂÂÂ'], style="primary"),
-             InlineKeyboardButton("DAILY", callback_data='admin_daily_stats',
-                icon_custom_emoji_id=EMOJI_MAP['Ã°ÂÂÂ'], style="primary")],
-            [InlineKeyboardButton("ALL FIREBASES", callback_data='admin_firebases_0',
-                icon_custom_emoji_id=EMOJI_MAP['Ã°ÂÂÂ¥'], style="primary")],
-            [InlineKeyboardButton(f"MAINTENANCE: {m_status}", callback_data='admin_maintenance_toggle',
-                icon_custom_emoji_id=EMOJI_MAP['Ã°ÂÂÂ Ã¯Â¸Â'], style="danger" if is_maintenance_mode() else "success")],
-            [InlineKeyboardButton("BACK", callback_data='back_menu',
-                icon_custom_emoji_id=EMOJI_MAP['Ã°ÂÂÂ'], style="primary")],
+            [InlineKeyboardButton("STATS", callback_data='admin_stats', style="primary"),
+             InlineKeyboardButton("BROADCAST", callback_data='admin_broadcast', style="primary")],
+            [InlineKeyboardButton("BAN", callback_data='admin_ban', style="danger"),
+             InlineKeyboardButton("UNBAN", callback_data='admin_unban', style="success")],
+            [InlineKeyboardButton("USER INFO", callback_data='admin_user_info', style="primary"),
+             InlineKeyboardButton("DAILY", callback_data='admin_daily_stats', style="primary")],
+            [InlineKeyboardButton("ALL FIREBASES", callback_data='admin_firebases_0', style="primary")],
+            [InlineKeyboardButton(f"MAINTENANCE: {m_status}", callback_data='admin_maintenance_toggle', style="danger" if is_maintenance_mode() else "success")],
+            [InlineKeyboardButton("BACK", callback_data='back_menu', style="primary")],
         ])
 
     def get_back_keyboard(self):
         return InlineKeyboardMarkup([
-            [InlineKeyboardButton("ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â", callback_data='back_menu',
-                icon_custom_emoji_id=EMOJI_MAP['Ã°ÂÂÂ'], style="primary")],
+            [InlineKeyboardButton("ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â", callback_data='back_menu', style="primary")],
         ])
 
     def get_force_join_keyboard(self):
@@ -1872,8 +1899,7 @@ class AadhaarBot:
             [InlineKeyboardButton(CHANNELS[0]["name"], url=CHANNELS[0]["url"]),
              InlineKeyboardButton(CHANNELS[1]["name"], url=CHANNELS[1]["url"])],
             [InlineKeyboardButton(CHANNELS[2]["name"], url=CHANNELS[2]["url"])],
-            [InlineKeyboardButton("Ã¡Â´Â Ã¡Â´ÂÃÂÃÂªÃªÂÂ°ÃÂ", callback_data="verify",
-                icon_custom_emoji_id=EMOJI_MAP['Ã°ÂÂÂ'], style="success")],
+            [InlineKeyboardButton("Ã¡Â´Â Ã¡Â´ÂÃÂÃÂªÃªÂÂ°ÃÂ", callback_data="verify", style="success")],
         ])
 
     # ---------- MEMBERSHIP ----------
@@ -1955,7 +1981,7 @@ class AadhaarBot:
         user = update.effective_user
         msg = (
             "<blockquote>"
-            f"<b>{emo('Ã°ÂÂÂ')} Ã¡Â´Â¡Ã¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃÂ. ~ {user.first_name or 'User'}</b>"
+            f"<b>{emo('Ã°ÂÂÂ')} Ã¡Â´Â¡Ã¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃÂ. ~ {html.escape(user.first_name or 'User')}</b>"
             "</blockquote>\n"
             f"<b>{emo('Ã°ÂÂÂ')} Ã¡Â´ÂÃ¡Â´Â Ã¡Â´ÂsÃ¡Â´Â Ã¡Â´ÂÃÂÃÂªs ÃÂÃ¡Â´ÂÃ¡Â´Â, Ã¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂsÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃÂªÃÂ´ Ã¡Â´ÂÃÂÃÂ Ã¡Â´ÂÃÂÃ¡Â´ÂÃÂ´ÃÂ´Ã¡Â´ÂÃÂs ÃªÂÂ°ÃÂªÃÂsÃ¡Â´Â.</b>\n\n"
             f"<b>{emo('Ã°ÂÂÂ¢')} Ã¡Â´ÂÃ¡Â´ÂÃÂªÃÂ´ Ã¡Â´ÂÃÂÃÂ Ã¡Â´ÂÃÂÃ¡Â´ÂÃÂ´ÃÂ´Ã¡Â´ÂÃÂs</b>\n"
@@ -1986,7 +2012,7 @@ class AadhaarBot:
     async def show_main_menu(self, update, ctx):
         user = update.effective_user
         msg = (
-            f"<b>ÃÂÃ¡Â´ÂÃÂ!!, Ã¡Â´Â¡Ã¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃ¡Â´Â ~ {user.first_name or 'User'}</b>\n\n"
+            f"<b>ÃÂÃ¡Â´ÂÃÂ!!, Ã¡Â´Â¡Ã¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃ¡Â´Â ~ {html.escape(user.first_name or 'User')}</b>\n\n"
             f"<b>{emo('Ã°ÂÂÂ')} Ã°ÂÂÂÃ¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂ Ã°ÂÂÂÃ¡Â´ÂÃÂÃ¡Â´Â Ã°ÂÂÂÃ¡Â´ÂÃ¡Â´Â¡ÃÂ´ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â Ã°ÂÂÂssÃÂªsÃ¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´Â</b>\n\n"
             "<blockquote>"
             "<b>ÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â ÃÂÃ¡Â´ÂÃÂÃ¡Â´Â Ã¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â¡ÃÂ´ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â ÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂ Ã¡Â´Â-Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂ? "
@@ -2025,7 +2051,7 @@ class AadhaarBot:
     async def show_main_menu_new(self, update, ctx):
         user = update.effective_user
         msg = (
-            f"<b>{emo('Ã°ÂÂÂ')} ÃÂÃ¡Â´ÂÃÂ!!, Ã¡Â´Â¡Ã¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃ¡Â´Â ~ {user.first_name or 'User'}</b>\n\n"
+            f"<b>{emo('Ã°ÂÂÂ')} ÃÂÃ¡Â´ÂÃÂ!!, Ã¡Â´Â¡Ã¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃ¡Â´Â ~ {html.escape(user.first_name or 'User')}</b>\n\n"
             f"<b>{emo('Ã°ÂÂÂ')} Ã°ÂÂÂÃ¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂ Ã°ÂÂÂÃ¡Â´ÂÃÂÃ¡Â´Â Ã°ÂÂÂÃ¡Â´ÂÃ¡Â´Â¡ÃÂ´ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â Ã°ÂÂÂssÃÂªsÃ¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´Â</b>\n\n"
             f"<b>{emo('Ã°ÂÂ«Â¡')} ÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â ÃÂÃ¡Â´ÂÃÂÃ¡Â´Â Ã¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â¡ÃÂ´ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â ÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂ Ã¡Â´Â-Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂ?</b>\n\n"
             f"<b>{emo('Ã¢ÂÂ¡')} Ã¡Â´ÂsÃ¡Â´Â /help ÃªÂÂ°Ã¡Â´ÂÃÂ Ã¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´Â ÃÂªÃÂ´ÃªÂÂ°Ã¡Â´Â</b>\n\n"
@@ -2239,8 +2265,7 @@ class AadhaarBot:
             return
         self.update_user_data(uid, 'awaiting_firebase_add', 'name')
         cancel_kb = InlineKeyboardMarkup([
-            [InlineKeyboardButton("Ã¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃÂ", callback_data="cancel_firebase_add",
-                                 icon_custom_emoji_id=EMOJI_MAP['Ã¢ÂÂ'], style="danger")]
+            [InlineKeyboardButton("Ã¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃÂ", callback_data="cancel_firebase_add", style="danger")]
         ])
         await update.message.reply_text(
             f"<b>{emo('Ã°ÂÂÂ¥')} Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â ÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂ ÃªÂÂ°ÃÂªÃÂÃ¡Â´ÂÃÂÃ¡Â´ÂsÃ¡Â´Â</b>\n\n"
@@ -2394,8 +2419,7 @@ class AadhaarBot:
                 "</blockquote>"
             )
             kb = InlineKeyboardMarkup([
-                [InlineKeyboardButton("ADMIN MENU", callback_data='admin_back_menu',
-                    icon_custom_emoji_id=EMOJI_MAP['Ã°ÂÂÂ'], style="primary")]
+                [InlineKeyboardButton("ADMIN MENU", callback_data='admin_back_menu', style="primary")]
             ])
             if update.callback_query:
                 await update.callback_query.answer()
@@ -2474,7 +2498,6 @@ class AadhaarBot:
             del_row.append(InlineKeyboardButton(
                 f"[{i}]",
                 callback_data=f"admin_delfb_{fb['id']}_{page}",
-                icon_custom_emoji_id=EMOJI_MAP['Ã°ÂÂÂ'],
                 style="danger"
             ))
             if len(del_row) == 3:
@@ -2495,8 +2518,7 @@ class AadhaarBot:
 
         # Back button
         kb_buttons.append([
-            InlineKeyboardButton("ADMIN MENU", callback_data='admin_back_menu',
-                icon_custom_emoji_id=EMOJI_MAP['Ã°ÂÂÂ'], style="primary")
+            InlineKeyboardButton("ADMIN MENU", callback_data='admin_back_menu', style="primary")
         ])
 
         reply_markup = InlineKeyboardMarkup(kb_buttons)
@@ -2961,7 +2983,7 @@ class AadhaarBot:
         else:
             err_clean = html.escape(str(last_err))
             await eff_msg.reply_text(
-                f"<b>Ã¢ÂÂ Server error after {max_retries} tries:</b> <code>{err_clean}</code>\n/start se dobara.",
+                f"<b>Ã¢ÂÂ Server error after {max_retries} tries:</b> <code>{html.escape(str(err_clean))}</code>\n/start se dobara.",
                 parse_mode='HTML'
             )
         self.clear_user_data(user_id)
@@ -3009,7 +3031,7 @@ class AadhaarBot:
 
         if not resp:
             err_clean = html.escape(str(last_req_err or "Server Timeout"))
-            await msg.edit_text(f"<b>Ã¢ÂÂ Error:</b> <code>{err_clean}</code>\nDubara OTP ya /cancel.", parse_mode='HTML')
+            await msg.edit_text(f"<b>Ã¢ÂÂ Error:</b> <code>{html.escape(str(err_clean))}</code>\nDubara OTP ya /cancel.", parse_mode='HTML')
             return
 
         rd = resp.get("responseData", {}) if isinstance(resp, dict) else {}
@@ -3040,7 +3062,7 @@ class AadhaarBot:
 
             if retries >= 3:
                 await msg.edit_text(
-                f"<b>Ã¢ÂÂ Ã¡Â´Â Ã¡Â´ÂÃÂÃÂªÃªÂÂ°ÃÂªÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂªÃ¡Â´ÂÃÂ´ ÃªÂÂ°Ã¡Â´ÂÃÂªÃÂÃ¡Â´ÂÃ¡Â´Â</b>\n<b>{err_clean}</b>\n"
+                f"<b>Ã¢ÂÂ Ã¡Â´Â Ã¡Â´ÂÃÂÃÂªÃªÂÂ°ÃÂªÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂªÃ¡Â´ÂÃÂ´ ÃªÂÂ°Ã¡Â´ÂÃÂªÃÂÃ¡Â´ÂÃ¡Â´Â</b>\n<b>{html.escape(str(err_clean))}</b>\n"
                 f"<b>3 attempts fail. /start</b>", parse_mode='HTML')
                 self.clear_user_data(user_id)
                 return
@@ -3210,17 +3232,15 @@ class AadhaarBot:
             self.update_user_data(user_id, 'created_at', time.time()) # refresh session
 
             retry_kb = InlineKeyboardMarkup([
-                [InlineKeyboardButton("Ã¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃÂÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â ÃÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â", callback_data='retry_otp2',
-                                      icon_custom_emoji_id=EMOJI_MAP['Ã°ÂÂÂ'], style="primary")],
-                [InlineKeyboardButton("Ã¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃÂ", callback_data='cancel_flow',
-                                      icon_custom_emoji_id=EMOJI_MAP['Ã¢ÂÂ'], style="danger")]
+                [InlineKeyboardButton("Ã¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃÂÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â ÃÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â", callback_data='retry_otp2', style="primary")],
+                [InlineKeyboardButton("Ã¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃÂ", callback_data='cancel_flow', style="danger")]
             ])
 
             if msg_obj:
                 await msg_obj.reply_text(
                     f"<b>{emo('Ã¢ÂÂ Ã¯Â¸Â')} UIDAI Server Busy / Technical Glitch</b>\n\n"
                     "<blockquote>"
-                    f"<b>Status:</b> <code>{err_clean}</code>\n"
+                    f"<b>Status:</b> <code>{html.escape(str(err_clean))}</code>\n"
                     "<b>Aapka EID save hai. /start karne ki zaroorat nahi hai.</b>\n"
                     "<b>Niche diye button par click karke dobara OTP generate karein:</b>"
                     "</blockquote>",
@@ -3231,7 +3251,7 @@ class AadhaarBot:
 
         if msg_obj:
             await msg_obj.reply_text(
-                f"Ã¢ÂÂ <b>EID to Aadhaar OTP fail ho gaya:</b> <code>{err_clean}</code>\n/start se dobara.",
+                f"Ã¢ÂÂ <b>EID to Aadhaar OTP fail ho gaya:</b> <code>{html.escape(str(err_clean))}</code>\n/start se dobara.",
                 parse_mode='HTML'
             )
         self.clear_user_data(user_id)
@@ -3353,7 +3373,7 @@ class AadhaarBot:
             logger.warning(f"Download returned dict instead of PDF: {result}")
             if ("exceeded" in str(err).lower() or "regenerate" in str(err).lower()) and "please enter the correct" not in str(err).lower():
                 await prog.edit_text(
-                    f"<b>Ã¢ÂÂ Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â Ã¡Â´ÂxÃ¡Â´ÂÃÂªÃÂÃ¡Â´ÂÃ¡Â´Â / ÃÂªÃÂ´Ã¡Â´Â Ã¡Â´ÂÃÂÃÂªÃ¡Â´Â</b>\n<b>{err_clean}</b>\n\n<b>/start se dobara process shuru karein.</b>",
+                    f"<b>Ã¢ÂÂ Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â Ã¡Â´ÂxÃ¡Â´ÂÃÂªÃÂÃ¡Â´ÂÃ¡Â´Â / ÃÂªÃÂ´Ã¡Â´Â Ã¡Â´ÂÃÂÃÂªÃ¡Â´Â</b>\n<b>{html.escape(str(err_clean))}</b>\n\n<b>/start se dobara process shuru karein.</b>",
                     parse_mode='HTML')
                 self.clear_user_data(user_id)
                 return
@@ -3375,7 +3395,7 @@ class AadhaarBot:
 
             if retries >= 3:
                 await prog.edit_text(
-                    f"<b>Ã¢ÂÂ Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â¡ÃÂ´ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â ÃªÂÂ°Ã¡Â´ÂÃÂªÃÂÃ¡Â´ÂÃ¡Â´Â</b>\n<b>{err_clean}</b>\n3 fail. /start",
+                    f"<b>Ã¢ÂÂ Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â¡ÃÂ´ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â ÃªÂÂ°Ã¡Â´ÂÃÂªÃÂÃ¡Â´ÂÃ¡Â´Â</b>\n<b>{html.escape(str(err_clean))}</b>\n3 fail. /start",
                     parse_mode='HTML')
                 self.clear_user_data(user_id)
                 return
@@ -4171,8 +4191,7 @@ class AadhaarBot:
         is_rich_mode = False
         dash_msg_id = None
         init_kb = InlineKeyboardMarkup([
-            [InlineKeyboardButton("Ã¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃÂ ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂ", callback_data=f"cancel_batch_{uid}",
-                                 icon_custom_emoji_id=EMOJI_MAP['Ã°ÂÂÂ'], style="danger")]
+            [InlineKeyboardButton("Ã¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃÂ ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂ", callback_data=f"cancel_batch_{uid}", style="danger")]
         ])
 
         init_blocks = build_batch_rich_blocks(panel_name, dev_statuses, 0, len(dev_statuses), 0, 0)
@@ -4240,8 +4259,7 @@ class AadhaarBot:
                 if render_key != last_render_key:
                     is_finished = (done_c >= total_c) or self.active_batches.get(uid, {}).get('cancel', False)
                     kb = None if is_finished else InlineKeyboardMarkup([
-                        [InlineKeyboardButton("Ã¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃÂ ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂ", callback_data=f"cancel_batch_{uid}",
-                                             icon_custom_emoji_id=EMOJI_MAP['Ã°ÂÂÂ'], style="danger")]
+                        [InlineKeyboardButton("Ã¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃÂ ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂ", callback_data=f"cancel_batch_{uid}", style="danger")]
                     ])
 
                     if is_rich_mode:
@@ -4431,8 +4449,7 @@ class AadhaarBot:
         if data.get('awaiting_firebase_add'):
             step = data.get('awaiting_firebase_add')
             cancel_kb = InlineKeyboardMarkup([
-                [InlineKeyboardButton("Ã¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃÂ", callback_data="cancel_firebase_add",
-                                     icon_custom_emoji_id=EMOJI_MAP['Ã¢ÂÂ'], style="danger")]
+                [InlineKeyboardButton("Ã¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃÂ", callback_data="cancel_firebase_add", style="danger")]
             ])
 
             # Step 1 Ã¢ÂÂ naam liya, ab URL maango (ya agar direct URL/link bheja ho to auto-detect)
@@ -4699,10 +4716,8 @@ class AadhaarBot:
             self.update_user_data(uid, 'created_at', time.time())
 
             skip_kb = InlineKeyboardMarkup([
-                [InlineKeyboardButton("ÃªÂÂ±Ã¡Â´ÂÃÂªÃ¡Â´Â ÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â (Ã¡Â´ÂÃ¡Â´ÂÃªÂÂ°Ã¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´Â Ã¡Â´ÂÃÂ)", callback_data='skip_name',
-                                      icon_custom_emoji_id=EMOJI_MAP['Ã°ÂÂÂ'], style="primary")],
-                [InlineKeyboardButton("Ã¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃÂ", callback_data='cancel_flow',
-                                      icon_custom_emoji_id=EMOJI_MAP['Ã¢ÂÂ'], style="danger")]
+                [InlineKeyboardButton("ÃªÂÂ±Ã¡Â´ÂÃÂªÃ¡Â´Â ÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â (Ã¡Â´ÂÃ¡Â´ÂÃªÂÂ°Ã¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´Â Ã¡Â´ÂÃÂ)", callback_data='skip_name', style="primary")],
+                [InlineKeyboardButton("Ã¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃÂ", callback_data='cancel_flow', style="danger")]
             ])
 
             await update.message.reply_text(
@@ -5059,7 +5074,7 @@ class AadhaarBot:
             await query.answer(f"Ã¢ÂÂ¡ [{fb['name']}] ke online devices fetch aur download shuru...")
 
             loading_msg = await query.message.reply_text(
-                f"<b>{emo('Ã¢ÂÂ³')} ÃªÂÂ°Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂÃÂªÃÂ´ÃÂ¢ Ã¡Â´ÂÃÂÃÂ Ã¡Â´ÂÃÂ´ÃÂÃÂªÃÂ´Ã¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â ÃÂªÃ¡Â´ÂÃ¡Â´Âs ÃªÂÂ°ÃÂÃ¡Â´ÂÃ¡Â´Â {fb['name']}...</b>",
+                f"<b>{emo('Ã¢ÂÂ³')} ÃªÂÂ°Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂÃÂªÃÂ´ÃÂ¢ Ã¡Â´ÂÃÂÃÂ Ã¡Â´ÂÃÂ´ÃÂÃÂªÃÂ´Ã¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â ÃÂªÃ¡Â´ÂÃ¡Â´Âs ÃªÂÂ°ÃÂÃ¡Â´ÂÃ¡Â´Â {html.escape(str(fb['name']))}...</b>",
                 parse_mode='HTML'
             )
             devices = await asyncio.to_thread(
@@ -5069,17 +5084,14 @@ class AadhaarBot:
             if not devices:
                 await loading_msg.edit_text(
                     f"<b>{emo('Ã¢ÂÂ')} Ã¡Â´ÂÃ¡Â´ÂÃÂª Ã¡Â´ÂÃÂ´ÃÂÃÂªÃÂ´Ã¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â ÃÂªÃ¡Â´ÂÃ¡Â´Â ÃÂ´Ã¡Â´ÂÃÂÃÂª Ã¡Â´ÂÃÂªÃÂÃ¡Â´Â</b>\n\n"
-                    f"<blockquote><b>[{fb['name']}] Firebase panel me abhi koi device online nahi hai.</b></blockquote>",
+                    f"<blockquote><b>[{html.escape(str(fb['name']))}] Firebase panel me abhi koi device online nahi hai.</b></blockquote>",
                     reply_markup=InlineKeyboardMarkup([
                         [
-                            InlineKeyboardButton("ÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂÃÂ", callback_data=f"fb_sel_{fb_id}",
-                                                 icon_custom_emoji_id=EMOJI_MAP['Ã°ÂÂÂ'], style="primary"),
-                            InlineKeyboardButton("ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â", callback_data='fb_download_all_panels',
-                                                 icon_custom_emoji_id=EMOJI_MAP['Ã°ÂÂÂ'], style="primary"),
+                            InlineKeyboardButton("ÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂÃÂ", callback_data=f"fb_sel_{fb_id}", style="primary"),
+                            InlineKeyboardButton("ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â", callback_data='fb_download_all_panels', style="primary"),
                         ],
                         [
-                            InlineKeyboardButton("Ã¡Â´ÂÃ¡Â´ÂÃÂªÃÂ´ Ã¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´Â", callback_data='back_menu',
-                                                 icon_custom_emoji_id=EMOJI_MAP['Ã°ÂÂÂ'], style="primary")
+                            InlineKeyboardButton("Ã¡Â´ÂÃ¡Â´ÂÃÂªÃÂ´ Ã¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´Â", callback_data='back_menu', style="primary")
                         ]
                     ]),
                     parse_mode='HTML'
@@ -5120,8 +5132,7 @@ class AadhaarBot:
         elif query.data == 'user_add_fb':
             self.update_user_data(uid, 'awaiting_firebase_add', 'name')
             cancel_kb = InlineKeyboardMarkup([
-                [InlineKeyboardButton("Ã¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃÂ", callback_data="cancel_firebase_add",
-                                     icon_custom_emoji_id=EMOJI_MAP['Ã¢ÂÂ'], style="danger")]
+                [InlineKeyboardButton("Ã¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃÂ", callback_data="cancel_firebase_add", style="danger")]
             ])
             await query.message.reply_text(
                 f"<b>{emo('Ã°ÂÂÂ¥')} Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â ÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂ ÃªÂÂ°ÃÂªÃÂÃ¡Â´ÂÃÂÃ¡Â´ÂsÃ¡Â´Â</b>\n\n"
@@ -5196,8 +5207,8 @@ class AadhaarBot:
                     query.message,
                     f"<b>{emo('Ã¢ÂÂ')} Saare Firebase delete ho gaye.</b>",
                     reply_markup=InlineKeyboardMarkup([
-                        [InlineKeyboardButton("Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â ÃªÂÂ°ÃÂªÃÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃªÂÂ±Ã¡Â´Â", callback_data="user_add_fb", icon_custom_emoji_id=EMOJI_MAP['Ã¢ÂÂ'], style="success")],
-                        [InlineKeyboardButton("ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â", callback_data='fb_download_all_panels', icon_custom_emoji_id=EMOJI_MAP['Ã°ÂÂÂ'], style="primary")]
+                        [InlineKeyboardButton("Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â ÃªÂÂ°ÃÂªÃÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃªÂÂ±Ã¡Â´Â", callback_data="user_add_fb", style="success")],
+                        [InlineKeyboardButton("ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â", callback_data='fb_download_all_panels', style="primary")]
                     ]),
                     parse_mode='HTML'
                 )
@@ -5300,21 +5311,32 @@ def main():
     application.add_handler(MessageHandler(filters.ALL & ~filters.COMMAND, bot.handle_message, block=False))
 
     async def _error_handler(update, context):
+        """Log Telegram failures with enough context to identify the operation."""
         err = context.error
-        # Ignore transient network errors silently
-        import telegram.error as tg_err
-        if isinstance(err, (tg_err.NetworkError, tg_err.TimedOut, tg_err.RetryAfter)):
-            logger.warning(f"Telegram transient error (ignored): {err}")
-            return
+        update_id = getattr(update, "update_id", None) if update else None
+        user = getattr(getattr(update, "effective_user", None), "id", None) if update else None
+        chat = getattr(getattr(update, "effective_chat", None), "id", None) if update else None
+        prefix = f"update_id={update_id} user_id={user} chat_id={chat}"
         if isinstance(err, tg_err.BadRequest):
-            err_msg = str(err).lower()
-            if any(ign in err_msg for ign in ("message is not modified", "message to edit not found", "query is too old", "message can't be deleted")):
-                return
-        logger.error(f"Unhandled bot error: {err}", exc_info=context.error)
+            message = str(err)
+            benign = ("message is not modified", "message to edit not found",
+                      "query is too old", "message can't be deleted")
+            if any(item in message.lower() for item in benign):
+                logger.info("Telegram benign BadRequest (%s): %s", prefix, message)
+            else:
+                logger.error("Telegram BadRequest (%s): %s", prefix, message, exc_info=err)
+            return
+        if isinstance(err, tg_err.RetryAfter):
+            logger.warning("Telegram rate limit (%s): retry_after=%s", prefix, err.retry_after)
+            return
+        if isinstance(err, (tg_err.NetworkError, tg_err.TimedOut)):
+            logger.warning("Telegram network/timeout error (%s): %s", prefix, err, exc_info=err)
+            return
+        logger.error("Unhandled bot error (%s): %s", prefix, err, exc_info=err)
 
     application.add_error_handler(_error_handler)
 
-    print("Ã°ÂÂ¤Â Bot starting...")
+    logger.info("Bot starting; polling for Telegram updates")
     application.run_polling(allowed_updates=Update.ALL_TYPES)
 
 
