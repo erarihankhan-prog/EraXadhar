@@ -5,8 +5,9 @@ ddddocr
 Pillow
 pymongo
 dnspython
-python-telegram-bot
+python-telegram-bot[http2]
 aiohttp
 requests
 pikepdf
 pypdf
+uvloop
